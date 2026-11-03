@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<!--
+  ============================================================================
+  GEO-DUEL: THE PHARAOH OF KHAO LO | มหาศึกคัมภีร์ราชันย์ธรณีพิภพ
+  VERSION: v1 (Version 1.0 Official Release)
+  นวัตกรรมเกมการ์ดวิทยาศาสตร์ ป.6 เรื่อง หินและการเปลี่ยนแปลง | โรงเรียนบ้านเขาล้อ
+  ============================================================================
+-->
 <html lang="th" class="dark">
 <head>
   <meta charset="UTF-8" />
@@ -11,7 +18,7 @@
   <meta name="theme-color" content="#04020a" />
   <link rel="manifest" href='data:application/manifest+json,{"name":"GEO-DUEL Online","short_name":"GEO-DUEL","display":"fullscreen","orientation":"any","background_color":"#04020a","theme_color":"#f59e0b"}' />
     <style id="v15-dual-ui-styles">
-    /* ==================== V16 TRUE DUAL UI SYSTEM: 16:9 PC LANDSCAPE & 9:16 SMARTPHONE PORTRAIT ==================== */
+    /* ==================== v1 TRUE DUAL UI SYSTEM: 16:9 PC LANDSCAPE & 9:16 SMARTPHONE PORTRAIT ==================== */
     body.ui-mode-mobile-916 {
       background: #020108 !important;
       display: flex !important;
@@ -217,7 +224,7 @@
       animation: vsFlash 1.1s ease-in-out infinite;
     }
   
-    /* ==================== V18 TRUE 9:16 SMARTPHONE NO-SCROLL & ARROW-NAVIGATION UI ==================== */
+    /* ==================== v1 TRUE 9:16 SMARTPHONE NO-SCROLL & ARROW-NAVIGATION UI ==================== */
     /* 1) Compact Top Header in 9:16 Mode */
     body.ui-mode-mobile-916 #main-top-header {
       min-height: 38px !important;
@@ -551,7 +558,7 @@
     }
 
   </style>
-  <title>GEO-DUEL: THE PHARAOH OF KHAO LO | มหาศึกคัมภีร์ราชันย์ธรณีพิภพ (8000 LP + อ่านออกเสียงภาษาไทย)</title>
+  <title>GEO-DUEL v1 | มหาศึกคัมภีร์ราชันย์ธรณีพิภพ (Version 1.0 - 8000 LP + อ่านออกเสียงภาษาไทย)</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,700&family=Cinzel+Decorative:wght@700;900&family=Kanit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -922,7 +929,7 @@
     }
 
   
-    /* ==================== V12 DRAG-TO-ATTACK, SLOT SELECTION & FLUSH-RIGHT BOARD ==================== */
+    /* ==================== v1 DRAG-TO-ATTACK, SLOT SELECTION & FLUSH-RIGHT BOARD ==================== */
     .slot-placement-target {
       border: 3px dashed #fde047 !important;
       background: radial-gradient(circle, rgba(250, 204, 21, 0.38) 0%, rgba(6, 182, 212, 0.18) 100%) !important;
@@ -946,7 +953,7 @@
   </style>
 </head>
 <body class="h-screen w-screen overflow-hidden flex flex-col egypt-thai-bg text-slate-100">
-  <!-- V27 PERSISTENT TOP-RIGHT EXPAND/SHRINK BUTTON (ALWAYS VISIBLE EVEN IN DUEL) -->
+  <!-- v1 PERSISTENT TOP-RIGHT EXPAND/SHRINK BUTTON (ALWAYS VISIBLE EVEN IN DUEL) -->
   <div id="v27-top-right-expand-Host" style="position:fixed;top:6px;right:6px;z-index:2147483647;pointer-events:auto;">
     <button id="btn-corner-expand-shrink" type="button" onclick="toggleExpandShrinkFullscreen(event)"
       style="display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:10px;font-weight:900;font-size:12px;line-height:1;border:2px solid #ffffff;background:linear-gradient(90deg,#34d399,#22d3ee);color:#020617;box-shadow:0 0 16px rgba(16,185,129,0.95),0 2px 8px rgba(0,0,0,0.85);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;">
@@ -1016,7 +1023,7 @@
         <span>หน้าเมนูหลัก</span>
       </button>
       <span class="hidden xl:inline-flex items-center gap-1.5 text-xs text-amber-300 font-bold tracking-wider">
-        <span class="text-cyan-400">❖</span> GEO-DUEL: มหาศึกคัมภีร์ธรณีวิทยา (8,000 LP + อ่านออกเสียงภาษาไทย)
+        <span class="text-cyan-400">❖</span> GEO-DUEL v1: มหาศึกคัมภีร์ธรณีวิทยา (Version 1.0 • 8,000 LP + อ่านออกเสียงภาษาไทย)
       </span>
     </div>
 
@@ -1042,7 +1049,7 @@
       </button>
     </nav>
 
-    <!-- User Badge & V15 Dual-UI Controls -->
+    <!-- User Badge & v1 Dual-UI Controls -->
     <div class="flex items-center gap-1 flex-wrap justify-end">
       <button id="btn-toggle-aspect-mode" onclick="toggleAspectLayoutMode()" class="px-2 py-1 rounded-lg bg-indigo-950/90 hover:bg-indigo-900 border border-cyan-400/80 text-[11px] font-black text-cyan-200 flex items-center gap-1 shadow" title="คำนวณสัดส่วนหน้าจออัตโนมัติและสลับโหมด UI พอดีจอ">
         <span id="aspect-mode-icon">🖥️</span>
@@ -1103,7 +1110,7 @@
       <!-- Top Title Logo -->
       <div class="relative z-10 text-center space-y-1 pt-1">
         <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-[#120d28]/90 border border-amber-400/80 text-amber-300 text-xs sm:text-sm font-extrabold shadow-[0_0_15px_rgba(245,158,11,0.4)]">
-          <span>🔱 นวัตกรรมเกมการ์ดวิทยาศาสตร์ ป.6 เรื่อง หินและการเปลี่ยนแปลง • รร.บ้านเขาล้อ 🔱</span>
+          <span>🔱 นวัตกรรมเกมการ์ดวิทยาศาสตร์ ป.6 เรื่อง หินและการเปลี่ยนแปลง • รร.บ้านเขาล้อ (v1) 🔱</span>
         </div>
         <h1 class="font-royal text-4xl sm:text-6xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-yellow-100 via-amber-400 to-amber-600 drop-shadow-[0_4px_16px_rgba(245,158,11,0.85)]">
           GEO-DUEL
@@ -1144,7 +1151,7 @@
           <span class="text-xs font-bold text-cyan-300">มอบการ์ดแรร์ SP01–SP10 &amp; สถิติ</span>
         </button>
 
-        <!-- V15 DUAL UI BAR: 16:9 PC vs 9:16 Smartphone + Fullscreen App (Hide Browser Toolbar) -->
+        <!-- v1 DUAL UI BAR: 16:9 PC vs 9:16 Smartphone + Fullscreen App (Hide Browser Toolbar) -->
         <div class="grid grid-cols-2 gap-2 pt-1">
           <button id="menu-btn-16-9" onclick="setAspectLayoutMode('16:9')" class="py-2 px-3 rounded-xl bg-cyan-950/90 hover:bg-cyan-900 border-2 border-cyan-400 text-cyan-200 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-lg">
             <span>📐 ปรับ UI ตามสัดส่วนหน้าจอ</span>
@@ -1230,7 +1237,7 @@
               <div id="auth-avatar-preview" class="w-14 h-14 rounded-2xl bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-2xl overflow-hidden">🧑‍🔬</div>
             </div>
 
-            <!-- V18 Live Bidirectional Cloud Database Status Bar -->
+            <!-- v1 Live Bidirectional Cloud Database Status Bar -->
             <div id="cloud-db-status-bar" class="p-2 rounded-xl bg-[#07131e] border border-cyan-400/60 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div class="flex items-center gap-1.5 font-bold text-cyan-200">
                 <span id="cloud-db-dot" class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -1317,7 +1324,7 @@
             </div>
           </div>
 
-          <!-- V16: CLEAN MEMBER PROFILE, BIG RANK EMBLEM, PHOTO UPLOAD, EDITABLE UNIQUE ID & SUMMARIZED PERSONAL HISTORY (NO DB LINKS!) -->
+          <!-- v1: CLEAN MEMBER PROFILE, BIG RANK EMBLEM, PHOTO UPLOAD, EDITABLE UNIQUE ID & SUMMARIZED PERSONAL HISTORY (NO DB LINKS!) -->
           <div id="member-logged-in-dashboard" class="hidden space-y-3.5">
             <div id="profile-top-hero-card" class="p-4 rounded-2xl bg-gradient-to-r from-[#090618] via-[#130d2a] to-[#091824] border-2 border-amber-400/85 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
               <div class="flex flex-col sm:flex-row items-center gap-3.5">
@@ -1455,7 +1462,7 @@
           <button id="btn-auto-deck" onclick="autoCompleteDeck()" class="px-2 py-1 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-400 text-emerald-200 text-xs font-extrabold">🎲 เติมครบ 40</button>
           <button id="btn-clear-deck" onclick="clearDeck()" class="px-2 py-1 rounded-lg bg-rose-600/30 hover:bg-rose-600/50 border border-rose-400 text-rose-200 text-xs font-extrabold">🗑️ ล้างเด็ค</button>
         </div>
-        <!-- V19 NEW: FAVORITE CUSTOM DECK SLOTS (NEVER OVERWRITES MAIN PRESET DECKS!) -->
+        <!-- v1 NEW: FAVORITE CUSTOM DECK SLOTS (NEVER OVERWRITES MAIN PRESET DECKS!) -->
         <div id="favorite-decks-toolbar" class="w-full pt-1.5 mt-1 border-t border-amber-500/30 flex flex-wrap items-center justify-between gap-1.5">
           <div class="flex flex-wrap items-center gap-1.5">
             <span class="text-[11px] font-black text-yellow-300">⭐ เด็คโปรดของฉัน (แยกจากเด็คหลัก):</span>
@@ -1525,7 +1532,7 @@
       <!-- Mode Selection Lobby -->
       <div id="lobby-selection" class="w-full h-full p-3 sm:p-5 overflow-y-auto flex items-center justify-center">
         <div class="max-w-6xl w-full flex flex-col gap-2 my-auto">
-          <!-- V18 9:16 Smartphone Mode Lobby Switcher (Eliminates long vertical scrolling on phone!) -->
+          <!-- v1 9:16 Smartphone Mode Lobby Switcher (Eliminates long vertical scrolling on phone!) -->
           <div id="mobile-916-lobby-tabs" class="only-mobile-916 grid grid-cols-2 gap-2 bg-[#070512] p-1.5 rounded-xl border border-amber-400/60">
             <button type="button" id="tab-mobile-lobby-bot" onclick="setMobileLobbyTab('bot')" class="py-2 px-3 rounded-lg bg-amber-400 text-slate-950 font-black text-xs shadow">
               🤖 ดวลบอท AI (10 ระดับ)
@@ -1731,9 +1738,9 @@
       </div>
         </div>
 
-      <!-- ==================== ACTIVE DUEL BATTLEFIELD (V12 FLUSH-RIGHT MAX BOARD + WIDE NO-SCROLL INSPECTOR + DRAG ATTACK) ==================== -->
+      <!-- ==================== ACTIVE DUEL BATTLEFIELD (v1 FLUSH-RIGHT MAX BOARD + WIDE NO-SCROLL INSPECTOR + DRAG ATTACK) ==================== -->
       <div id="duel-arena" class="hidden w-full h-full flex flex-col lg:flex-row items-stretch justify-between overflow-hidden egypt-thai-bg relative select-none">
-        <!-- V16 SPECTATOR READ-ONLY LIVE BANNER (#11: Visitors can ONLY watch, never click player buttons!) -->
+        <!-- v1 SPECTATOR READ-ONLY LIVE BANNER (#11: Visitors can ONLY watch, never click player buttons!) -->
         <div id="spectator-live-banner" class="hidden absolute top-2 left-1/2 -translate-x-1/2 z-[65] px-4 py-1.5 rounded-full bg-purple-950/95 border-2 border-purple-300 shadow-[0_0_30px_rgba(168,85,247,0.9)] flex items-center gap-3">
           <span class="text-xs sm:text-sm font-black text-purple-100 flex items-center gap-1.5">
             <span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
@@ -2244,7 +2251,7 @@
             </div>
           </div>
 
-          <!-- V15 NEW (#4): ADMIN EXCLUSIVE RARE CARD GRANTING SYSTEM (SP01 - SP10 FROM GOOGLE DRIVE) -->
+          <!-- v1 NEW (#4): ADMIN EXCLUSIVE RARE CARD GRANTING SYSTEM (SP01 - SP10 FROM GOOGLE DRIVE) -->
           <div class="royal-frame rounded-2xl p-4 sm:p-5 space-y-3.5 border-2 border-yellow-400/80">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-500/40 pb-2.5">
               <div>
@@ -2507,7 +2514,7 @@
   <div id="battle-log" class="hidden"></div>
 
 
-  <!-- ==================== V15 MODAL 1: 10-SECOND CHALLENGER ACCEPT / DECLINE COUNTDOWN (#8 & #9) ==================== -->
+  <!-- ==================== v1 MODAL 1: 10-SECOND CHALLENGER ACCEPT / DECLINE COUNTDOWN (#8 & #9) ==================== -->
   <div id="modal-room-challenge" class="hidden fixed inset-0 z-[120] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
     <div class="royal-frame rounded-3xl max-w-lg w-full p-6 text-center space-y-4 border-4 border-amber-300 shadow-[0_0_80px_rgba(250,204,21,0.9)]">
       <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-rose-600/30 border border-rose-400 text-rose-200 text-xs font-black uppercase tracking-wider animate-pulse">
@@ -2556,7 +2563,7 @@
     </div>
   </div>
 
-  <!-- ==================== V15 MODAL 2: PRE-DUEL VS MOTION GRAPHIC INTRO WITH PROFILE PHOTOS & RANKS (#9 & #10) ==================== -->
+  <!-- ==================== v1 MODAL 2: PRE-DUEL VS MOTION GRAPHIC INTRO WITH PROFILE PHOTOS & RANKS (#9 & #10) ==================== -->
   <div id="pre-duel-vs-overlay" class="hidden fixed inset-0 z-[125] bg-slate-950/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 overflow-hidden select-none">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.28)_0%,rgba(6,182,212,0.18)_45%,rgba(2,1,8,0.98)_100%)] pointer-events-none"></div>
     <div class="relative z-10 max-w-4xl w-full space-y-5 text-center">
@@ -2594,7 +2601,7 @@
     </div>
   </div>
 
-  <!-- ==================== V15 MODAL 3: VISITOR / SPECTATOR MODE LOBBY (#11) ==================== -->
+  <!-- ==================== v1 MODAL 3: VISITOR / SPECTATOR MODE LOBBY (#11) ==================== -->
   <div id="modal-spectator-lobby" class="hidden fixed inset-0 z-[118] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
     <div class="royal-frame rounded-3xl max-w-4xl w-full p-5 sm:p-6 space-y-4 border-2 border-purple-400 shadow-[0_0_70px_rgba(168,85,247,0.75)] max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-purple-400/40 pb-3">
@@ -2613,7 +2620,7 @@
     </div>
   </div>
 
-  <!-- ==================== V15 MODAL 4: FULLSCREEN APP & GITHUB TOOLBAR HIDER GUIDE (#1) ==================== -->
+  <!-- ==================== v1 MODAL 4: FULLSCREEN APP & GITHUB TOOLBAR HIDER GUIDE (#1) ==================== -->
   <div id="modal-app-install-guide" class="hidden fixed inset-0 z-[118] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
     <div class="royal-frame rounded-3xl max-w-xl w-full p-6 space-y-4 border-2 border-emerald-400 shadow-2xl">
       <div class="flex items-center justify-between border-b border-emerald-400/40 pb-2.5">
@@ -2634,7 +2641,7 @@
     </div>
   </div>
 
-  <!-- ==================== V23 MODALS: DB SYNC SPINNER, ROOM RESERVATION & PASSWORD PROMPT ==================== -->
+  <!-- ==================== v1 MODALS: DB SYNC SPINNER, ROOM RESERVATION & PASSWORD PROMPT ==================== -->
   <!-- 1. DATABASE VERIFICATION & SYNC LOADING SPINNER MODAL (REQ 1, 2, 3) -->
   <div id="modal-room-db-loading" class="hidden fixed inset-0 z-[140] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 select-none">
     <div class="royal-frame rounded-3xl max-w-md w-full p-6 text-center space-y-4 border-2 border-cyan-400 shadow-[0_0_70px_rgba(6,182,212,0.75)]">
@@ -2752,7 +2759,7 @@
     </div>
   </div>
 
-  <!-- ==================== V24 MOBILE CARD INFO POPUP TAB (9:16 ONLY) ==================== -->
+  <!-- ==================== v1 MOBILE CARD INFO POPUP TAB (9:16 ONLY) ==================== -->
   <div id="mobile-card-info-tab-popup" onclick="if(event.target===this) closeMobileCardInfoTab()" class="hidden fixed inset-0 z-[136] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-2 select-none">
     <div id="mobile-card-info-tab-frame" class="royal-frame rounded-3xl w-full p-3.5 space-y-2.5 border-2 border-amber-400 shadow-[0_0_65px_rgba(245,158,11,0.75)] flex flex-col max-h-[88dvh] overflow-hidden" style="width: min(94vw, calc(var(--dyn-frame-w, 420px) - 12px)); max-width: 420px;">
       <!-- Top Header Bar -->
@@ -3683,7 +3690,7 @@
       toastTimer = setTimeout(() => box.classList.add('hidden'), 3600);
     }
 
-    // ==================== USER PROFILE, REAL AUTHENTICATION & REAL STATS ENGINE (V14) ====================
+    // ==================== USER PROFILE, REAL AUTHENTICATION & REAL STATS ENGINE (v1) ====================
     let isPlayerLoggedIn = false;
     let userProfile = {
       username: '',
@@ -4774,7 +4781,7 @@
       document.getElementById('modal-card').classList.add('hidden');
     }
 
-    // ==================== REAL ONLINE P2P (WEBRTC PEERJS + BROADCASTCHANNEL) MULTIPLAYER ENGINE (V14) ====================
+    // ==================== REAL ONLINE P2P (WEBRTC PEERJS + BROADCASTCHANNEL) MULTIPLAYER ENGINE (v1) ====================
     let peerInstance = null;
     let peerConn = null;
     let currentRoomCode = '';
@@ -4900,7 +4907,7 @@
       try {
         if (typeof Peer !== 'undefined') {
           if (peerInstance) peerInstance.destroy();
-          peerInstance = new Peer('geoduel-v14-room-' + currentRoomCode, PEER_ICE_CONFIG);
+          peerInstance = new Peer('geoduel-v1-room-' + currentRoomCode, PEER_ICE_CONFIG);
           peerInstance.on('connection', conn => {
             peerConn = conn;
             setupPeerConnection();
@@ -4949,7 +4956,7 @@
           if (peerInstance) peerInstance.destroy();
           peerInstance = new Peer(PEER_ICE_CONFIG);
           peerInstance.on('open', () => {
-            peerConn = peerInstance.connect('geoduel-v14-room-' + code, { reliable: true });
+            peerConn = peerInstance.connect('geoduel-v1-room-' + code, { reliable: true });
             setupPeerConnection();
             peerConn.on('open', () => {
               sendP2PPacket({
@@ -6946,7 +6953,7 @@
       return true;
     }
 
-    // ==================== V12 DRAG-CARD-TO-ATTACK ENGINE (#8) ====================
+    // ==================== v1 DRAG-CARD-TO-ATTACK ENGINE (#8) ====================
     let dragAttackState = null;
 
     function startMonsterCardDrag(ev, side, slotIdx) {
@@ -7057,7 +7064,7 @@
       window.addEventListener('pointerup', onPointerUp);
     }
 
-    // ==================== V12 WIDE SIDE-BY-SIDE CARD INSPECTOR (#5 & #2 — ZERO SCROLLING, ZERO DUPLICATE BUTTONS!) ====================
+    // ==================== v1 WIDE SIDE-BY-SIDE CARD INSPECTOR (#5 & #2 — ZERO SCROLLING, ZERO DUPLICATE BUTTONS!) ====================
     function renderDuelInspector() {
       const box = document.getElementById('duel-card-inspector');
       const actBox = document.getElementById('duel-card-actions');
@@ -8360,7 +8367,7 @@
       const pl = duelState.players[side];
       const opp = duelState.players[1 - side];
       setScienceBanner(card);
-      // V15 FIX (#7): Do NOT play a fake 2-card clash motion graphic pairing an opponent's spell with the player's monster!
+      // v1 FIX (#7): Do NOT play a fake 2-card clash motion graphic pairing an opponent's spell with the player's monster!
       // Only show single-card motion graphic for major board-wide catastrophe traps/spells without a fake targetCard.
       if (card.id === 'S035' || card.id === 'T001' || card.id === 'T006' || card.id === 'T015') {
         playCardMotionGraphic({
@@ -10134,7 +10141,7 @@
                 return;
               }
               updateDynamicStats();
-              // V15 FIX (#5): Check SP04 (ถั่วเขียวหน้าเสาธง) & T028 (เขตหวงห้าม) before Bot declares any attack!
+              // v1 FIX (#5): Check SP04 (ถั่วเขียวหน้าเสาธง) & T028 (เขตหวงห้าม) before Bot declares any attack!
               const humanHasBean = human.monsters.some(hm => hm && !hm.faceDown && hm.id === 'SP04');
               if (humanHasBean) {
                 logBattle(`🌱 <strong>ถั่วเขียวหน้าเสาธง (SP04)</strong> ทำงาน! ${bot.name} ไม่สามารถสั่งโจมตีได้!`);
@@ -10167,7 +10174,7 @@
                 }, 650);
               } else {
                 let validTargets = allHumanM.filter(x => {
-                  if (!x.hm.faceDown && x.hm.id === 'M049') return false; // V15 FIX (#5): M049 Soapstone Priest CANNOT be attacked even if it is the only monster!
+                  if (!x.hm.faceDown && x.hm.id === 'M049') return false; // v1 FIX (#5): M049 Soapstone Priest CANNOT be attacked even if it is the only monster!
                   if (!x.hm.faceDown && x.hm.id === 'M120' && m.currentAtk >= 2000) return false;
                   return true;
                 });
@@ -10705,8 +10712,8 @@
     }
 
 
-    // ==================== GEO-DUEL V15 MASTER UPGRADE MODULE (ALL 11 USER REQUESTS) ====================
-    APP_DATA.googleAppsScriptCode = "/**\n * ============================================================================\n * GEO-DUEL ONLINE (v18 Master) — GOOGLE APPS SCRIPT BACKEND (Code.gs)\n * โรงเรียนบ้านเขาล้อ (เขาล้อประชานุทิศ) | นวัตกรรมสื่อการเรียนรู้วิทยาศาสตร์ ป.6\n * โฟลเดอร์ Google Drive: https://drive.google.com/drive/folders/1Wiou1QPjq6j01K0hMhLcYUKUZBmtQDXN\n * Google Sheet Database: https://docs.google.com/spreadsheets/d/1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM/edit\n * ============================================================================\n * วิธีติดตั้งและ Deploy Web App:\n * 1. เปิดไฟล์ Google Sheet:\n *    https://docs.google.com/spreadsheets/d/1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM/edit\n * 2. ไปที่เมนู ส่วนขยาย (Extensions) > Apps Script\n * 3. ลบโค้ดเดิมออกทั้งหมด แล้ววางโค้ดไฟล์นี้ลงไป กดบันทึก (Save / Ctrl+S)\n * 4. กดปุ่ม \"ทำให้ใช้งานได้\" (Deploy) > \"การทำให้ใช้งานได้รายการใหม่\" (New deployment)\n * 5. เลือกประเภทเป็น \"เว็บแอป\" (Web app):\n *    - ดำเนินการในฐานะ (Execute as): \"ฉัน\" (Me)\n *    - ผู้ที่มีสิทธิ์เข้าถึง (Who has access): \"ทุกคน\" (Anyone)\n * 6. กด Deploy แล้วคัดลอก Web App URL (ลงท้ายด้วย /exec) นำมาแจ้งหรือวางในเกม GEO-DUEL\n * ============================================================================\n */\n\nconst SPREADSHEET_ID = '1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM';\nconst DRIVE_FOLDER_ID = '1Wiou1QPjq6j01K0hMhLcYUKUZBmtQDXN';\nconst RARE_CARDS_FOLDER_ID = '1cSmx54cU9b2acAvdv85VYyLElFfV4DS-';\n\nconst TAB_AUTH = 'Accounts_Auth';            // 7 คอลัมน์ (A-G): แยกเก็บ User_ID และรหัสผ่าน\nconst TAB_PROFILE = 'Members_Profile_Deck';  // 17 คอลัมน์ (A-Q): โปรไฟล์ เด็ค 40 ใบ สถิติ แรงก์ คะแนน และรูปโปรไฟล์\nconst TAB_MATCHES = 'Match_Evaluation_Logs'; // 19 คอลัมน์ (A-S): ประวัติการดูเอลและคะแนนตามหลักสูตรวิทยาศาสตร์ มฐ. ว 3.2 ป.6/1-ป.6/2\nconst TAB_RARES = 'Rare_Cards_Registry';     // 13 คอลัมน์ (A-M): ทะเบียนการ์ดแรร์ SP01-SP10 และผู้ถือครอง (คอลัมน์ J-K)\nconst TAB_ROOMS = 'Rooms_50_Lobby';          // 15 คอลัมน์ (A-O): สถานะห้องดูเอลออนไลน์ 50 ห้อง (Room 01 - Room 50)\n\nconst HEADERS_AUTH = [\n  'User_ID', 'Password_Hash_Or_Pin', 'Role', 'Account_Status',\n  'Created_At', 'Last_Login_At', 'Previous_User_ID'\n];\n\nconst HEADERS_PROFILE = [\n  'User_ID', 'Student_Full_Name', 'Classroom', 'Avatar_Icon',\n  'Profile_Photo_DataURI', 'Rank_Tier', 'Rank_RP', 'Wins',\n  'Losses', 'Games_Played', 'Win_Rate_Pct', 'Avg_Play_Score_100',\n  'Avg_Play_Score_20', 'Last_Evaluation_Grade', 'Saved_Deck_40_JSON',\n  'Granted_Rare_Cards', 'Updated_At'\n];\n\nconst HEADERS_MATCHES = [\n  'Log_ID', 'Timestamp', 'User_ID', 'Student_Full_Name',\n  'Opponent_Name', 'Opponent_Rank_Tier', 'Match_Mode', 'Match_Result',\n  'RP_Change', 'New_Rank_RP', 'New_Rank_Tier', 'Total_Score_100',\n  'Score_Out_Of_20', 'Grade_Rank', 'Geo_Mastery_30', 'Tribute_Resource_25',\n  'Combat_Math_25', 'Survival_Speed_20', 'Science_Curriculum_Summary'\n];\n\nconst HEADERS_RARES = [\n  'Card_ID', 'Card_Name_TH', 'Card_Name_EN', 'Card_Category',\n  'Attribute_Element', 'Level_Stars_ATK_DEF', 'Card_Effect', 'Special_Quote',\n  'Serial_Number', 'Exclusive_Owner_ID', 'Exclusive_Owner_Name',\n  'Drive_Image_Link', 'Drive_Folder_Link'\n];\n\nconst HEADERS_ROOMS = [\n  'Room_No', 'Room_Name', 'Room_Status', 'Host_Duelist_ID',\n  'Host_Duelist_Name', 'Challenger_Duelist_ID', 'Challenger_Duelist_Name',\n  'Spectators_Count', 'Duel_Turn_Count', 'Turn_Timer_Seconds',\n  'Host_Deck_Archetype', 'Challenger_Deck_Archetype', 'Active_Match_ID',\n  'Player_Meta_JSON', 'Live_State_JSON'\n];\n\nfunction getDb() {\n  try {\n    return SpreadsheetApp.openById(SPREADSHEET_ID);\n  } catch (e) {\n    return SpreadsheetApp.getActiveSpreadsheet();\n  }\n}\n\nfunction ensureSheet(ss, name, headers) {\n  let sh = ss.getSheetByName(name);\n  if (!sh) {\n    sh = ss.insertSheet(name);\n    sh.appendRow(headers);\n  } else if (sh.getLastRow() === 0) {\n    sh.appendRow(headers);\n  }\n  return sh;\n}\n\nfunction initAllSheets() {\n  const ss = getDb();\n  ensureSheet(ss, TAB_AUTH, HEADERS_AUTH);\n  const shProf = ensureSheet(ss, TAB_PROFILE, HEADERS_PROFILE);\n  ensureSheet(ss, TAB_MATCHES, HEADERS_MATCHES);\n  ensureSheet(ss, TAB_RARES, HEADERS_RARES);\n  const shRooms = ensureSheet(ss, TAB_ROOMS, HEADERS_ROOMS);\n\n  repairProfileRowsIfNeeded(shProf);\n  ensureAll50RoomsExist(shRooms);\n  return ss;\n}\n\n/**\n * ซ่อมแถวใน Members_Profile_Deck อัตโนมัติ หากเคยถูกบันทึกด้วยโครงสร้าง 16 คอลัมน์แบบเก่า\n * ให้กลับมาตรงกับตาราง 17 คอลัมน์ (A-Q) อย่างถูกต้อง\n */\nfunction repairProfileRowsIfNeeded(shProf) {\n  if (!shProf || shProf.getLastRow() < 2) return;\n  const range = shProf.getDataRange();\n  const rows = range.getValues();\n  for (let i = 1; i < rows.length; i++) {\n    const r = rows[i];\n    const colD = String(r[3] || '').trim();\n    const colN = String(r[13] || '').trim();\n    const colO = String(r[14] || '').trim();\n    const isOld16Col = (colD === 'โรงเรียนบ้านเขาล้อ') || (colN.startsWith('{') && (colO.startsWith('data:image') || colO === '' || !colO.startsWith('{')));\n    if (isOld16Col) {\n      const uid = String(r[0] || '').trim();\n      const fullName = String(r[1] || uid).trim();\n      const classroom = String(r[2] || 'ป.6').trim();\n      const rankTier = String(r[4] || 'Bronze').trim();\n      const rankRp = Number(r[5] || 1000);\n      const wins = Number(r[7] || 0);\n      const losses = Number(r[8] || 0);\n      const games = wins + losses;\n      const winRate = games > 0 ? Math.round((wins / games) * 1000) / 10 : 0;\n      const avg100 = Number(r[10] || 0);\n      const avg20 = Math.round((avg100 / 5) * 100) / 100;\n      const grade = avg100 >= 90 ? 'S+' : (avg100 >= 82 ? 'S' : (avg100 >= 74 ? 'A' : (avg100 > 0 ? 'B' : '-')));\n      const rareJson = String(r[12] || '[]').trim().startsWith('[') ? String(r[12]).trim() : '[]';\n      const deckJson = colN.startsWith('{') ? colN : '{}';\n      const rawAv = colO;\n      const avatarIcon = (rawAv && !rawAv.startsWith('data:image')) ? rawAv : '🧑‍🔬';\n      const photoUri = (rawAv && rawAv.startsWith('data:image')) ? rawAv : '';\n      const updatedAt = String(r[15] || Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss'));\n\n      const fixedRow = [\n        uid, fullName, classroom, avatarIcon, photoUri,\n        rankTier, rankRp, wins, losses, games,\n        winRate, avg100, avg20, grade, deckJson,\n        rareJson, updatedAt\n      ];\n      shProf.getRange(i + 1, 1, 1, 17).setValues([fixedRow]);\n    }\n  }\n}\n\n/**\n * ตรวจสอบให้มีครบทั้ง 50 ห้อง (Room 01 - Room 50)\n */\nfunction ensureAll50RoomsExist(shRooms) {\n  if (!shRooms) return;\n  const rows = shRooms.getDataRange().getValues();\n  const existingNums = {};\n  for (let i = 1; i < rows.length; i++) {\n    const rNo = parseRoomNumber(rows[i][0]);\n    if (rNo >= 1 && rNo <= 50) existingNums[rNo] = true;\n  }\n  for (let n = 1; n <= 50; n++) {\n    if (!existingNums[n]) {\n      const codeStr = 'Room ' + (n < 10 ? '0' + n : n);\n      const defaultName = n === 50\n        ? 'มหาวิหารฟาโรห์ราชันย์ธรณี 50'\n        : (n === 49 ? 'ห้องประลองชิงชนะเลิศ Tournament 49' : ('ห้องประลองศิลาอิสระ ' + (n < 10 ? '0' + n : n)));\n      shRooms.appendRow([codeStr, defaultName, 'empty', '', '', '', '', '', '', '', '', '', '', '', '']);\n    }\n  }\n}\n\nfunction parseRoomNumber(val) {\n  if (typeof val === 'number') return val;\n  const m = String(val || '').match(/\\d+/);\n  return m ? parseInt(m[0], 10) : 0;\n}\n\nfunction jsonResponse(obj) {\n  return ContentService\n    .createTextOutput(JSON.stringify(obj))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction doGet(e) {\n  const params = (e && e.parameter) ? e.parameter : {};\n  const action = params.action || 'ping';\n  return handleRequest(action, params);\n}\n\nfunction doPost(e) {\n  let body = {};\n  try {\n    if (e && e.postData && e.postData.contents) {\n      body = JSON.parse(e.postData.contents);\n    }\n  } catch (err) {\n    body = (e && e.parameter) ? e.parameter : {};\n  }\n  const action = body.action || (e && e.parameter && e.parameter.action) || 'ping';\n  return handleRequest(action, body);\n}\n\nfunction handleRequest(action, data) {\n  const lock = LockService.getScriptLock();\n  lock.waitLock(10000);\n  try {\n    const ss = initAllSheets();\n    const nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');\n\n    // 0. ดึงข้อมูลทั้งหมด (Ping / SyncAll)\n    if (action === 'ping' || action === 'syncAll') {\n      return jsonResponse({\n        ok: true,\n        spreadsheetId: ss.getId(),\n        timestamp: nowStr,\n        rareRegistry: readRareRegistry(ss),\n        rooms: readAllRooms(ss),\n        leaderboard: readLeaderboard(ss),\n        members: readAllMembers(ss),\n        matches: readRecentMatches(ss, 100)\n      });\n    }\n\n    // 1. สมัครสมาชิกใหม่ (แยกเก็บ User_ID/Password ใน Accounts_Auth และโปรไฟล์ 17 คอลัมน์ใน Members_Profile_Deck)\n    if (action === 'register') {\n      const userId = String(data.userId || '').trim();\n      const password = String(data.password || '').trim();\n      if (!userId || !password) {\n        return jsonResponse({ ok: false, error: 'กรุณากรอก User ID และรหัสผ่านให้ครบถ้วน' });\n      }\n\n      const shAuth = ss.getSheetByName(TAB_AUTH);\n      const authRows = shAuth.getDataRange().getValues();\n      let authExists = false;\n      for (let i = 1; i < authRows.length; i++) {\n        if (String(authRows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n          authExists = true;\n          break;\n        }\n      }\n\n      if (!authExists) {\n        shAuth.appendRow([\n          userId,\n          \"'\" + password,\n          String(data.role || 'MEMBER').toUpperCase(),\n          'ACTIVE',\n          nowStr,\n          nowStr,\n          'Registered via GEO-DUEL'\n        ]);\n      }\n\n      const shProf = ss.getSheetByName(TAB_PROFILE);\n      const profRows = shProf.getDataRange().getValues();\n      let profExists = false;\n      for (let i = 1; i < profRows.length; i++) {\n        if (String(profRows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n          profExists = true;\n          break;\n        }\n      }\n\n      if (!profExists) {\n        const rawAvatar = String(data.avatar || '').trim();\n        const avatarIcon = String(data.avatarIcon || (!rawAvatar.startsWith('data:image') && rawAvatar ? rawAvatar : '🧑‍🔬'));\n        const photoDataUri = String(data.photoDataUrl || (rawAvatar.startsWith('data:image') ? rawAvatar : ''));\n        const deckObj = safeJsonParse(data.savedDeck || data.deck, {});\n        const rareArr = safeJsonParse(data.rareCards, []);\n        const rankRp = Number(data.rankPoints ?? data.rankRp ?? 1000);\n        const rankTier = String(data.rankTier || 'Bronze');\n\n        shProf.appendRow([\n          userId,\n          data.fullName || data.displayName || userId,\n          data.classroom || 'ป.6',\n          avatarIcon,\n          photoDataUri,\n          rankTier,\n          rankRp,\n          0, 0, 0, 0, 0, 0,\n          '-',\n          JSON.stringify(deckObj),\n          JSON.stringify(rareArr),\n          nowStr\n        ]);\n      }\n\n      return jsonResponse({\n        ok: true,\n        message: authExists ? 'อัปเดตสถานะสมาชิกแล้ว' : 'สมัครสมาชิกสำเร็จ',\n        userId: userId\n      });\n    }\n\n    // 2. เข้าสู่ระบบ (ตรวจสอบรหัสผ่านจาก Accounts_Auth และดึงโปรไฟล์จาก Members_Profile_Deck)\n    if (action === 'login') {\n      const userId = String(data.userId || '').trim();\n      const password = String(data.password || '').trim();\n      const shAuth = ss.getSheetByName(TAB_AUTH);\n      const authRows = shAuth.getDataRange().getValues();\n      let foundAuth = false;\n      for (let i = 1; i < authRows.length; i++) {\n        const rowUser = String(authRows[i][0]).trim();\n        const rowPass = String(authRows[i][1]).replace(/^'/, '').trim();\n        if (rowUser.toLowerCase() === userId.toLowerCase()) {\n          if (rowPass !== password) {\n            return jsonResponse({ ok: false, error: 'รหัสผ่านไม่ถูกต้อง' });\n          }\n          shAuth.getRange(i + 1, 6).setValue(nowStr);\n          foundAuth = true;\n          break;\n        }\n      }\n      if (!foundAuth) {\n        return jsonResponse({ ok: false, error: 'ไม่พบบัญชีผู้ใช้ \"' + userId + '\" ในระบบ' });\n      }\n      const profile = getMemberProfile(ss, userId);\n      return jsonResponse({ ok: true, profile: profile, rareRegistry: readRareRegistry(ss) });\n    }\n\n    // 3. เปลี่ยน User ID ของผู้เล่น (อัปเดตครบทุกแท็บ: Auth, Profile, Rare Cards คอลัมน์ J, Match Logs)\n    if (action === 'changeUserId') {\n      const oldId = String(data.oldUserId || '').trim();\n      const newId = String(data.newUserId || '').trim();\n      if (!oldId || !newId) return jsonResponse({ ok: false, error: 'ข้อมูลไม่ครบถ้วน' });\n\n      const shAuth = ss.getSheetByName(TAB_AUTH);\n      const authRows = shAuth.getDataRange().getValues();\n      for (let i = 1; i < authRows.length; i++) {\n        if (String(authRows[i][0]).trim().toLowerCase() === newId.toLowerCase() && newId.toLowerCase() !== oldId.toLowerCase()) {\n          return jsonResponse({ ok: false, error: 'User ID \"' + newId + '\" ซ้ำกับสมาชิกคนอื่น กรุณาใช้ชื่ออื่น' });\n        }\n      }\n      for (let i = 1; i < authRows.length; i++) {\n        if (String(authRows[i][0]).trim().toLowerCase() === oldId.toLowerCase()) {\n          shAuth.getRange(i + 1, 1).setValue(newId);\n          shAuth.getRange(i + 1, 7).setValue(oldId);\n        }\n      }\n\n      const shProf = ss.getSheetByName(TAB_PROFILE);\n      const profRows = shProf.getDataRange().getValues();\n      for (let i = 1; i < profRows.length; i++) {\n        if (String(profRows[i][0]).trim().toLowerCase() === oldId.toLowerCase()) {\n          shProf.getRange(i + 1, 1).setValue(newId);\n          if (data.displayName) shProf.getRange(i + 1, 2).setValue(data.displayName);\n          shProf.getRange(i + 1, 17).setValue(nowStr);\n        }\n      }\n\n      const shRares = ss.getSheetByName(TAB_RARES);\n      const rareRows = shRares.getDataRange().getValues();\n      for (let i = 1; i < rareRows.length; i++) {\n        // คอลัมน์ J (index 9, col 10) คือ Exclusive_Owner_ID\n        if (String(rareRows[i][9] || '').trim().toLowerCase() === oldId.toLowerCase()) {\n          shRares.getRange(i + 1, 10).setValue(newId);\n          if (data.displayName) shRares.getRange(i + 1, 11).setValue(data.displayName);\n        }\n      }\n\n      const shMatch = ss.getSheetByName(TAB_MATCHES);\n      const matchRows = shMatch.getDataRange().getValues();\n      for (let i = 1; i < matchRows.length; i++) {\n        if (String(matchRows[i][2] || '').trim().toLowerCase() === oldId.toLowerCase()) {\n          shMatch.getRange(i + 1, 3).setValue(newId);\n        }\n      }\n\n      return jsonResponse({ ok: true, newUserId: newId });\n    }\n\n    // 4. บันทึกโปรไฟล์ เด็ค 40 ใบ สถิติ แรงก์ และรูปโปรไฟล์ (ตรงตาม 17 คอลัมน์ A-Q)\n    if (action === 'saveProfileAndDeck' || action === 'syncProfileAndDeck') {\n      const userId = String(data.userId || '').trim();\n      if (!userId) return jsonResponse({ ok: false, error: 'Missing userId' });\n\n      const shAuth = ss.getSheetByName(TAB_AUTH);\n      if (data.password) {\n        const aRows = shAuth.getDataRange().getValues();\n        let authFound = false;\n        for (let i = 1; i < aRows.length; i++) {\n          if (String(aRows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n            shAuth.getRange(i + 1, 6).setValue(nowStr);\n            authFound = true;\n            break;\n          }\n        }\n        if (!authFound) {\n          shAuth.appendRow([\n            userId, \"'\" + String(data.password).trim(), 'MEMBER', 'ACTIVE',\n            nowStr, nowStr, 'Synced via GEO-DUEL'\n          ]);\n        }\n      }\n\n      const shProf = ss.getSheetByName(TAB_PROFILE);\n      const rows = shProf.getDataRange().getValues();\n      const rawAvatar = String(data.avatar || '').trim();\n      const incomingDeck = safeJsonParse(data.savedDeck || data.deck, null);\n      const incomingRares = safeJsonParse(data.rareCards, null);\n\n      let updated = false;\n      for (let i = 1; i < rows.length; i++) {\n        if (String(rows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n          const cur = rows[i];\n          const fullName = String(data.fullName || data.displayName || cur[1] || userId).trim();\n          const classroom = String(data.classroom || cur[2] || 'ป.6').trim();\n\n          let avatarIcon = String(cur[3] || '🧑‍🔬').trim();\n          if (avatarIcon === 'โรงเรียนบ้านเขาล้อ' || !avatarIcon) avatarIcon = '🧑‍🔬';\n          if (data.avatarIcon) {\n            avatarIcon = String(data.avatarIcon).trim();\n          } else if (rawAvatar && !rawAvatar.startsWith('data:image')) {\n            avatarIcon = rawAvatar;\n          }\n\n          let photoDataUri = String(cur[4] || '').trim();\n          if (!photoDataUri.startsWith('data:image')) photoDataUri = '';\n          if (data.photoDataUrl && String(data.photoDataUrl).startsWith('data:image')) {\n            photoDataUri = String(data.photoDataUrl).trim();\n          } else if (rawAvatar.startsWith('data:image')) {\n            photoDataUri = rawAvatar;\n          }\n\n          const rankTier = String(data.rankTier || cur[5] || 'Bronze').trim();\n          const rankRp = Number(data.rankPoints ?? data.rankRp ?? cur[6] ?? 1000);\n          const wins = Math.max(Number(data.wins ?? cur[7] ?? 0), 0);\n          const losses = Math.max(Number(data.losses ?? cur[8] ?? 0), 0);\n          const games = wins + losses;\n          const winRate = games > 0 ? Math.round((wins / games) * 1000) / 10 : 0;\n          const avg100 = Number(data.avgScore100 ?? cur[11] ?? 0);\n          const avg20 = Math.round((avg100 / 5) * 100) / 100;\n          const lastGrade = String(\n            data.lastRank || data.grade ||\n            (avg100 >= 90 ? 'S+' : (avg100 >= 82 ? 'S' : (avg100 >= 74 ? 'A' : (avg100 > 0 ? 'B' : (cur[13] && !String(cur[13]).startsWith('{') ? cur[13] : '-')))))\n          );\n\n          const existingDeckObj = safeJsonParse(cur[14], {});\n          const finalDeckObj = (incomingDeck && Object.keys(incomingDeck).length > 0) ? incomingDeck : existingDeckObj;\n\n          const existingRaresArr = safeJsonParse(cur[15], []);\n          const finalRaresArr = Array.isArray(incomingRares) ? incomingRares : existingRaresArr;\n\n          const rowValues = [\n            userId,\n            fullName,\n            classroom,\n            avatarIcon,\n            photoDataUri,\n            rankTier,\n            rankRp,\n            wins,\n            losses,\n            games,\n            winRate,\n            avg100,\n            avg20,\n            lastGrade,\n            JSON.stringify(finalDeckObj),\n            JSON.stringify(finalRaresArr),\n            nowStr\n          ];\n          shProf.getRange(i + 1, 1, 1, 17).setValues([rowValues]);\n          updated = true;\n          break;\n        }\n      }\n\n      if (!updated) {\n        const avatarIcon = String(data.avatarIcon || (!rawAvatar.startsWith('data:image') && rawAvatar ? rawAvatar : '🧑‍🔬'));\n        const photoDataUri = String(data.photoDataUrl || (rawAvatar.startsWith('data:image') ? rawAvatar : ''));\n        const wins = Number(data.wins || 0);\n        const losses = Number(data.losses || 0);\n        const games = wins + losses;\n        const winRate = games > 0 ? Math.round((wins / games) * 1000) / 10 : 0;\n        const avg100 = Number(data.avgScore100 || 0);\n        const avg20 = Math.round((avg100 / 5) * 100) / 100;\n        const lastGrade = avg100 >= 90 ? 'S+' : (avg100 >= 82 ? 'S' : (avg100 >= 74 ? 'A' : (avg100 > 0 ? 'B' : '-')));\n\n        shProf.appendRow([\n          userId,\n          data.fullName || data.displayName || userId,\n          data.classroom || 'ป.6',\n          avatarIcon,\n          photoDataUri,\n          data.rankTier || 'Bronze',\n          Number(data.rankPoints ?? data.rankRp ?? 1000),\n          wins,\n          losses,\n          games,\n          winRate,\n          avg100,\n          avg20,\n          lastGrade,\n          JSON.stringify(incomingDeck || {}),\n          JSON.stringify(incomingRares || []),\n          nowStr\n        ]);\n      }\n\n      return jsonResponse({ ok: true, userId: userId });\n    }\n\n    // 5. บันทึกผลการดูเอลและคะแนนตามหลักสูตรวิทยาศาสตร์ (ตรงตาม 19 คอลัมน์ A-S ใน Match_Evaluation_Logs)\n    if (action === 'recordMatch') {\n      const shMatch = ss.getSheetByName(TAB_MATCHES);\n      const userId = String(data.userId || '').trim();\n      const prof = userId ? getMemberProfile(ss, userId) : null;\n\n      const total100 = Number(data.totalScore100 ?? 85);\n      const score20 = Math.round((total100 / 5) * 100) / 100;\n      const logId = String(data.logId || data.matchId || ('M-' + new Date().getTime()));\n      const studentName = String(data.fullName || data.displayName || (prof ? prof.displayName : userId) || '');\n      const opponentName = String(data.opponentName || 'Bot');\n      const opponentRank = String(data.opponentRankTier || data.opponentRank || 'Bronze');\n      const matchMode = String(data.modeLabel || data.modeRoom || 'Bot Duel');\n      const matchResult = String(data.resultLabel || data.result || 'ชนะ (WIN)');\n      const rpChange = Number(data.rpDelta || 0);\n      const newRankRp = Number(data.newRankRp ?? (prof ? prof.rankPoints : 1000));\n      const newRankTier = String(data.newRankTier || (prof ? prof.rankTier : 'Bronze'));\n      const gradeRank = String(data.gradeRank || data.grade || 'A');\n      const geo30 = Number(data.geoScore ?? data.rockCycle30 ?? 26);\n      const trib25 = Number(data.tribScore ?? data.tribute25 ?? 22);\n      const math25 = Number(data.mathScore ?? data.combatMath25 ?? 21);\n      const speed20 = Number(data.speedScore ?? data.disaster20 ?? 16);\n      const summary = String(data.summaryShort || data.combosUsed || '');\n\n      shMatch.appendRow([\n        logId,\n        nowStr,\n        userId,\n        studentName,\n        opponentName,\n        opponentRank,\n        matchMode,\n        matchResult,\n        rpChange,\n        newRankRp,\n        newRankTier,\n        total100,\n        score20,\n        gradeRank,\n        geo30,\n        trib25,\n        math25,\n        speed20,\n        summary\n      ]);\n      return jsonResponse({ ok: true, logId: logId });\n    }\n\n    // 6. แอดมินมอบหรือถอนการ์ดแรร์ SP01-SP10 (บันทึกในคอลัมน์ J Exclusive_Owner_ID และ K Exclusive_Owner_Name)\n    if (action === 'grantRareCard') {\n      const cardId = String(data.cardId || '').trim();\n      const targetUserId = String(data.targetUserId || '').trim();\n      if (!cardId) return jsonResponse({ ok: false, error: 'Missing cardId' });\n\n      const shRares = ss.getSheetByName(TAB_RARES);\n      const rows = shRares.getDataRange().getValues();\n      let foundRow = -1;\n      for (let i = 1; i < rows.length; i++) {\n        if (String(rows[i][0]).trim().toUpperCase() === cardId.toUpperCase()) {\n          foundRow = i + 1;\n          break;\n        }\n      }\n\n      let ownerName = '';\n      if (targetUserId) {\n        const targetProf = getMemberProfile(ss, targetUserId);\n        ownerName = targetProf ? targetProf.displayName : targetUserId;\n      }\n\n      if (foundRow === -1) {\n        shRares.appendRow([\n          cardId, data.cardName || cardId, '', '', '', '', '', '', '',\n          targetUserId, ownerName, '', ''\n        ]);\n      } else {\n        // อัปเดตเฉพาะคอลัมน์ J (col 10: Exclusive_Owner_ID) และคอลัมน์ K (col 11: Exclusive_Owner_Name)\n        shRares.getRange(foundRow, 10, 1, 2).setValues([[targetUserId, ownerName]]);\n      }\n\n      // ซิงค์รายการการ์ดแรร์กลับไปยังคอลัมน์ P (Granted_Rare_Cards) ใน Members_Profile_Deck\n      syncMemberRareCardsColumn(ss);\n\n      return jsonResponse({ ok: true, rareRegistry: readRareRegistry(ss) });\n    }\n\n    // 7. อัปเดตสถานะห้องดูเอลออนไลน์ 50 ห้อง (Rooms_50_Lobby)\n    if (action === 'updateRoom') {\n      const roomNo = parseRoomNumber(data.roomNo || 1);\n      if (roomNo < 1 || roomNo > 50) return jsonResponse({ ok: false, error: 'Invalid roomNo' });\n\n      const shRooms = ss.getSheetByName(TAB_ROOMS);\n      const rows = shRooms.getDataRange().getValues();\n      let targetRow = -1;\n      let existingName = 'ห้องประลองศิลาอิสระ ' + (roomNo < 10 ? '0' + roomNo : roomNo);\n\n      for (let i = 1; i < rows.length; i++) {\n        if (parseRoomNumber(rows[i][0]) === roomNo) {\n          targetRow = i + 1;\n          if (rows[i][1]) existingName = String(rows[i][1]);\n          break;\n        }\n      }\n\n      const roomCodeStr = 'Room ' + (roomNo < 10 ? '0' + roomNo : roomNo);\n      const statusStr = String(data.status || 'empty').toLowerCase();\n      const playerMeta = {\n        hostRankTier: data.hostRankTier || 'Bronze',\n        hostRp: Number(data.hostRp || 1000),\n        hostAvatar: data.hostAvatar || '🧑‍🔬',\n        challengerRankTier: data.challengerRankTier || 'Bronze',\n        challengerRp: Number(data.challengerRp || 1000),\n        challengerAvatar: data.challengerAvatar || '🧑‍🔬',\n        challengeTimestamp: Number(data.challengeTimestamp || 0)\n      };\n\n      const rowData = [\n        roomCodeStr,\n        data.roomName || existingName,\n        statusStr,\n        statusStr === 'empty' ? '' : String(data.hostUserId || ''),\n        statusStr === 'empty' ? '' : String(data.hostName || ''),\n        statusStr === 'empty' ? '' : String(data.challengerUserId || ''),\n        statusStr === 'empty' ? '' : String(data.challengerName || ''),\n        Number(data.spectators || 0),\n        Number(data.turnCount || 0),\n        Number(data.turnTimer || 0),\n        String(data.hostDeckArchetype || ''),\n        String(data.challengerDeckArchetype || ''),\n        String(data.activeMatchId || ''),\n        statusStr === 'empty' ? '' : JSON.stringify(playerMeta),\n        statusStr === 'empty' ? '' : JSON.stringify(data.liveState || {})\n      ];\n\n      if (targetRow === -1) {\n        shRooms.appendRow(rowData);\n      } else {\n        shRooms.getRange(targetRow, 1, 1, rowData.length).setValues([rowData]);\n      }\n\n      return jsonResponse({ ok: true, rooms: readAllRooms(ss) });\n    }\n\n    return jsonResponse({ ok: false, error: 'Unknown action: ' + action });\n  } finally {\n    lock.releaseLock();\n  }\n}\n\nfunction syncMemberRareCardsColumn(ss) {\n  const rareMap = readRareRegistry(ss);\n  const shProf = ss.getSheetByName(TAB_PROFILE);\n  if (!shProf || shProf.getLastRow() < 2) return;\n  const rows = shProf.getDataRange().getValues();\n  for (let i = 1; i < rows.length; i++) {\n    const uid = String(rows[i][0] || '').trim();\n    if (!uid) continue;\n    const owned = [];\n    Object.keys(rareMap).forEach(function(cid) {\n      if (String(rareMap[cid] || '').toLowerCase() === uid.toLowerCase()) {\n        owned.push(cid);\n      }\n    });\n    shProf.getRange(i + 1, 16).setValue(JSON.stringify(owned));\n  }\n}\n\nfunction getMemberProfile(ss, userId) {\n  const shProf = ss.getSheetByName(TAB_PROFILE);\n  if (!shProf) return null;\n  const rows = shProf.getDataRange().getValues();\n  for (let i = 1; i < rows.length; i++) {\n    if (String(rows[i][0]).trim().toLowerCase() === String(userId).trim().toLowerCase()) {\n      const r = rows[i];\n      return {\n        userId: String(r[0]).trim(),\n        displayName: String(r[1] || r[0]).trim(),\n        classroom: String(r[2] || 'ป.6').trim(),\n        avatarIcon: String(r[3] || '🧑‍🔬').trim(),\n        photoDataUrl: String(r[4] || '').trim(),\n        avatar: String(r[4] || r[3] || '🧑‍🔬').trim(),\n        school: 'โรงเรียนบ้านเขาล้อ',\n        rankTier: String(r[5] || 'Bronze').trim(),\n        rankPoints: Number(r[6] || 1000),\n        wins: Number(r[7] || 0),\n        losses: Number(r[8] || 0),\n        gamesPlayed: Number(r[9] || 0),\n        winRatePct: Number(r[10] || 0),\n        avgScore100: Number(r[11] || 0),\n        avgScore20: Number(r[12] || 0),\n        lastGrade: String(r[13] || '-').trim(),\n        deck: safeJsonParse(r[14], {}),\n        rareCards: safeJsonParse(r[15], []),\n        updatedAt: String(r[16] || '')\n      };\n    }\n  }\n  return null;\n}\n\nfunction readRareRegistry(ss) {\n  const sh = ss.getSheetByName(TAB_RARES);\n  if (!sh || sh.getLastRow() < 2) return {};\n  const rows = sh.getDataRange().getValues();\n  const map = {};\n  for (let i = 1; i < rows.length; i++) {\n    const cid = String(rows[i][0] || '').trim();\n    if (!cid || !cid.toUpperCase().startsWith('SP')) continue;\n    // อ่านจากคอลัมน์ J (index 9: Exclusive_Owner_ID) เท่านั้น\n    const ownerUid = String(rows[i][9] || '').trim();\n    if (ownerUid && !/\\s/.test(ownerUid) && ownerUid !== 'Exclusive_Owner_ID') {\n      map[cid] = ownerUid;\n    } else {\n      map[cid] = '';\n    }\n  }\n  return map;\n}\n\nfunction readAllRooms(ss) {\n  const sh = ss.getSheetByName(TAB_ROOMS);\n  if (!sh || sh.getLastRow() < 2) return [];\n  const rows = sh.getDataRange().getValues();\n  const list = [];\n  for (let i = 1; i < rows.length; i++) {\n    const r = rows[i];\n    const rNo = parseRoomNumber(r[0]);\n    if (!rNo) continue;\n    const meta = safeJsonParse(r[13], {});\n    list.push({\n      roomNo: rNo,\n      roomName: String(r[1] || ''),\n      status: String(r[2] || 'empty').toLowerCase(),\n      hostUserId: String(r[3] || ''),\n      hostName: String(r[4] || ''),\n      hostRankTier: String(meta.hostRankTier || 'Bronze'),\n      hostRp: Number(meta.hostRp || 1000),\n      hostAvatar: String(meta.hostAvatar || '🧑‍🔬'),\n      challengerUserId: String(r[5] || ''),\n      challengerName: String(r[6] || ''),\n      challengerRankTier: String(meta.challengerRankTier || 'Bronze'),\n      challengerRp: Number(meta.challengerRp || 1000),\n      challengerAvatar: String(meta.challengerAvatar || '🧑‍🔬'),\n      challengeTimestamp: Number(meta.challengeTimestamp || 0),\n      spectators: Number(r[7] || 0),\n      liveState: safeJsonParse(r[14], {})\n    });\n  }\n  return list;\n}\n\nfunction readLeaderboard(ss) {\n  const sh = ss.getSheetByName(TAB_PROFILE);\n  if (!sh || sh.getLastRow() < 2) return [];\n  const rows = sh.getDataRange().getValues();\n  const list = [];\n  for (let i = 1; i < rows.length; i++) {\n    const r = rows[i];\n    if (!r[0]) continue;\n    list.push({\n      userId: String(r[0]).trim(),\n      displayName: String(r[1] || r[0]).trim(),\n      classroom: String(r[2] || 'ป.6').trim(),\n      avatarIcon: String(r[3] || '🧑‍🔬').trim(),\n      photoDataUrl: String(r[4] || '').trim(),\n      rankTier: String(r[5] || 'Bronze').trim(),\n      rankPoints: Number(r[6] || 1000),\n      wins: Number(r[7] || 0),\n      losses: Number(r[8] || 0),\n      gamesPlayed: Number(r[9] || 0),\n      winRatePct: Number(r[10] || 0),\n      avgScore100: Number(r[11] || 0),\n      avgScore20: Number(r[12] || 0),\n      lastGrade: String(r[13] || '-').trim(),\n      deck: safeJsonParse(r[14], {}),\n      rareCards: safeJsonParse(r[15], [])\n    });\n  }\n  return list;\n}\n\nfunction readAllMembers(ss) {\n  const shAuth = ss.getSheetByName(TAB_AUTH);\n  const passMap = {};\n  if (shAuth && shAuth.getLastRow() >= 2) {\n    const aRows = shAuth.getDataRange().getValues();\n    for (let i = 1; i < aRows.length; i++) {\n      const uid = String(aRows[i][0] || '').trim().toLowerCase();\n      const pass = String(aRows[i][1] || '').replace(/^'/, '').trim();\n      if (uid) passMap[uid] = pass;\n    }\n  }\n  const list = readLeaderboard(ss);\n  list.forEach(function(m) {\n    m.password = passMap[m.userId.toLowerCase()] || '';\n  });\n  return list;\n}\n\nfunction readRecentMatches(ss, limitCount) {\n  const sh = ss.getSheetByName(TAB_MATCHES);\n  if (!sh || sh.getLastRow() < 2) return [];\n  const rows = sh.getDataRange().getValues();\n  const list = [];\n  const startIdx = Math.max(1, rows.length - (limitCount || 100));\n  for (let i = rows.length - 1; i >= startIdx; i--) {\n    const r = rows[i];\n    if (!r[0]) continue;\n    list.push({\n      logId: String(r[0]),\n      timestamp: String(r[1]),\n      userId: String(r[2]),\n      studentName: String(r[3]),\n      opponentName: String(r[4]),\n      opponentRankTier: String(r[5]),\n      matchMode: String(r[6]),\n      matchResult: String(r[7]),\n      rpChange: Number(r[8] || 0),\n      newRankRp: Number(r[9] || 1000),\n      newRankTier: String(r[10] || 'Bronze'),\n      totalScore100: Number(r[11] || 0),\n      scoreOutOf20: Number(r[12] || 0),\n      gradeRank: String(r[13] || 'A'),\n      geoMastery30: Number(r[14] || 0),\n      tributeResource25: Number(r[15] || 0),\n      combatMath25: Number(r[16] || 0),\n      survivalSpeed20: Number(r[17] || 0),\n      summary: String(r[18] || '')\n    });\n  }\n  return list;\n}\n\nfunction safeJsonParse(val, fallback) {\n  if (val === undefined || val === null || val === '') return fallback;\n  if (typeof val === 'object') return val;\n  try {\n    return JSON.parse(String(val));\n  } catch (e) {\n    return fallback;\n  }\n}\n";
+    // ==================== GEO-DUEL v1 MASTER UPGRADE MODULE (ALL 11 USER REQUESTS) ====================
+    APP_DATA.googleAppsScriptCode = "/**\n * ============================================================================\n * GEO-DUEL ONLINE (v1 Master) — GOOGLE APPS SCRIPT BACKEND (Code.gs)\n * โรงเรียนบ้านเขาล้อ (เขาล้อประชานุทิศ) | นวัตกรรมสื่อการเรียนรู้วิทยาศาสตร์ ป.6\n * โฟลเดอร์ Google Drive: https://drive.google.com/drive/folders/1Wiou1QPjq6j01K0hMhLcYUKUZBmtQDXN\n * Google Sheet Database: https://docs.google.com/spreadsheets/d/1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM/edit\n * ============================================================================\n * วิธีติดตั้งและ Deploy Web App:\n * 1. เปิดไฟล์ Google Sheet:\n *    https://docs.google.com/spreadsheets/d/1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM/edit\n * 2. ไปที่เมนู ส่วนขยาย (Extensions) > Apps Script\n * 3. ลบโค้ดเดิมออกทั้งหมด แล้ววางโค้ดไฟล์นี้ลงไป กดบันทึก (Save / Ctrl+S)\n * 4. กดปุ่ม \"ทำให้ใช้งานได้\" (Deploy) > \"การทำให้ใช้งานได้รายการใหม่\" (New deployment)\n * 5. เลือกประเภทเป็น \"เว็บแอป\" (Web app):\n *    - ดำเนินการในฐานะ (Execute as): \"ฉัน\" (Me)\n *    - ผู้ที่มีสิทธิ์เข้าถึง (Who has access): \"ทุกคน\" (Anyone)\n * 6. กด Deploy แล้วคัดลอก Web App URL (ลงท้ายด้วย /exec) นำมาแจ้งหรือวางในเกม GEO-DUEL\n * ============================================================================\n */\n\nconst SPREADSHEET_ID = '1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM';\nconst DRIVE_FOLDER_ID = '1Wiou1QPjq6j01K0hMhLcYUKUZBmtQDXN';\nconst RARE_CARDS_FOLDER_ID = '1cSmx54cU9b2acAvdv85VYyLElFfV4DS-';\n\nconst TAB_AUTH = 'Accounts_Auth';            // 7 คอลัมน์ (A-G): แยกเก็บ User_ID และรหัสผ่าน\nconst TAB_PROFILE = 'Members_Profile_Deck';  // 17 คอลัมน์ (A-Q): โปรไฟล์ เด็ค 40 ใบ สถิติ แรงก์ คะแนน และรูปโปรไฟล์\nconst TAB_MATCHES = 'Match_Evaluation_Logs'; // 19 คอลัมน์ (A-S): ประวัติการดูเอลและคะแนนตามหลักสูตรวิทยาศาสตร์ มฐ. ว 3.2 ป.6/1-ป.6/2\nconst TAB_RARES = 'Rare_Cards_Registry';     // 13 คอลัมน์ (A-M): ทะเบียนการ์ดแรร์ SP01-SP10 และผู้ถือครอง (คอลัมน์ J-K)\nconst TAB_ROOMS = 'Rooms_50_Lobby';          // 15 คอลัมน์ (A-O): สถานะห้องดูเอลออนไลน์ 50 ห้อง (Room 01 - Room 50)\n\nconst HEADERS_AUTH = [\n  'User_ID', 'Password_Hash_Or_Pin', 'Role', 'Account_Status',\n  'Created_At', 'Last_Login_At', 'Previous_User_ID'\n];\n\nconst HEADERS_PROFILE = [\n  'User_ID', 'Student_Full_Name', 'Classroom', 'Avatar_Icon',\n  'Profile_Photo_DataURI', 'Rank_Tier', 'Rank_RP', 'Wins',\n  'Losses', 'Games_Played', 'Win_Rate_Pct', 'Avg_Play_Score_100',\n  'Avg_Play_Score_20', 'Last_Evaluation_Grade', 'Saved_Deck_40_JSON',\n  'Granted_Rare_Cards', 'Updated_At'\n];\n\nconst HEADERS_MATCHES = [\n  'Log_ID', 'Timestamp', 'User_ID', 'Student_Full_Name',\n  'Opponent_Name', 'Opponent_Rank_Tier', 'Match_Mode', 'Match_Result',\n  'RP_Change', 'New_Rank_RP', 'New_Rank_Tier', 'Total_Score_100',\n  'Score_Out_Of_20', 'Grade_Rank', 'Geo_Mastery_30', 'Tribute_Resource_25',\n  'Combat_Math_25', 'Survival_Speed_20', 'Science_Curriculum_Summary'\n];\n\nconst HEADERS_RARES = [\n  'Card_ID', 'Card_Name_TH', 'Card_Name_EN', 'Card_Category',\n  'Attribute_Element', 'Level_Stars_ATK_DEF', 'Card_Effect', 'Special_Quote',\n  'Serial_Number', 'Exclusive_Owner_ID', 'Exclusive_Owner_Name',\n  'Drive_Image_Link', 'Drive_Folder_Link'\n];\n\nconst HEADERS_ROOMS = [\n  'Room_No', 'Room_Name', 'Room_Status', 'Host_Duelist_ID',\n  'Host_Duelist_Name', 'Challenger_Duelist_ID', 'Challenger_Duelist_Name',\n  'Spectators_Count', 'Duel_Turn_Count', 'Turn_Timer_Seconds',\n  'Host_Deck_Archetype', 'Challenger_Deck_Archetype', 'Active_Match_ID',\n  'Player_Meta_JSON', 'Live_State_JSON'\n];\n\nfunction getDb() {\n  try {\n    return SpreadsheetApp.openById(SPREADSHEET_ID);\n  } catch (e) {\n    return SpreadsheetApp.getActiveSpreadsheet();\n  }\n}\n\nfunction ensureSheet(ss, name, headers) {\n  let sh = ss.getSheetByName(name);\n  if (!sh) {\n    sh = ss.insertSheet(name);\n    sh.appendRow(headers);\n  } else if (sh.getLastRow() === 0) {\n    sh.appendRow(headers);\n  }\n  return sh;\n}\n\nfunction initAllSheets() {\n  const ss = getDb();\n  ensureSheet(ss, TAB_AUTH, HEADERS_AUTH);\n  const shProf = ensureSheet(ss, TAB_PROFILE, HEADERS_PROFILE);\n  ensureSheet(ss, TAB_MATCHES, HEADERS_MATCHES);\n  ensureSheet(ss, TAB_RARES, HEADERS_RARES);\n  const shRooms = ensureSheet(ss, TAB_ROOMS, HEADERS_ROOMS);\n\n  repairProfileRowsIfNeeded(shProf);\n  ensureAll50RoomsExist(shRooms);\n  return ss;\n}\n\n/**\n * ซ่อมแถวใน Members_Profile_Deck อัตโนมัติ หากเคยถูกบันทึกด้วยโครงสร้าง 16 คอลัมน์แบบเก่า\n * ให้กลับมาตรงกับตาราง 17 คอลัมน์ (A-Q) อย่างถูกต้อง\n */\nfunction repairProfileRowsIfNeeded(shProf) {\n  if (!shProf || shProf.getLastRow() < 2) return;\n  const range = shProf.getDataRange();\n  const rows = range.getValues();\n  for (let i = 1; i < rows.length; i++) {\n    const r = rows[i];\n    const colD = String(r[3] || '').trim();\n    const colN = String(r[13] || '').trim();\n    const colO = String(r[14] || '').trim();\n    const isOld16Col = (colD === 'โรงเรียนบ้านเขาล้อ') || (colN.startsWith('{') && (colO.startsWith('data:image') || colO === '' || !colO.startsWith('{')));\n    if (isOld16Col) {\n      const uid = String(r[0] || '').trim();\n      const fullName = String(r[1] || uid).trim();\n      const classroom = String(r[2] || 'ป.6').trim();\n      const rankTier = String(r[4] || 'Bronze').trim();\n      const rankRp = Number(r[5] || 1000);\n      const wins = Number(r[7] || 0);\n      const losses = Number(r[8] || 0);\n      const games = wins + losses;\n      const winRate = games > 0 ? Math.round((wins / games) * 1000) / 10 : 0;\n      const avg100 = Number(r[10] || 0);\n      const avg20 = Math.round((avg100 / 5) * 100) / 100;\n      const grade = avg100 >= 90 ? 'S+' : (avg100 >= 82 ? 'S' : (avg100 >= 74 ? 'A' : (avg100 > 0 ? 'B' : '-')));\n      const rareJson = String(r[12] || '[]').trim().startsWith('[') ? String(r[12]).trim() : '[]';\n      const deckJson = colN.startsWith('{') ? colN : '{}';\n      const rawAv = colO;\n      const avatarIcon = (rawAv && !rawAv.startsWith('data:image')) ? rawAv : '🧑‍🔬';\n      const photoUri = (rawAv && rawAv.startsWith('data:image')) ? rawAv : '';\n      const updatedAt = String(r[15] || Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss'));\n\n      const fixedRow = [\n        uid, fullName, classroom, avatarIcon, photoUri,\n        rankTier, rankRp, wins, losses, games,\n        winRate, avg100, avg20, grade, deckJson,\n        rareJson, updatedAt\n      ];\n      shProf.getRange(i + 1, 1, 1, 17).setValues([fixedRow]);\n    }\n  }\n}\n\n/**\n * ตรวจสอบให้มีครบทั้ง 50 ห้อง (Room 01 - Room 50)\n */\nfunction ensureAll50RoomsExist(shRooms) {\n  if (!shRooms) return;\n  const rows = shRooms.getDataRange().getValues();\n  const existingNums = {};\n  for (let i = 1; i < rows.length; i++) {\n    const rNo = parseRoomNumber(rows[i][0]);\n    if (rNo >= 1 && rNo <= 50) existingNums[rNo] = true;\n  }\n  for (let n = 1; n <= 50; n++) {\n    if (!existingNums[n]) {\n      const codeStr = 'Room ' + (n < 10 ? '0' + n : n);\n      const defaultName = n === 50\n        ? 'มหาวิหารฟาโรห์ราชันย์ธรณี 50'\n        : (n === 49 ? 'ห้องประลองชิงชนะเลิศ Tournament 49' : ('ห้องประลองศิลาอิสระ ' + (n < 10 ? '0' + n : n)));\n      shRooms.appendRow([codeStr, defaultName, 'empty', '', '', '', '', '', '', '', '', '', '', '', '']);\n    }\n  }\n}\n\nfunction parseRoomNumber(val) {\n  if (typeof val === 'number') return val;\n  const m = String(val || '').match(/\\d+/);\n  return m ? parseInt(m[0], 10) : 0;\n}\n\nfunction jsonResponse(obj) {\n  return ContentService\n    .createTextOutput(JSON.stringify(obj))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction doGet(e) {\n  const params = (e && e.parameter) ? e.parameter : {};\n  const action = params.action || 'ping';\n  return handleRequest(action, params);\n}\n\nfunction doPost(e) {\n  let body = {};\n  try {\n    if (e && e.postData && e.postData.contents) {\n      body = JSON.parse(e.postData.contents);\n    }\n  } catch (err) {\n    body = (e && e.parameter) ? e.parameter : {};\n  }\n  const action = body.action || (e && e.parameter && e.parameter.action) || 'ping';\n  return handleRequest(action, body);\n}\n\nfunction handleRequest(action, data) {\n  const lock = LockService.getScriptLock();\n  lock.waitLock(10000);\n  try {\n    const ss = initAllSheets();\n    const nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');\n\n    // 0. ดึงข้อมูลทั้งหมด (Ping / SyncAll)\n    if (action === 'ping' || action === 'syncAll') {\n      return jsonResponse({\n        ok: true,\n        spreadsheetId: ss.getId(),\n        timestamp: nowStr,\n        rareRegistry: readRareRegistry(ss),\n        rooms: readAllRooms(ss),\n        leaderboard: readLeaderboard(ss),\n        members: readAllMembers(ss),\n        matches: readRecentMatches(ss, 100)\n      });\n    }\n\n    // 1. สมัครสมาชิกใหม่ (แยกเก็บ User_ID/Password ใน Accounts_Auth และโปรไฟล์ 17 คอลัมน์ใน Members_Profile_Deck)\n    if (action === 'register') {\n      const userId = String(data.userId || '').trim();\n      const password = String(data.password || '').trim();\n      if (!userId || !password) {\n        return jsonResponse({ ok: false, error: 'กรุณากรอก User ID และรหัสผ่านให้ครบถ้วน' });\n      }\n\n      const shAuth = ss.getSheetByName(TAB_AUTH);\n      const authRows = shAuth.getDataRange().getValues();\n      let authExists = false;\n      for (let i = 1; i < authRows.length; i++) {\n        if (String(authRows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n          authExists = true;\n          break;\n        }\n      }\n\n      if (!authExists) {\n        shAuth.appendRow([\n          userId,\n          \"'\" + password,\n          String(data.role || 'MEMBER').toUpperCase(),\n          'ACTIVE',\n          nowStr,\n          nowStr,\n          'Registered via GEO-DUEL'\n        ]);\n      }\n\n      const shProf = ss.getSheetByName(TAB_PROFILE);\n      const profRows = shProf.getDataRange().getValues();\n      let profExists = false;\n      for (let i = 1; i < profRows.length; i++) {\n        if (String(profRows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n          profExists = true;\n          break;\n        }\n      }\n\n      if (!profExists) {\n        const rawAvatar = String(data.avatar || '').trim();\n        const avatarIcon = String(data.avatarIcon || (!rawAvatar.startsWith('data:image') && rawAvatar ? rawAvatar : '🧑‍🔬'));\n        const photoDataUri = String(data.photoDataUrl || (rawAvatar.startsWith('data:image') ? rawAvatar : ''));\n        const deckObj = safeJsonParse(data.savedDeck || data.deck, {});\n        const rareArr = safeJsonParse(data.rareCards, []);\n        const rankRp = Number(data.rankPoints ?? data.rankRp ?? 1000);\n        const rankTier = String(data.rankTier || 'Bronze');\n\n        shProf.appendRow([\n          userId,\n          data.fullName || data.displayName || userId,\n          data.classroom || 'ป.6',\n          avatarIcon,\n          photoDataUri,\n          rankTier,\n          rankRp,\n          0, 0, 0, 0, 0, 0,\n          '-',\n          JSON.stringify(deckObj),\n          JSON.stringify(rareArr),\n          nowStr\n        ]);\n      }\n\n      return jsonResponse({\n        ok: true,\n        message: authExists ? 'อัปเดตสถานะสมาชิกแล้ว' : 'สมัครสมาชิกสำเร็จ',\n        userId: userId\n      });\n    }\n\n    // 2. เข้าสู่ระบบ (ตรวจสอบรหัสผ่านจาก Accounts_Auth และดึงโปรไฟล์จาก Members_Profile_Deck)\n    if (action === 'login') {\n      const userId = String(data.userId || '').trim();\n      const password = String(data.password || '').trim();\n      const shAuth = ss.getSheetByName(TAB_AUTH);\n      const authRows = shAuth.getDataRange().getValues();\n      let foundAuth = false;\n      for (let i = 1; i < authRows.length; i++) {\n        const rowUser = String(authRows[i][0]).trim();\n        const rowPass = String(authRows[i][1]).replace(/^'/, '').trim();\n        if (rowUser.toLowerCase() === userId.toLowerCase()) {\n          if (rowPass !== password) {\n            return jsonResponse({ ok: false, error: 'รหัสผ่านไม่ถูกต้อง' });\n          }\n          shAuth.getRange(i + 1, 6).setValue(nowStr);\n          foundAuth = true;\n          break;\n        }\n      }\n      if (!foundAuth) {\n        return jsonResponse({ ok: false, error: 'ไม่พบบัญชีผู้ใช้ \"' + userId + '\" ในระบบ' });\n      }\n      const profile = getMemberProfile(ss, userId);\n      return jsonResponse({ ok: true, profile: profile, rareRegistry: readRareRegistry(ss) });\n    }\n\n    // 3. เปลี่ยน User ID ของผู้เล่น (อัปเดตครบทุกแท็บ: Auth, Profile, Rare Cards คอลัมน์ J, Match Logs)\n    if (action === 'changeUserId') {\n      const oldId = String(data.oldUserId || '').trim();\n      const newId = String(data.newUserId || '').trim();\n      if (!oldId || !newId) return jsonResponse({ ok: false, error: 'ข้อมูลไม่ครบถ้วน' });\n\n      const shAuth = ss.getSheetByName(TAB_AUTH);\n      const authRows = shAuth.getDataRange().getValues();\n      for (let i = 1; i < authRows.length; i++) {\n        if (String(authRows[i][0]).trim().toLowerCase() === newId.toLowerCase() && newId.toLowerCase() !== oldId.toLowerCase()) {\n          return jsonResponse({ ok: false, error: 'User ID \"' + newId + '\" ซ้ำกับสมาชิกคนอื่น กรุณาใช้ชื่ออื่น' });\n        }\n      }\n      for (let i = 1; i < authRows.length; i++) {\n        if (String(authRows[i][0]).trim().toLowerCase() === oldId.toLowerCase()) {\n          shAuth.getRange(i + 1, 1).setValue(newId);\n          shAuth.getRange(i + 1, 7).setValue(oldId);\n        }\n      }\n\n      const shProf = ss.getSheetByName(TAB_PROFILE);\n      const profRows = shProf.getDataRange().getValues();\n      for (let i = 1; i < profRows.length; i++) {\n        if (String(profRows[i][0]).trim().toLowerCase() === oldId.toLowerCase()) {\n          shProf.getRange(i + 1, 1).setValue(newId);\n          if (data.displayName) shProf.getRange(i + 1, 2).setValue(data.displayName);\n          shProf.getRange(i + 1, 17).setValue(nowStr);\n        }\n      }\n\n      const shRares = ss.getSheetByName(TAB_RARES);\n      const rareRows = shRares.getDataRange().getValues();\n      for (let i = 1; i < rareRows.length; i++) {\n        // คอลัมน์ J (index 9, col 10) คือ Exclusive_Owner_ID\n        if (String(rareRows[i][9] || '').trim().toLowerCase() === oldId.toLowerCase()) {\n          shRares.getRange(i + 1, 10).setValue(newId);\n          if (data.displayName) shRares.getRange(i + 1, 11).setValue(data.displayName);\n        }\n      }\n\n      const shMatch = ss.getSheetByName(TAB_MATCHES);\n      const matchRows = shMatch.getDataRange().getValues();\n      for (let i = 1; i < matchRows.length; i++) {\n        if (String(matchRows[i][2] || '').trim().toLowerCase() === oldId.toLowerCase()) {\n          shMatch.getRange(i + 1, 3).setValue(newId);\n        }\n      }\n\n      return jsonResponse({ ok: true, newUserId: newId });\n    }\n\n    // 4. บันทึกโปรไฟล์ เด็ค 40 ใบ สถิติ แรงก์ และรูปโปรไฟล์ (ตรงตาม 17 คอลัมน์ A-Q)\n    if (action === 'saveProfileAndDeck' || action === 'syncProfileAndDeck') {\n      const userId = String(data.userId || '').trim();\n      if (!userId) return jsonResponse({ ok: false, error: 'Missing userId' });\n\n      const shAuth = ss.getSheetByName(TAB_AUTH);\n      if (data.password) {\n        const aRows = shAuth.getDataRange().getValues();\n        let authFound = false;\n        for (let i = 1; i < aRows.length; i++) {\n          if (String(aRows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n            shAuth.getRange(i + 1, 6).setValue(nowStr);\n            authFound = true;\n            break;\n          }\n        }\n        if (!authFound) {\n          shAuth.appendRow([\n            userId, \"'\" + String(data.password).trim(), 'MEMBER', 'ACTIVE',\n            nowStr, nowStr, 'Synced via GEO-DUEL'\n          ]);\n        }\n      }\n\n      const shProf = ss.getSheetByName(TAB_PROFILE);\n      const rows = shProf.getDataRange().getValues();\n      const rawAvatar = String(data.avatar || '').trim();\n      const incomingDeck = safeJsonParse(data.savedDeck || data.deck, null);\n      const incomingRares = safeJsonParse(data.rareCards, null);\n\n      let updated = false;\n      for (let i = 1; i < rows.length; i++) {\n        if (String(rows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n          const cur = rows[i];\n          const fullName = String(data.fullName || data.displayName || cur[1] || userId).trim();\n          const classroom = String(data.classroom || cur[2] || 'ป.6').trim();\n\n          let avatarIcon = String(cur[3] || '🧑‍🔬').trim();\n          if (avatarIcon === 'โรงเรียนบ้านเขาล้อ' || !avatarIcon) avatarIcon = '🧑‍🔬';\n          if (data.avatarIcon) {\n            avatarIcon = String(data.avatarIcon).trim();\n          } else if (rawAvatar && !rawAvatar.startsWith('data:image')) {\n            avatarIcon = rawAvatar;\n          }\n\n          let photoDataUri = String(cur[4] || '').trim();\n          if (!photoDataUri.startsWith('data:image')) photoDataUri = '';\n          if (data.photoDataUrl && String(data.photoDataUrl).startsWith('data:image')) {\n            photoDataUri = String(data.photoDataUrl).trim();\n          } else if (rawAvatar.startsWith('data:image')) {\n            photoDataUri = rawAvatar;\n          }\n\n          const rankTier = String(data.rankTier || cur[5] || 'Bronze').trim();\n          const rankRp = Number(data.rankPoints ?? data.rankRp ?? cur[6] ?? 1000);\n          const wins = Math.max(Number(data.wins ?? cur[7] ?? 0), 0);\n          const losses = Math.max(Number(data.losses ?? cur[8] ?? 0), 0);\n          const games = wins + losses;\n          const winRate = games > 0 ? Math.round((wins / games) * 1000) / 10 : 0;\n          const avg100 = Number(data.avgScore100 ?? cur[11] ?? 0);\n          const avg20 = Math.round((avg100 / 5) * 100) / 100;\n          const lastGrade = String(\n            data.lastRank || data.grade ||\n            (avg100 >= 90 ? 'S+' : (avg100 >= 82 ? 'S' : (avg100 >= 74 ? 'A' : (avg100 > 0 ? 'B' : (cur[13] && !String(cur[13]).startsWith('{') ? cur[13] : '-')))))\n          );\n\n          const existingDeckObj = safeJsonParse(cur[14], {});\n          const finalDeckObj = (incomingDeck && Object.keys(incomingDeck).length > 0) ? incomingDeck : existingDeckObj;\n\n          const existingRaresArr = safeJsonParse(cur[15], []);\n          const finalRaresArr = Array.isArray(incomingRares) ? incomingRares : existingRaresArr;\n\n          const rowValues = [\n            userId,\n            fullName,\n            classroom,\n            avatarIcon,\n            photoDataUri,\n            rankTier,\n            rankRp,\n            wins,\n            losses,\n            games,\n            winRate,\n            avg100,\n            avg20,\n            lastGrade,\n            JSON.stringify(finalDeckObj),\n            JSON.stringify(finalRaresArr),\n            nowStr\n          ];\n          shProf.getRange(i + 1, 1, 1, 17).setValues([rowValues]);\n          updated = true;\n          break;\n        }\n      }\n\n      if (!updated) {\n        const avatarIcon = String(data.avatarIcon || (!rawAvatar.startsWith('data:image') && rawAvatar ? rawAvatar : '🧑‍🔬'));\n        const photoDataUri = String(data.photoDataUrl || (rawAvatar.startsWith('data:image') ? rawAvatar : ''));\n        const wins = Number(data.wins || 0);\n        const losses = Number(data.losses || 0);\n        const games = wins + losses;\n        const winRate = games > 0 ? Math.round((wins / games) * 1000) / 10 : 0;\n        const avg100 = Number(data.avgScore100 || 0);\n        const avg20 = Math.round((avg100 / 5) * 100) / 100;\n        const lastGrade = avg100 >= 90 ? 'S+' : (avg100 >= 82 ? 'S' : (avg100 >= 74 ? 'A' : (avg100 > 0 ? 'B' : '-')));\n\n        shProf.appendRow([\n          userId,\n          data.fullName || data.displayName || userId,\n          data.classroom || 'ป.6',\n          avatarIcon,\n          photoDataUri,\n          data.rankTier || 'Bronze',\n          Number(data.rankPoints ?? data.rankRp ?? 1000),\n          wins,\n          losses,\n          games,\n          winRate,\n          avg100,\n          avg20,\n          lastGrade,\n          JSON.stringify(incomingDeck || {}),\n          JSON.stringify(incomingRares || []),\n          nowStr\n        ]);\n      }\n\n      return jsonResponse({ ok: true, userId: userId });\n    }\n\n    // 5. บันทึกผลการดูเอลและคะแนนตามหลักสูตรวิทยาศาสตร์ (ตรงตาม 19 คอลัมน์ A-S ใน Match_Evaluation_Logs)\n    if (action === 'recordMatch') {\n      const shMatch = ss.getSheetByName(TAB_MATCHES);\n      const userId = String(data.userId || '').trim();\n      const prof = userId ? getMemberProfile(ss, userId) : null;\n\n      const total100 = Number(data.totalScore100 ?? 85);\n      const score20 = Math.round((total100 / 5) * 100) / 100;\n      const logId = String(data.logId || data.matchId || ('M-' + new Date().getTime()));\n      const studentName = String(data.fullName || data.displayName || (prof ? prof.displayName : userId) || '');\n      const opponentName = String(data.opponentName || 'Bot');\n      const opponentRank = String(data.opponentRankTier || data.opponentRank || 'Bronze');\n      const matchMode = String(data.modeLabel || data.modeRoom || 'Bot Duel');\n      const matchResult = String(data.resultLabel || data.result || 'ชนะ (WIN)');\n      const rpChange = Number(data.rpDelta || 0);\n      const newRankRp = Number(data.newRankRp ?? (prof ? prof.rankPoints : 1000));\n      const newRankTier = String(data.newRankTier || (prof ? prof.rankTier : 'Bronze'));\n      const gradeRank = String(data.gradeRank || data.grade || 'A');\n      const geo30 = Number(data.geoScore ?? data.rockCycle30 ?? 26);\n      const trib25 = Number(data.tribScore ?? data.tribute25 ?? 22);\n      const math25 = Number(data.mathScore ?? data.combatMath25 ?? 21);\n      const speed20 = Number(data.speedScore ?? data.disaster20 ?? 16);\n      const summary = String(data.summaryShort || data.combosUsed || '');\n\n      shMatch.appendRow([\n        logId,\n        nowStr,\n        userId,\n        studentName,\n        opponentName,\n        opponentRank,\n        matchMode,\n        matchResult,\n        rpChange,\n        newRankRp,\n        newRankTier,\n        total100,\n        score20,\n        gradeRank,\n        geo30,\n        trib25,\n        math25,\n        speed20,\n        summary\n      ]);\n      return jsonResponse({ ok: true, logId: logId });\n    }\n\n    // 6. แอดมินมอบหรือถอนการ์ดแรร์ SP01-SP10 (บันทึกในคอลัมน์ J Exclusive_Owner_ID และ K Exclusive_Owner_Name)\n    if (action === 'grantRareCard') {\n      const cardId = String(data.cardId || '').trim();\n      const targetUserId = String(data.targetUserId || '').trim();\n      if (!cardId) return jsonResponse({ ok: false, error: 'Missing cardId' });\n\n      const shRares = ss.getSheetByName(TAB_RARES);\n      const rows = shRares.getDataRange().getValues();\n      let foundRow = -1;\n      for (let i = 1; i < rows.length; i++) {\n        if (String(rows[i][0]).trim().toUpperCase() === cardId.toUpperCase()) {\n          foundRow = i + 1;\n          break;\n        }\n      }\n\n      let ownerName = '';\n      if (targetUserId) {\n        const targetProf = getMemberProfile(ss, targetUserId);\n        ownerName = targetProf ? targetProf.displayName : targetUserId;\n      }\n\n      if (foundRow === -1) {\n        shRares.appendRow([\n          cardId, data.cardName || cardId, '', '', '', '', '', '', '',\n          targetUserId, ownerName, '', ''\n        ]);\n      } else {\n        // อัปเดตเฉพาะคอลัมน์ J (col 10: Exclusive_Owner_ID) และคอลัมน์ K (col 11: Exclusive_Owner_Name)\n        shRares.getRange(foundRow, 10, 1, 2).setValues([[targetUserId, ownerName]]);\n      }\n\n      // ซิงค์รายการการ์ดแรร์กลับไปยังคอลัมน์ P (Granted_Rare_Cards) ใน Members_Profile_Deck\n      syncMemberRareCardsColumn(ss);\n\n      return jsonResponse({ ok: true, rareRegistry: readRareRegistry(ss) });\n    }\n\n    // 7. อัปเดตสถานะห้องดูเอลออนไลน์ 50 ห้อง (Rooms_50_Lobby)\n    if (action === 'updateRoom') {\n      const roomNo = parseRoomNumber(data.roomNo || 1);\n      if (roomNo < 1 || roomNo > 50) return jsonResponse({ ok: false, error: 'Invalid roomNo' });\n\n      const shRooms = ss.getSheetByName(TAB_ROOMS);\n      const rows = shRooms.getDataRange().getValues();\n      let targetRow = -1;\n      let existingName = 'ห้องประลองศิลาอิสระ ' + (roomNo < 10 ? '0' + roomNo : roomNo);\n\n      for (let i = 1; i < rows.length; i++) {\n        if (parseRoomNumber(rows[i][0]) === roomNo) {\n          targetRow = i + 1;\n          if (rows[i][1]) existingName = String(rows[i][1]);\n          break;\n        }\n      }\n\n      const roomCodeStr = 'Room ' + (roomNo < 10 ? '0' + roomNo : roomNo);\n      const statusStr = String(data.status || 'empty').toLowerCase();\n      const playerMeta = {\n        hostRankTier: data.hostRankTier || 'Bronze',\n        hostRp: Number(data.hostRp || 1000),\n        hostAvatar: data.hostAvatar || '🧑‍🔬',\n        challengerRankTier: data.challengerRankTier || 'Bronze',\n        challengerRp: Number(data.challengerRp || 1000),\n        challengerAvatar: data.challengerAvatar || '🧑‍🔬',\n        challengeTimestamp: Number(data.challengeTimestamp || 0)\n      };\n\n      const rowData = [\n        roomCodeStr,\n        data.roomName || existingName,\n        statusStr,\n        statusStr === 'empty' ? '' : String(data.hostUserId || ''),\n        statusStr === 'empty' ? '' : String(data.hostName || ''),\n        statusStr === 'empty' ? '' : String(data.challengerUserId || ''),\n        statusStr === 'empty' ? '' : String(data.challengerName || ''),\n        Number(data.spectators || 0),\n        Number(data.turnCount || 0),\n        Number(data.turnTimer || 0),\n        String(data.hostDeckArchetype || ''),\n        String(data.challengerDeckArchetype || ''),\n        String(data.activeMatchId || ''),\n        statusStr === 'empty' ? '' : JSON.stringify(playerMeta),\n        statusStr === 'empty' ? '' : JSON.stringify(data.liveState || {})\n      ];\n\n      if (targetRow === -1) {\n        shRooms.appendRow(rowData);\n      } else {\n        shRooms.getRange(targetRow, 1, 1, rowData.length).setValues([rowData]);\n      }\n\n      return jsonResponse({ ok: true, rooms: readAllRooms(ss) });\n    }\n\n    return jsonResponse({ ok: false, error: 'Unknown action: ' + action });\n  } finally {\n    lock.releaseLock();\n  }\n}\n\nfunction syncMemberRareCardsColumn(ss) {\n  const rareMap = readRareRegistry(ss);\n  const shProf = ss.getSheetByName(TAB_PROFILE);\n  if (!shProf || shProf.getLastRow() < 2) return;\n  const rows = shProf.getDataRange().getValues();\n  for (let i = 1; i < rows.length; i++) {\n    const uid = String(rows[i][0] || '').trim();\n    if (!uid) continue;\n    const owned = [];\n    Object.keys(rareMap).forEach(function(cid) {\n      if (String(rareMap[cid] || '').toLowerCase() === uid.toLowerCase()) {\n        owned.push(cid);\n      }\n    });\n    shProf.getRange(i + 1, 16).setValue(JSON.stringify(owned));\n  }\n}\n\nfunction getMemberProfile(ss, userId) {\n  const shProf = ss.getSheetByName(TAB_PROFILE);\n  if (!shProf) return null;\n  const rows = shProf.getDataRange().getValues();\n  for (let i = 1; i < rows.length; i++) {\n    if (String(rows[i][0]).trim().toLowerCase() === String(userId).trim().toLowerCase()) {\n      const r = rows[i];\n      return {\n        userId: String(r[0]).trim(),\n        displayName: String(r[1] || r[0]).trim(),\n        classroom: String(r[2] || 'ป.6').trim(),\n        avatarIcon: String(r[3] || '🧑‍🔬').trim(),\n        photoDataUrl: String(r[4] || '').trim(),\n        avatar: String(r[4] || r[3] || '🧑‍🔬').trim(),\n        school: 'โรงเรียนบ้านเขาล้อ',\n        rankTier: String(r[5] || 'Bronze').trim(),\n        rankPoints: Number(r[6] || 1000),\n        wins: Number(r[7] || 0),\n        losses: Number(r[8] || 0),\n        gamesPlayed: Number(r[9] || 0),\n        winRatePct: Number(r[10] || 0),\n        avgScore100: Number(r[11] || 0),\n        avgScore20: Number(r[12] || 0),\n        lastGrade: String(r[13] || '-').trim(),\n        deck: safeJsonParse(r[14], {}),\n        rareCards: safeJsonParse(r[15], []),\n        updatedAt: String(r[16] || '')\n      };\n    }\n  }\n  return null;\n}\n\nfunction readRareRegistry(ss) {\n  const sh = ss.getSheetByName(TAB_RARES);\n  if (!sh || sh.getLastRow() < 2) return {};\n  const rows = sh.getDataRange().getValues();\n  const map = {};\n  for (let i = 1; i < rows.length; i++) {\n    const cid = String(rows[i][0] || '').trim();\n    if (!cid || !cid.toUpperCase().startsWith('SP')) continue;\n    // อ่านจากคอลัมน์ J (index 9: Exclusive_Owner_ID) เท่านั้น\n    const ownerUid = String(rows[i][9] || '').trim();\n    if (ownerUid && !/\\s/.test(ownerUid) && ownerUid !== 'Exclusive_Owner_ID') {\n      map[cid] = ownerUid;\n    } else {\n      map[cid] = '';\n    }\n  }\n  return map;\n}\n\nfunction readAllRooms(ss) {\n  const sh = ss.getSheetByName(TAB_ROOMS);\n  if (!sh || sh.getLastRow() < 2) return [];\n  const rows = sh.getDataRange().getValues();\n  const list = [];\n  for (let i = 1; i < rows.length; i++) {\n    const r = rows[i];\n    const rNo = parseRoomNumber(r[0]);\n    if (!rNo) continue;\n    const meta = safeJsonParse(r[13], {});\n    list.push({\n      roomNo: rNo,\n      roomName: String(r[1] || ''),\n      status: String(r[2] || 'empty').toLowerCase(),\n      hostUserId: String(r[3] || ''),\n      hostName: String(r[4] || ''),\n      hostRankTier: String(meta.hostRankTier || 'Bronze'),\n      hostRp: Number(meta.hostRp || 1000),\n      hostAvatar: String(meta.hostAvatar || '🧑‍🔬'),\n      challengerUserId: String(r[5] || ''),\n      challengerName: String(r[6] || ''),\n      challengerRankTier: String(meta.challengerRankTier || 'Bronze'),\n      challengerRp: Number(meta.challengerRp || 1000),\n      challengerAvatar: String(meta.challengerAvatar || '🧑‍🔬'),\n      challengeTimestamp: Number(meta.challengeTimestamp || 0),\n      spectators: Number(r[7] || 0),\n      liveState: safeJsonParse(r[14], {})\n    });\n  }\n  return list;\n}\n\nfunction readLeaderboard(ss) {\n  const sh = ss.getSheetByName(TAB_PROFILE);\n  if (!sh || sh.getLastRow() < 2) return [];\n  const rows = sh.getDataRange().getValues();\n  const list = [];\n  for (let i = 1; i < rows.length; i++) {\n    const r = rows[i];\n    if (!r[0]) continue;\n    list.push({\n      userId: String(r[0]).trim(),\n      displayName: String(r[1] || r[0]).trim(),\n      classroom: String(r[2] || 'ป.6').trim(),\n      avatarIcon: String(r[3] || '🧑‍🔬').trim(),\n      photoDataUrl: String(r[4] || '').trim(),\n      rankTier: String(r[5] || 'Bronze').trim(),\n      rankPoints: Number(r[6] || 1000),\n      wins: Number(r[7] || 0),\n      losses: Number(r[8] || 0),\n      gamesPlayed: Number(r[9] || 0),\n      winRatePct: Number(r[10] || 0),\n      avgScore100: Number(r[11] || 0),\n      avgScore20: Number(r[12] || 0),\n      lastGrade: String(r[13] || '-').trim(),\n      deck: safeJsonParse(r[14], {}),\n      rareCards: safeJsonParse(r[15], [])\n    });\n  }\n  return list;\n}\n\nfunction readAllMembers(ss) {\n  const shAuth = ss.getSheetByName(TAB_AUTH);\n  const passMap = {};\n  if (shAuth && shAuth.getLastRow() >= 2) {\n    const aRows = shAuth.getDataRange().getValues();\n    for (let i = 1; i < aRows.length; i++) {\n      const uid = String(aRows[i][0] || '').trim().toLowerCase();\n      const pass = String(aRows[i][1] || '').replace(/^'/, '').trim();\n      if (uid) passMap[uid] = pass;\n    }\n  }\n  const list = readLeaderboard(ss);\n  list.forEach(function(m) {\n    m.password = passMap[m.userId.toLowerCase()] || '';\n  });\n  return list;\n}\n\nfunction readRecentMatches(ss, limitCount) {\n  const sh = ss.getSheetByName(TAB_MATCHES);\n  if (!sh || sh.getLastRow() < 2) return [];\n  const rows = sh.getDataRange().getValues();\n  const list = [];\n  const startIdx = Math.max(1, rows.length - (limitCount || 100));\n  for (let i = rows.length - 1; i >= startIdx; i--) {\n    const r = rows[i];\n    if (!r[0]) continue;\n    list.push({\n      logId: String(r[0]),\n      timestamp: String(r[1]),\n      userId: String(r[2]),\n      studentName: String(r[3]),\n      opponentName: String(r[4]),\n      opponentRankTier: String(r[5]),\n      matchMode: String(r[6]),\n      matchResult: String(r[7]),\n      rpChange: Number(r[8] || 0),\n      newRankRp: Number(r[9] || 1000),\n      newRankTier: String(r[10] || 'Bronze'),\n      totalScore100: Number(r[11] || 0),\n      scoreOutOf20: Number(r[12] || 0),\n      gradeRank: String(r[13] || 'A'),\n      geoMastery30: Number(r[14] || 0),\n      tributeResource25: Number(r[15] || 0),\n      combatMath25: Number(r[16] || 0),\n      survivalSpeed20: Number(r[17] || 0),\n      summary: String(r[18] || '')\n    });\n  }\n  return list;\n}\n\nfunction safeJsonParse(val, fallback) {\n  if (val === undefined || val === null || val === '') return fallback;\n  if (typeof val === 'object') return val;\n  try {\n    return JSON.parse(String(val));\n  } catch (e) {\n    return fallback;\n  }\n}\n";
     const GOOGLE_SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM/edit';
     const GOOGLE_DRIVE_RARE_FOLDER_URL = 'https://drive.google.com/drive/folders/1cSmx54cU9b2acAvdv85VYyLElFfV4DS-';
     let currentAspectMode = '16:9';
@@ -10972,7 +10979,7 @@
 
     applyLoggedInMember = function(found) {
       isPlayerLoggedIn = true;
-      // V15 (#3): Registered Username IS the Player ID (no random GD-xxxx!)
+      // v1 (#3): Registered Username IS the Player ID (no random GD-xxxx!)
       found.id = found.username;
       userProfile.username = found.username;
       userProfile.id = found.username;
@@ -11177,7 +11184,7 @@
       const displayName = rawFullName.includes(cls) ? rawFullName : `${rawFullName} (${cls})`;
       const newMember = {
         username: uName,
-        id: uName, // V15 (#3): User ID IS the registered username!
+        id: uName, // v1 (#3): User ID IS the registered username!
         pass: uPass,
         name: displayName,
         rawName: rawFullName,
@@ -11614,7 +11621,7 @@
     updateDynamicStats = function() {
       cleanupOrphanedEquips();
       _origUpdateDynamicStats();
-      // V15 (#4): Apply SP03 (ผอ.ประภาพร) aura: +200 ATK/DEF to all friendly cards with "ครู" or "นักเรียน"
+      // v1 (#4): Apply SP03 (ผอ.ประภาพร) aura: +200 ATK/DEF to all friendly cards with "ครู" or "นักเรียน"
       [0, 1].forEach(pIdx => {
         const pl = duelState.players?.[pIdx];
         if (!pl) return;
@@ -11681,7 +11688,7 @@
       cleanupOrphanedEquips();
     };
 
-    // V15 FIX (#5): Tribute Summon can overwrite occupied slots directly without needing an empty monster zone first!
+    // v1 FIX (#5): Tribute Summon can overwrite occupied slots directly without needing an empty monster zone first!
     requestSlotPlacement = function(handIdx, zType, pos) {
       if (isSpectatorMode) return;
       if (duelState.phase === 'draw') { playerClickDrawPhase(); return; }
@@ -11726,7 +11733,7 @@
         return;
       }
       const mySide = duelState.mode === 'hotseat' ? duelState.activePlayer : 0;
-      // V15 FIX (#5): If user selected a Level 5+ monster in hand and clicks directly on a friendly monster slot (even occupied!), initiate Tribute Summon targeting that slot!
+      // v1 FIX (#5): If user selected a Level 5+ monster in hand and clicks directly on a friendly monster slot (even occupied!), initiate Tribute Summon targeting that slot!
       if (side === mySide && zType === 'm' && duelState.selectedRef && duelState.selectedRef.side === mySide && duelState.selectedRef.zoneType === 'hand' && (duelState.phase === 'main' || duelState.phase === 'main2' || duelState.phase === 'battle')) {
         const handIdx = duelState.selectedRef.index;
         const handCard = duelState.players[mySide].hand[handIdx];
@@ -12371,7 +12378,7 @@
       syncAccountWithGoogleSheet(false);
     };
 
-    // Initialize V15 features on startup
+    // Initialize v1 features on startup
     const _origLoadState = loadState;
     loadState = function() {
       try {
@@ -12406,7 +12413,7 @@
     };
 
 
-    // ==================== V16 UPGRADES: SUMMARIZED USER PROFILE & STRICT HANDS-OFF SPECTATOR MODE ====================
+    // ==================== v1 UPGRADES: SUMMARIZED USER PROFILE & STRICT HANDS-OFF SPECTATOR MODE ====================
     const _v15UpdateProfileUI = updateProfileUI;
     updateProfileUI = function() {
       _v15UpdateProfileUI();
@@ -12796,7 +12803,7 @@
 // startSpectatingRoom uses 100% real live room state only (no simulated bot spectating)
 
 
-    // ==================== V17 MASTER FIXES: LIVE GOOGLE APPS SCRIPT API, RARE CARD EFFECTS & BOT WATCHDOG ====================
+    // ==================== v1 MASTER FIXES: LIVE GOOGLE APPS SCRIPT API, RARE CARD EFFECTS & BOT WATCHDOG ====================
     const DEFAULT_GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyKiEEvRfKDbZnmnS9nqPOE8FUUYAdk7nMfuDnEVWizl_BiAMfb04gWwa-qSD84xLb-5A/exec';
     gasWebAppUrl = DEFAULT_GAS_WEBAPP_URL;
 
@@ -13284,7 +13291,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       const gasInEl = document.getElementById('input-gas-webapp-url'); if (gasInEl) gasInEl.value = gasWebAppUrl;
-      // Replaced by V18 fast non-blocking pullCloudDatabaseFast
+      // Replaced by v1 fast non-blocking pullCloudDatabaseFast
       if ('speechSynthesis' in window) {
         window.speechSynthesis.getVoices();
       }
@@ -13296,7 +13303,7 @@
       renderAiEvaluationScreen();
     });
 
-    // ==================== V18 MASTER UPGRADE: FAST BIDIRECTIONAL CLOUD DB (GVIZ + GAS GET/POST) & 9:16 ARROW UI ====================
+    // ==================== v1 MASTER UPGRADE: FAST BIDIRECTIONAL CLOUD DB (GVIZ + GAS GET/POST) & 9:16 ARROW UI ====================
     const CLOUD_SPREADSHEET_ID = '1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM';
     const INVALID_RARE_OWNER_STRINGS = new Set([
       'Siripon The Rule Arbiter', 'Ban Khao Lo School', 'Grade 4.00',
@@ -14015,7 +14022,7 @@
       await pullCloudDatabaseFast(false);
     };
 
-    // ==================== V18 9:16 SMARTPHONE ARROW-BASED CARD SELECTION & STREAMLINED DUEL UI ====================
+    // ==================== v1 9:16 SMARTPHONE ARROW-BASED CARD SELECTION & STREAMLINED DUEL UI ====================
     function toggleMobileDeckDrawer() {
       playTone('click');
       document.body.classList.toggle('show-mobile-deck-drawer');
@@ -14351,7 +14358,7 @@
       grid.appendChild(pager);
     };
 
-    // Initialize V18 on startup
+    // Initialize v1 on startup
     window.addEventListener('DOMContentLoaded', () => {
       if (!gasWebAppUrl || gasWebAppUrl.includes('AKfycbyDkUQ0TJGbykWOsLgtUcqqfFVk0eSS3v2GUsYaA5z7IfztCfq81poFPGQuTXlMcLkM2Q')) {
         gasWebAppUrl = DEFAULT_GAS_WEBAPP_URL;
@@ -14374,7 +14381,7 @@
     });
 
   
-    // ==================== V19 MASTER UPGRADE: 8-POINT USER REQUEST ENHANCEMENTS ====================
+    // ==================== v1 MASTER UPGRADE: 8-POINT USER REQUEST ENHANCEMENTS ====================
 
     // --- [REQ 4] FAVORITE CUSTOM DECK SLOTS (NEVER OVERWRITES MAIN PRESETS: IGNEOUS, SEDIMENTARY, METAMORPHIC) ---
     let userFavoriteDecks = { fav1: null, fav2: null, fav3: null };
@@ -15110,7 +15117,7 @@
     });
 
 
-    // ==================== V20 DYNAMIC SCREEN ASPECT RATIO CALCULATOR & AUTO-FIT UI ENGINE ====================
+    // ==================== v1 DYNAMIC SCREEN ASPECT RATIO CALCULATOR & AUTO-FIT UI ENGINE ====================
     // 1. Force upgrade to the new deployed Google Apps Script Web App URL
     const V20_DEPLOYED_GAS_URL = "https://script.google.com/macros/s/AKfycbyKiEEvRfKDbZnmnS9nqPOE8FUUYAdk7nMfuDnEVWizl_BiAMfb04gWwa-qSD84xLb-5A/exec";
     gasWebAppUrl = V20_DEPLOYED_GAS_URL;
@@ -15345,7 +15352,7 @@
     });
 
 
-    // ==================== V21 MASTER FIXES: INSTANT ROOM SYNC, UNSTICK ROOMS & MOBILE UI OVERHAUL ====================
+    // ==================== v1 MASTER FIXES: INSTANT ROOM SYNC, UNSTICK ROOMS & MOBILE UI OVERHAUL ====================
 
     // --- 1. MOBILE UI CSS OVERHAUL (FIXES DECK CAROUSEL, LOBBY, AI ANALYSIS & COMPACT HEADER) ---
     function injectV21MobileFixStyles() {
@@ -16200,7 +16207,7 @@
     // Run fast 1.5s room polling
     setInterval(pollCloudRoomsAndChallenges, 1500);
 
-    // ==================== V22 ATOMIC ROOM & CHALLENGE STATE MACHINE ====================
+    // ==================== v1 ATOMIC ROOM & CHALLENGE STATE MACHINE ====================
     // Fixes:
     // 1. Real-time room sit / stand-up / challenge / cancel / decline without freezing or desyncing
     // 2. Sequential per-room cloud update queue (prevents Sit -> Stand Up HTTP race conditions)
@@ -16306,7 +16313,7 @@
         const hostUid = String(cr.hostUserId || "").trim();
         const guestUid = String(cr.challengerUserId || "").trim();
 
-        // Detect old v19 bloated rooms (where raw 40-card hostDeck array was left in liveState) or rooms older than 20 mins
+        // Detect old v1 bloated rooms (where raw 40-card hostDeck array was left in liveState) or rooms older than 20 mins
         const hasBloatedRawDeck = Boolean(ls && Array.isArray(ls.hostDeck) && ls.hostDeck.length > 5);
         const pktTime = (ls && ls.updatedAt) ? Number(ls.updatedAt) : ((ls && ls.pktSeq) ? Number(ls.pktSeq) : 0);
         const isExpiredStuck = (pktTime > 0 && (now - pktTime > 20 * 60 * 1000)) || (hasBloatedRawDeck && currentSeatedRoomId !== rNo);
@@ -17328,14 +17335,14 @@
       }
     };
 
-    // ==================== V23 ATOMIC ROOM RESERVATION, PIN, DECLINE BAN & HIGH-SPEED DB ENGINE ====================
+    // ==================== v1 ATOMIC ROOM RESERVATION, PIN, DECLINE BAN & HIGH-SPEED DB ENGINE ====================
     window._isRoomDbBusy = false;
     window._pendingBookRoomId = null;
     window._pendingPinChallengeRoomId = null;
     window._myCurrentHostSessionId = "";
     window._myCurrentRoomPin = "";
     window._rejectedHostSessionsMap = {}; // hostSessionId -> true (records sessions where this player was declined)
-    window._gasSupportsSyncRoomsOnly = true; // tries ultra-fast syncRoomsOnly first, auto-falls back to syncAll if v18 URL
+    window._gasSupportsSyncRoomsOnly = true; // tries ultra-fast syncRoomsOnly first, auto-falls back to syncAll if v1 URL
 
     // --- 1. DATABASE LOADING SPINNER MODAL (REQ 1, 2, 3) ---
     function showRoomDbLoadingModal(titleText, descText, badgeText = "🔄 DATABASE REAL-TIME SYNC", iconEmoji = "☁️") {
@@ -18608,7 +18615,7 @@
       }
     };
 
-    // ==================== V24 MOBILE MODE (9:16) CARD INFO TAB & READ BUTTON ENGINE ====================
+    // ==================== v1 MOBILE MODE (9:16) CARD INFO TAB & READ BUTTON ENGINE ====================
     // Specifically for Mobile Mode (currentAspectMode === '9:16'):
     // - Keeps 100% of the existing 9:16 screen, board, hand, and carousel proportions unchanged.
     // - Adds a clear "📖 อ่านข้อมูล" button on cards and in the mobile control bars.
@@ -19033,7 +19040,7 @@
       });
     };
 
-    // ==================== V25 FIXES: VISIBLE EXIT BUTTON, 9:16 VS MOTION EFFECT & INSTANT DECLINE AUTO-KICK ====================
+    // ==================== v1 FIXES: VISIBLE EXIT BUTTON, 9:16 VS MOTION EFFECT & INSTANT DECLINE AUTO-KICK ====================
 
     function injectV25MobileAndMotionStyles() {
       if (document.getElementById("v25-mobile-motion-styles")) return;
@@ -19484,7 +19491,7 @@
       }
     };
   
-    // ==================== V27 FIXES: ALWAYS-VISIBLE TOP-RIGHT "ขยาย / ย่อ" BUTTON & 100% FULL MOBILE HAND CARDS ====================
+    // ==================== v1 FIXES: ALWAYS-VISIBLE TOP-RIGHT "ขยาย / ย่อ" BUTTON & 100% FULL MOBILE HAND CARDS ====================
 
     window._isVirtualExpandedFullscreen = false;
     window._lastObservedVw = 0;
@@ -20235,6 +20242,156 @@
       ensureUnifiedExpandShrinkDomButtons();
       scheduleMultiPassViewportRecalc(true);
     });
+
+  
+    // ==================== GEO-DUEL v1 MODULE: DUEL EXIT CONFIRMATION TAB ====================
+    window.APP_VERSION = "v1 (Version 1.0)";
+    window._pendingDuelExitCallback = null;
+
+    function ensureDuelExitConfirmModalExists() {
+      if (document.getElementById("modal-confirm-duel-exit")) return;
+      const modal = document.createElement("div");
+      modal.id = "modal-confirm-duel-exit";
+      modal.className = "hidden fixed inset-0 z-[220] bg-slate-950/88 backdrop-blur-md flex items-center justify-center p-3 select-none";
+      modal.onclick = function(ev) {
+        if (ev.target === modal) {
+          closeDuelExitConfirmModal();
+        }
+      };
+      modal.innerHTML = `
+        <div class="royal-frame w-full max-w-sm rounded-3xl p-4 sm:p-5 bg-gradient-to-b from-[#170e2e] via-[#0c071b] to-[#14081c] border-2 border-rose-400 shadow-[0_0_45px_rgba(244,63,94,0.65)] text-white flex flex-col gap-3 animate-[fadeIn_0.16s_ease-out]" onclick="event.stopPropagation()">
+          <div class="flex items-center justify-between gap-2 border-b border-rose-500/40 pb-2">
+            <div class="flex items-center gap-2">
+              <span class="w-9 h-9 rounded-2xl bg-rose-600/30 border border-rose-400 flex items-center justify-center text-xl shadow">🏳️</span>
+              <div>
+                <h3 class="font-black text-base sm:text-lg text-amber-300 leading-tight">ยืนยันการออกจากการดูเอล?</h3>
+                <p class="text-[11px] text-rose-200 font-bold">ป้องกันการกดปุ่มออกโดยไม่ได้ตั้งใจ (GEO-DUEL v1)</p>
+              </div>
+            </div>
+            <button type="button" onclick="closeDuelExitConfirmModal()" class="w-8 h-8 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-600 text-slate-300 font-black text-sm flex items-center justify-center">✕</button>
+          </div>
+
+          <div class="bg-[#080514]/95 border border-amber-400/50 rounded-2xl p-3 text-xs sm:text-sm text-slate-200 leading-relaxed space-y-1.5">
+            <p class="font-bold text-white">⚠️ คุณกำลังอยู่ในระหว่างการดูเอล</p>
+            <p id="confirm-duel-exit-desc" class="text-amber-200 font-semibold">
+              หากกดยืนยันออกจากการดูเอลตอนนี้ ระบบจะนับเป็น <strong class="text-rose-400 underline">การยอมแพ้ (แพ้ 1 เกม)</strong> และจบแมตช์ทันที
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5 pt-1">
+            <button id="btn-cancel-duel-exit" type="button" onclick="closeDuelExitConfirmModal()"
+              class="py-2.5 px-3 rounded-2xl bg-gradient-to-r from-emerald-400 to-cyan-400 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm border-2 border-white shadow-[0_0_16px_rgba(16,185,129,0.75)] flex items-center justify-center gap-1.5 active:scale-95 transition">
+              <span>🛡️</span>
+              <span>ยกเลิก (เล่นต่อ)</span>
+            </button>
+            <button id="btn-confirm-duel-exit-now" type="button" onclick="confirmDuelExitNow()"
+              class="py-2.5 px-3 rounded-2xl bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:brightness-110 text-white font-black text-xs sm:text-sm border-2 border-rose-200 shadow-[0_0_16px_rgba(244,63,94,0.85)] flex items-center justify-center gap-1.5 active:scale-95 transition">
+              <span>🏳️</span>
+              <span>ยืนยันออก</span>
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function openDuelExitConfirmModal(onConfirmCallback, customDescHtml = "") {
+      playTone("click");
+      ensureDuelExitConfirmModalExists();
+      window._pendingDuelExitCallback = typeof onConfirmCallback === "function" ? onConfirmCallback : null;
+      const descEl = document.getElementById("confirm-duel-exit-desc");
+      if (descEl) {
+        if (customDescHtml) {
+          descEl.innerHTML = customDescHtml;
+        } else if (isSpectatorMode) {
+          descEl.innerHTML = `คุณต้องการออกจากการรับชมการดูเอลสด และกลับไปยังหน้าห้องประลองใช่หรือไม่?`;
+        } else {
+          descEl.innerHTML = `หากกดยืนยันออกจากการดูเอลตอนนี้ ระบบจะนับเป็น <strong class="text-rose-400 underline">การยอมแพ้ (แพ้ 1 เกม)</strong> และจบแมตช์ทันที`;
+        }
+      }
+      const modal = document.getElementById("modal-confirm-duel-exit");
+      if (modal) {
+        modal.classList.remove("hidden");
+      }
+    }
+
+    function closeDuelExitConfirmModal() {
+      playTone("click");
+      window._pendingDuelExitCallback = null;
+      const modal = document.getElementById("modal-confirm-duel-exit");
+      if (modal) {
+        modal.classList.add("hidden");
+      }
+    }
+
+    function executeActualDuelForfeitAndExit() {
+      if (duelState && duelState.active && !isSpectatorMode) {
+        showToast("🏳️ คุณยืนยันออกจากสนามก่อนจบเกม — ระบบนับเป็นการยอมแพ้ (แพ้ 1 เกม)", "🏳️");
+        finishDuel(1, "🏳️ ผู้เล่นกดยืนยันออกจากสนามก่อนจบเกม (ยอมแพ้ / Forfeit)", false);
+        return;
+      }
+      exitPostDuelAndGoMainMenu("menu");
+      updateExpandShrinkButtonsUI();
+      computeAndApplyScreenUI(true);
+    }
+
+    function confirmDuelExitNow() {
+      const cb = window._pendingDuelExitCallback;
+      window._pendingDuelExitCallback = null;
+      const modal = document.getElementById("modal-confirm-duel-exit");
+      if (modal) {
+        modal.classList.add("hidden");
+      }
+      if (typeof cb === "function") {
+        cb();
+      } else {
+        executeActualDuelForfeitAndExit();
+      }
+    }
+
+    // Override exitDuelToHomeMenu & exitDuelToLobby to ALWAYS show the Confirmation Tab first when a duel is active!
+    exitDuelToHomeMenu = function() {
+      if (duelState && duelState.active) {
+        openDuelExitConfirmModal(() => {
+          if (isSpectatorMode) {
+            exitSpectatorModeToLobby();
+          } else {
+            executeActualDuelForfeitAndExit();
+          }
+        });
+        return;
+      }
+      executeActualDuelForfeitAndExit();
+    };
+
+    exitDuelToLobby = function() {
+      if (duelState && duelState.active) {
+        openDuelExitConfirmModal(() => {
+          if (isSpectatorMode) {
+            exitSpectatorModeToLobby();
+          } else {
+            executeActualDuelForfeitAndExit();
+          }
+        });
+        return;
+      }
+      executeActualDuelForfeitAndExit();
+    };
+
+    // Also guard switchScreen when a duel is active so accidental nav clicks ask for confirmation first!
+    const _v1PreConfirmSwitchScreen = switchScreen;
+    switchScreen = function(scr) {
+      if (duelState && duelState.active && !isSpectatorMode && scr !== "lobby") {
+        openDuelExitConfirmModal(() => {
+          executeActualDuelForfeitAndExit();
+        });
+        return;
+      }
+      _v1PreConfirmSwitchScreen(scr);
+    };
+
+    ensureDuelExitConfirmModalExists();
+    window.addEventListener("DOMContentLoaded", ensureDuelExitConfirmModalExists);
 
   </script>
 </body>
