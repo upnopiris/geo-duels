@@ -19476,6 +19476,627 @@
       }
     };
 
+  
+    // ==================== V26 FIXES: UNIFIED "ขยาย / ย่อ" BUTTON, AUTO PROPORTIONS & FULL HAND CARDS ====================
+
+    window._isVirtualExpandedFullscreen = false;
+    window._currentActiveScreenId = "menu";
+
+    function isNativeFullscreenActive() {
+      return Boolean(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      );
+    }
+
+    function isAppExpandedFullscreen() {
+      return Boolean(isNativeFullscreenActive() || window._isVirtualExpandedFullscreen);
+    }
+
+    function updateExpandShrinkButtonsUI() {
+      const expanded = isAppExpandedFullscreen();
+      document.body.classList.toggle("app-expanded-fullscreen", expanded);
+
+      const labelHtml = expanded
+        ? `<span class="text-sm leading-none">🗕</span><span>ย่อ</span>`
+        : `<span class="text-sm leading-none">⛶</span><span>ขยาย</span>`;
+
+      const menuLabelHtml = expanded
+        ? `<span class="text-base leading-none">🗕</span><span>ย่อ (ออกจากโหมดเต็มจอ)</span>`
+        : `<span class="text-base leading-none">⛶</span><span>ขยาย (เปิดโหมดเต็มจอ)</span>`;
+
+      const cornerBtn = document.getElementById("btn-corner-expand-shrink");
+      if (cornerBtn) {
+        cornerBtn.innerHTML = labelHtml;
+        cornerBtn.title = expanded
+          ? "ย่อกลับมาโหมดไม่เต็มจอเหมือนเดิม (คำนวณสัดส่วนหน้าจออัตโนมัติ)"
+          : "ขยายเปิดโหมดเต็มจอ (คำนวณสัดส่วนหน้าจออัตโนมัติ)";
+        cornerBtn.className = expanded
+          ? "fixed top-1.5 right-2 z-[150] px-3 py-1 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 hover:brightness-110 border-2 border-white text-slate-950 font-black text-xs shadow-[0_0_16px_rgba(251,191,36,0.9)] flex items-center gap-1 transition active:scale-95"
+          : "fixed top-1.5 right-2 z-[150] px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-400 to-cyan-400 hover:brightness-110 border-2 border-white text-slate-950 font-black text-xs shadow-[0_0_16px_rgba(16,185,129,0.9)] flex items-center gap-1 transition active:scale-95";
+
+        // Visibility rule: ALWAYS visible at top-right corner when on ANY screen other than Main Menu (#screen-menu)
+        const menuScr = document.getElementById("screen-menu");
+        const duelArena = document.getElementById("duel-arena");
+        const isDuelActive = Boolean((duelState && duelState.active) || (duelArena && !duelArena.classList.contains("hidden")));
+        const isOnMainMenu = Boolean(menuScr && !menuScr.classList.contains("hidden") && !isDuelActive);
+        cornerBtn.classList.toggle("hidden", isOnMainMenu);
+      }
+
+      const menuBtn = document.getElementById("btn-menu-expand-shrink");
+      if (menuBtn) {
+        menuBtn.innerHTML = menuLabelHtml;
+        menuBtn.className = expanded
+          ? "w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-400 to-orange-400 hover:brightness-110 border-2 border-white text-slate-950 font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(251,191,36,0.8)] transition active:scale-95"
+          : "w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 hover:brightness-110 border-2 border-white text-slate-950 font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.8)] transition active:scale-95";
+      }
+    }
+
+    let _multiPassTimers = [];
+    function scheduleMultiPassViewportRecalc(reRender = true) {
+      _multiPassTimers.forEach(t => clearTimeout(t));
+      _multiPassTimers = [];
+      // Always lock to automatic screen ratio calculation for both Mobile & PC
+      screenLayoutLockMode = "auto";
+      computeAndApplyScreenUI(reRender);
+      updateExpandShrinkButtonsUI();
+
+      [80, 220, 450, 800].forEach((delayMs, idx) => {
+        const tid = setTimeout(() => {
+          screenLayoutLockMode = "auto";
+          computeAndApplyScreenUI(idx === 1 || idx === 3);
+          updateExpandShrinkButtonsUI();
+        }, delayMs);
+        _multiPassTimers.push(tid);
+      });
+    }
+
+    async function toggleExpandShrinkFullscreen(ev) {
+      if (ev) ev.stopPropagation();
+      playTone("click");
+
+      const currentlyExpanded = isAppExpandedFullscreen();
+      if (!currentlyExpanded) {
+        // Switch to EXPANDED (Fullscreen) mode
+        window._isVirtualExpandedFullscreen = true;
+        try {
+          const docEl = document.documentElement;
+          const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+          if (req) {
+            await req.call(docEl);
+          }
+        } catch (e) {
+          // Even if browser blocks native fullscreen (e.g. iOS Safari), keep virtual expanded state & scroll address bar
+        }
+        try { window.scrollTo(0, 1); } catch (e) {}
+        scheduleMultiPassViewportRecalc(true);
+        showToast("⛶ ขยายเปิดโหมดเต็มจอและคำนวณอัตราส่วนหน้าจออัตโนมัติแล้ว!", "⛶");
+      } else {
+        // Switch back to SHRINK (Normal non-fullscreen) mode
+        window._isVirtualExpandedFullscreen = false;
+        try {
+          if (isNativeFullscreenActive()) {
+            const exitFn = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+            if (exitFn) {
+              await exitFn.call(document);
+            }
+          }
+        } catch (e) {}
+        scheduleMultiPassViewportRecalc(true);
+        showToast("🗕 ย่อกลับสู่โหมดปกติและคำนวณอัตราส่วนพอดีหน้าจอแล้ว!", "🗕");
+      }
+    }
+
+    // Keep toggleFullscreenApp aliased to toggleExpandShrinkFullscreen so any legacy call uses the unified logic
+    toggleFullscreenApp = toggleExpandShrinkFullscreen;
+
+    function injectV26UnifiedLayoutAndHandStyles() {
+      if (document.getElementById("v26-unified-layout-hand-styles")) return;
+      const st = document.createElement("style");
+      st.id = "v26-unified-layout-hand-styles";
+      st.textContent = `
+        /* ============================================================================
+           1. EXACT VIEWPORT FIT (BOTH FULLSCREEN "ขยาย" & NORMAL "ย่อ" ON MOBILE/PC)
+           ============================================================================ */
+        html, body {
+          width: var(--dyn-vw, 100dvw) !important;
+          height: var(--dyn-vh, 100dvh) !important;
+          max-width: var(--dyn-vw, 100dvw) !important;
+          max-height: var(--dyn-vh, 100dvh) !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          overflow: hidden !important;
+          position: fixed !important;
+          inset: 0 !important;
+        }
+
+        /* Hide old duplicate aspect/fullscreen buttons in header & menu */
+        #btn-toggle-aspect-mode,
+        #btn-fullscreen-app,
+        #menu-btn-16-9,
+        #menu-btn-9-16 {
+          display: none !important;
+        }
+
+        /* Reserve right space on #main-top-header so the fixed top-right "ขยาย/ย่อ" button never overlaps user badge */
+        #main-top-header {
+          padding-right: 78px !important;
+        }
+
+        /* ============================================================================
+           2. DUEL ARENA PROPORTIONS & FULL UNCLIPPED HAND CARDS (MOBILE 9:16 & PC 16:9)
+           ============================================================================ */
+        /* Top Playmat Board Stage in 9:16: exact height of square board + 6px so NO wasted black bars! */
+        body.ui-mode-mobile-916 #duel-arena > div:last-child {
+          height: var(--dyn-board-stage-h, 50%) !important;
+          min-height: 0 !important;
+          max-height: var(--dyn-board-stage-h, 50%) !important;
+          padding: 2px !important;
+          flex: 0 0 auto !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+
+        /* Bottom Control + Hand Hub in 9:16: takes all remaining height with zero dead gap! */
+        body.ui-mode-mobile-916 #duel-side-hub {
+          width: 100% !important;
+          height: var(--dyn-hub-stage-h, 50%) !important;
+          min-height: 0 !important;
+          max-height: var(--dyn-hub-stage-h, 50%) !important;
+          flex: 1 1 0% !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: flex-start !important;
+          overflow: hidden !important;
+        }
+
+        /* Compact LP & Status Top Banner in 9:16 */
+        body.ui-mode-mobile-916 #science-banner {
+          flex: 0 0 auto !important;
+          padding: 2px 5px !important;
+          gap: 2px !important;
+        }
+        body.ui-mode-mobile-916 #science-banner .grid > div {
+          padding: 2px 6px !important;
+          border-radius: 8px !important;
+        }
+        body.ui-mode-mobile-916 #science-banner .lp-digits {
+          font-size: 15px !important;
+          line-height: 1 !important;
+        }
+        body.ui-mode-mobile-916 #opp-top-hand-bar {
+          padding: 1px 5px !important;
+          min-height: 20px !important;
+        }
+        body.ui-mode-mobile-916 #opp-hand-icons > div {
+          width: 18px !important;
+          height: 24px !important;
+        }
+
+        /* Middle Phase Strip + Selected Card Action Bar in 9:16: fixed compact height so hand is NEVER pushed off! */
+        body.ui-mode-mobile-916 #duel-side-hub > div:nth-child(2) {
+          flex: 0 0 auto !important;
+          display: flex !important;
+          flex-direction: column-reverse !important;
+          overflow: visible !important;
+        }
+        body.ui-mode-mobile-916 #duel-left-panel {
+          padding: 1px 4px !important;
+          height: auto !important;
+          flex: 0 0 auto !important;
+        }
+        body.ui-mode-mobile-916 #duel-card-actions {
+          padding: 1px 0 !important;
+          min-height: 44px !important;
+          max-height: 52px !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+          overflow: hidden !important;
+        }
+        /* Keep action buttons inside #duel-card-actions in a single scrollable row in 9:16 so they never wrap to 3 lines */
+        body.ui-mode-mobile-916 #duel-card-actions .flex-wrap {
+          flex-wrap: nowrap !important;
+          overflow-x: auto !important;
+          scrollbar-width: none !important;
+          gap: 4px !important;
+          padding-bottom: 1px !important;
+        }
+        body.ui-mode-mobile-916 #duel-card-actions .flex-wrap button {
+          padding: 2px 7px !important;
+          font-size: 10.5px !important;
+          white-space: nowrap !important;
+          flex-shrink: 0 !important;
+        }
+
+        /* Player Hand Dock in 9:16: expands to fill all remaining hub height so cards are 100% visible! */
+        body.ui-mode-mobile-916 #player-hand-dock {
+          flex: 1 1 0% !important;
+          min-height: var(--dyn-hand-dock-h, 122px) !important;
+          height: auto !important;
+          max-height: none !important;
+          padding: 2px 4px 4px 4px !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: flex-start !important;
+          overflow: visible !important;
+        }
+        /* Compact 1-line Hand Header in 9:16 */
+        body.ui-mode-mobile-916 #player-hand-dock > div:first-child {
+          margin-bottom: 1px !important;
+          padding: 0 2px !important;
+          flex: 0 0 auto !important;
+          height: 15px !important;
+          overflow: hidden !important;
+        }
+        body.ui-mode-mobile-916 #player-hand-dock > div:first-child > div:first-child {
+          font-size: 10px !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+        }
+        body.ui-mode-mobile-916 #placement-mode-hint {
+          font-size: 9.5px !important;
+        }
+        /* Hand Container Row in 9:16 */
+        body.ui-mode-mobile-916 #player-hand-dock > div:last-child {
+          flex: 1 1 0% !important;
+          min-height: var(--dyn-hand-box-h, 106px) !important;
+          height: var(--dyn-hand-box-h, 106px) !important;
+          display: flex !important;
+          align-items: center !important;
+          width: 100% !important;
+        }
+        /* REMOVE max-height: 96px clipping on #player-hand-container! */
+        body.ui-mode-mobile-916 #player-hand-container {
+          flex-wrap: nowrap !important;
+          overflow-x: auto !important;
+          overflow-y: hidden !important;
+          align-items: center !important;
+          height: var(--dyn-hand-box-h, 106px) !important;
+          min-height: var(--dyn-hand-box-h, 106px) !important;
+          max-height: none !important;
+          padding: 3px 4px !important;
+          gap: 6px !important;
+          scroll-behavior: smooth !important;
+        }
+        /* Size every .hand-card in 9:16 to fit 100% inside #player-hand-container without top or bottom clipping! */
+        body.ui-mode-mobile-916 #player-hand-container .hand-card {
+          width: var(--dyn-hand-card-w, 72px) !important;
+          height: var(--dyn-hand-card-h, 98px) !important;
+          min-width: var(--dyn-hand-card-w, 72px) !important;
+          min-height: var(--dyn-hand-card-h, 98px) !important;
+          max-height: var(--dyn-hand-card-h, 98px) !important;
+          padding: 2px !important;
+          border-radius: 9px !important;
+          flex-shrink: 0 !important;
+          box-sizing: border-box !important;
+        }
+        body.ui-mode-mobile-916 #player-hand-container .hand-card:hover,
+        body.ui-mode-mobile-916 #player-hand-container .hand-card.selected-hand {
+          transform: translateY(-2px) scale(1.02) !important;
+        }
+
+        /* Ensure inner fallback sprite & bottom ATK/DEF bar inside .hand-card NEVER overflow or get cut off! */
+        #player-hand-container .hand-card > div.relative {
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: space-between !important;
+          height: 100% !important;
+          width: 100% !important;
+          overflow: hidden !important;
+        }
+        #player-hand-container .hand-card > div.relative > div:first-child {
+          flex: 1 1 0% !important;
+          min-height: 0 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          overflow: hidden !important;
+        }
+        #player-hand-container .hand-card .card-sprite {
+          flex: 1 1 0% !important;
+          min-height: 0 !important;
+          width: 100% !important;
+          aspect-ratio: auto !important;
+        }
+        #player-hand-container .hand-card > div.relative > div:last-child {
+          flex: 0 0 auto !important;
+          margin-top: 1px !important;
+          z-index: 15 !important;
+          position: relative !important;
+          background: rgba(2, 6, 23, 0.92) !important;
+          border-top: 1px solid rgba(251, 191, 36, 0.55) !important;
+        }
+
+        /* Also ensure 16:9 PC / Landscape #player-hand-container never clips selected hand cards */
+        body:not(.ui-mode-mobile-916) #player-hand-container {
+          min-height: 124px !important;
+          max-height: 146px !important;
+          padding: 6px 4px !important;
+          align-items: center !important;
+        }
+        body:not(.ui-mode-mobile-916) #player-hand-container .hand-card:hover,
+        body:not(.ui-mode-mobile-916) #player-hand-container .hand-card.selected-hand {
+          transform: translateY(-4px) scale(1.04) !important;
+        }
+      `;
+      document.head.appendChild(st);
+    }
+
+    function ensureUnifiedExpandShrinkDomButtons() {
+      injectV26UnifiedLayoutAndHandStyles();
+
+      // 1. Replace the old 4 buttons on Main Menu (#screen-menu) with ONE single "ขยาย / ย่อ" button
+      const b16 = document.getElementById("menu-btn-16-9");
+      if (b16 && b16.parentElement) {
+        const gridRow = b16.parentElement;
+        const nextRow = gridRow.nextElementSibling;
+        if (nextRow && nextRow.querySelector("button[onclick*='toggleFullscreenApp']")) {
+          nextRow.style.display = "none";
+        }
+        gridRow.className = "w-full pt-1";
+        gridRow.innerHTML = `
+          <button id="btn-menu-expand-shrink" type="button" onclick="toggleExpandShrinkFullscreen(event)">
+            <span class="text-base leading-none">⛶</span><span>ขยาย (เปิดโหมดเต็มจอ)</span>
+          </button>
+        `;
+      }
+
+      // 2. Create the persistent Top-Right Corner "ขยาย / ย่อ" button (#btn-corner-expand-shrink)
+      if (!document.getElementById("btn-corner-expand-shrink")) {
+        const cornerBtn = document.createElement("button");
+        cornerBtn.id = "btn-corner-expand-shrink";
+        cornerBtn.type = "button";
+        cornerBtn.onclick = function(ev) { toggleExpandShrinkFullscreen(ev); };
+        document.body.appendChild(cornerBtn);
+      }
+
+      updateExpandShrinkButtonsUI();
+    }
+
+    // Upgrade computeAndApplyScreenUI so it ALWAYS calculates exact proportions for both Mobile & PC,
+    // in both Fullscreen ("ขยาย") and Normal ("ย่อ") modes, and computes exact hand card dimensions!
+    computeAndApplyScreenUI = function(reRenderViews = false) {
+      injectDynamicViewportStyles();
+      injectV26UnifiedLayoutAndHandStyles();
+
+      const vv = window.visualViewport;
+      const rawW = (vv && vv.width) ? vv.width : (window.innerWidth || document.documentElement.clientWidth || 1024);
+      const rawH = (vv && vv.height) ? vv.height : (window.innerHeight || document.documentElement.clientHeight || 768);
+      const vw = Math.max(280, Math.round(rawW));
+      const vh = Math.max(340, Math.round(rawH));
+      const ratio = vw / vh;
+      const isRealPortrait = ratio < 0.98;
+
+      // Always calculate UI proportionally from actual screen ratio
+      screenLayoutLockMode = "auto";
+      const useCompactPortraitUI = isRealPortrait;
+
+      const prevMode = currentAspectMode;
+      currentAspectMode = useCompactPortraitUI ? "9:16" : "16:9";
+
+      document.body.classList.toggle("ui-mode-mobile-916", useCompactPortraitUI);
+      document.body.classList.toggle("is-real-portrait-screen", isRealPortrait);
+
+      const rootStyle = document.documentElement.style;
+      rootStyle.setProperty("--dyn-vw", vw + "px");
+      rootStyle.setProperty("--dyn-vh", vh + "px");
+
+      if (useCompactPortraitUI) {
+        const frameW = vw;
+        const headerEl = document.getElementById("main-top-header");
+        const isHeaderHidden = !headerEl || headerEl.classList.contains("hidden");
+        const headerH = isHeaderHidden ? 0 : 40;
+        const availH = Math.max(320, vh - headerH);
+
+        // Duel Arena runs with #main-top-header hidden, so it has full vh!
+        // Reserve generous height for #duel-side-hub so #player-hand-container NEVER clips cards!
+        const minHubPx = Math.max(242, Math.min(320, Math.round(vh * 0.46)));
+        const maxBoardFromH = Math.max(195, vh - minHubPx - 6);
+        const boardMaxPx = Math.max(195, Math.floor(Math.min(frameW * 0.95, maxBoardFromH * 0.97)));
+        const boardStagePx = boardMaxPx + 6;
+        const hubStagePx = Math.max(236, vh - boardStagePx);
+
+        // Fixed overhead inside #duel-side-hub:
+        // #science-banner (~54px) + phase strip (~26px) + #duel-card-actions (~46px) + hand dock title (~16px) = ~142px
+        const handDockH = Math.max(106, hubStagePx - 126);
+        const handBoxH = Math.max(92, handDockH - 18);
+        const handCardH = Math.max(84, Math.min(128, handBoxH - 6));
+        const handCardW = Math.max(60, Math.round(handCardH * 0.71));
+
+        // Deck Builder card showcase size
+        const deckAvailH = Math.max(320, vh - 40);
+        const cardH = Math.max(164, Math.min(232, Math.floor((deckAvailH - 210) * 0.72)));
+        const cardW = Math.round(cardH * 0.70);
+        const cardArtH = Math.max(66, Math.round(cardH * 0.43));
+
+        rootStyle.setProperty("--dyn-frame-w", frameW + "px");
+        rootStyle.setProperty("--dyn-board-stage-h", boardStagePx + "px");
+        rootStyle.setProperty("--dyn-hub-stage-h", hubStagePx + "px");
+        rootStyle.setProperty("--dyn-board-max-px", boardMaxPx + "px");
+        rootStyle.setProperty("--dyn-hand-dock-h", handDockH + "px");
+        rootStyle.setProperty("--dyn-hand-box-h", handBoxH + "px");
+        rootStyle.setProperty("--dyn-hand-card-w", handCardW + "px");
+        rootStyle.setProperty("--dyn-hand-card-h", handCardH + "px");
+        rootStyle.setProperty("--dyn-card-w", cardW + "px");
+        rootStyle.setProperty("--dyn-card-h", cardH + "px");
+        rootStyle.setProperty("--dyn-card-art-h", cardArtH + "px");
+      } else {
+        // Landscape / PC proportional calculation (works for 16:9, 16:10, 4:3, 21:9, windowed or fullscreen!)
+        const sideHubW = Math.max(290, Math.min(440, Math.round(vw * 0.31)));
+        const availBoardW = Math.max(280, vw - sideHubW - 20);
+        const availBoardH = Math.max(280, vh - 16);
+        const boardMaxPx = Math.floor(Math.min(availBoardW * 0.96, availBoardH * 0.96));
+
+        rootStyle.setProperty("--dyn-side-hub-w", sideHubW + "px");
+        rootStyle.setProperty("--dyn-board-max-px", boardMaxPx + "px");
+      }
+
+      if (useCompactPortraitUI) {
+        document.body.classList.toggle("mobile-lobby-tab-bot", (currentMobileLobbyTab || "bot") === "bot");
+        document.body.classList.toggle("mobile-lobby-tab-rooms", currentMobileLobbyTab === "rooms");
+      } else {
+        document.body.classList.remove("mobile-lobby-tab-bot", "mobile-lobby-tab-rooms", "show-mobile-deck-drawer");
+      }
+
+      updateExpandShrinkButtonsUI();
+
+      if (reRenderViews || prevMode !== currentAspectMode) {
+        renderCardCatalog();
+        render50RoomsLobby();
+        if (duelState && duelState.active) {
+          renderDuelArena();
+        }
+      }
+    };
+
+    // Hook switchScreen, beginDuelWithOrder, and exitDuelToHomeMenu so the Top-Right "ขยาย / ย่อ" button
+    // is ALWAYS shown on every screen except Main Menu (#screen-menu) and proportions are always fresh!
+    const _v25SwitchScreen = switchScreen;
+    switchScreen = function(scr) {
+      window._currentActiveScreenId = scr;
+      _v25SwitchScreen(scr);
+      updateExpandShrinkButtonsUI();
+      computeAndApplyScreenUI(false);
+    };
+
+    const _v25BeginDuelWithOrder = beginDuelWithOrder;
+    beginDuelWithOrder = function(playerGoesFirst) {
+      _v25BeginDuelWithOrder(playerGoesFirst);
+      updateExpandShrinkButtonsUI();
+      computeAndApplyScreenUI(true);
+    };
+
+    const _v25ExitDuelToHomeMenu = exitDuelToHomeMenu;
+    exitDuelToHomeMenu = function() {
+      _v25ExitDuelToHomeMenu();
+      updateExpandShrinkButtonsUI();
+      computeAndApplyScreenUI(true);
+    };
+
+    // Refine 9:16 Hand Card badges & #duel-card-actions so buttons NEVER cover the bottom ATK/DEF bar on hand cards!
+    renderDuelInspector = function() {
+      _v17RenderDuelInspector();
+
+      // Center hand cards when <= 4 cards, or start-align when >= 5 cards so all cards can be scrolled cleanly
+      const handSide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      const handArr = duelState.players?.[handSide]?.hand || [];
+      const handBoxEl = document.getElementById("player-hand-container");
+      if (handBoxEl) {
+        if (currentAspectMode === "9:16") {
+          handBoxEl.style.justifyContent = handArr.length <= 4 ? "center" : "flex-start";
+        } else {
+          handBoxEl.style.justifyContent = "center";
+        }
+      }
+
+      if (currentAspectMode !== "9:16") return;
+
+      const handCardsDom = document.querySelectorAll("#player-hand-container .hand-card");
+      handCardsDom.forEach((cardEl, idx) => {
+        const c = handArr[idx];
+        if (!c) return;
+
+        // Move the speaker button to top-right so the bottom ATK/DEF bar is 100% visible!
+        const spkBtn = cardEl.querySelector("button[onclick*='speakCardById']");
+        if (spkBtn) {
+          spkBtn.className = "absolute top-0.5 right-0.5 z-20 w-4 h-4 rounded-full bg-cyan-400/95 hover:bg-cyan-300 text-slate-950 text-[8.5px] font-black flex items-center justify-center shadow border border-white/80";
+        }
+
+        // Place a compact "📖" info button at top-left so it NEVER covers the bottom ATK/DEF bar or card name!
+        let infoBtn = cardEl.querySelector(".mob-hand-info-btn");
+        if (!infoBtn) {
+          infoBtn = document.createElement("button");
+          infoBtn.type = "button";
+          cardEl.appendChild(infoBtn);
+        }
+        infoBtn.className = "mob-hand-info-btn absolute bottom-[17px] left-0.5 z-20 px-1 h-4 rounded bg-amber-400/95 hover:bg-amber-300 text-slate-950 text-[8px] font-black flex items-center gap-0.5 shadow border border-white/80 leading-none";
+        infoBtn.innerHTML = "📖 ข้อมูล";
+        infoBtn.title = "กดอ่านข้อมูลการ์ดใบนี้";
+        infoBtn.onclick = function(ev) {
+          ev.stopPropagation();
+          duelState.selectedRef = { side: handSide, zoneType: "hand", index: idx };
+          renderDuelInspector();
+          openMobileCardInfoTab(c, { source: "duel", ref: { side: handSide, zoneType: "hand", index: idx } });
+        };
+      });
+
+      // Ensure #duel-card-actions in 9:16 mode has "📖 อ่านข้อมูล" & compact 1-line action buttons
+      if (!duelState.selectedRef) return;
+      const { side, zoneType, index } = duelState.selectedRef;
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      const pl = duelState.players?.[side];
+      const card = pl ? (zoneType === "hand" ? pl.hand[index] : (zoneType === "m" ? pl.monsters[index] : pl.spellTraps[index])) : null;
+      if (!card) return;
+      const canSee = (!card.faceDown || side === mySide);
+      if (!canSee) return;
+
+      const actBox = document.getElementById("duel-card-actions");
+      if (!actBox) return;
+      actBox.querySelectorAll("button").forEach(btn => {
+        if (btn.textContent.includes("ดูการ์ด")) {
+          btn.innerHTML = "📖 อ่านข้อมูล";
+          btn.onclick = function(ev) {
+            ev.stopPropagation();
+            openMobileCardInfoTab(card, { source: "duel", ref: { side, zoneType, index } });
+          };
+        }
+        // Shorten long summon button texts in 9:16 so they fit on one clean line without wrapping
+        if (btn.textContent.includes("อัญเชิญตั้งโจมตี")) {
+          btn.innerHTML = btn.innerHTML.replace(" (เลือกช่องได้)", "");
+        }
+        if (btn.textContent.includes("วางหมอบป้องกัน")) {
+          btn.innerHTML = btn.innerHTML.replace(" (เลือกช่องได้)", "");
+        }
+      });
+    };
+
+    // Listen to all Fullscreen, App-Switch (visibilitychange/focus/pageshow), and Viewport events
+    // so returning from another app or exiting Fullscreen NEVER leaves the screen skewed!
+    ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach(evName => {
+      document.addEventListener(evName, () => {
+        if (!isNativeFullscreenActive()) {
+          window._isVirtualExpandedFullscreen = false;
+        }
+        scheduleMultiPassViewportRecalc(true);
+      });
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) {
+        if (!isNativeFullscreenActive()) {
+          window._isVirtualExpandedFullscreen = false;
+        }
+        scheduleMultiPassViewportRecalc(true);
+      }
+    });
+
+    window.addEventListener("focus", () => {
+      if (!isNativeFullscreenActive()) {
+        window._isVirtualExpandedFullscreen = false;
+      }
+      scheduleMultiPassViewportRecalc(true);
+    });
+
+    window.addEventListener("pageshow", () => {
+      scheduleMultiPassViewportRecalc(true);
+    });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", () => scheduleMultiPassViewportRecalc(false));
+      window.visualViewport.addEventListener("scroll", () => scheduleMultiPassViewportRecalc(false));
+    }
+
+    ensureUnifiedExpandShrinkDomButtons();
+    scheduleMultiPassViewportRecalc(false);
+    window.addEventListener("DOMContentLoaded", () => {
+      ensureUnifiedExpandShrinkDomButtons();
+      scheduleMultiPassViewportRecalc(true);
+    });
+
   </script>
 </body>
 </html>
