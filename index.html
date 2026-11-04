@@ -1477,6 +1477,10 @@
             <button type="button" id="btn-load-fav-deck" onclick="loadSelectedFavoriteDeckSlot()" class="px-2.5 py-1 rounded-lg bg-cyan-500/30 hover:bg-cyan-400 hover:text-slate-950 border border-cyan-300 text-cyan-100 font-black text-xs shadow">
               📂 เรียกใช้เด็คโปรดนี้
             </button>
+            <button type="button" id="btn-pull-cloud-deck" onclick="manualSyncDeckFromCloud(event)" class="px-2.5 py-1 rounded-lg bg-emerald-500/30 hover:bg-emerald-400 hover:text-slate-950 border border-emerald-400 text-emerald-200 font-black text-xs shadow transition cursor-pointer flex items-center gap-1" title="ดึงเด็ค 40 ใบและเด็คโปรดล่าสุดที่บันทึกไว้จากคอมพิวเตอร์ผ่าน Google Sheets">
+              <span>☁️</span>
+              <span>ซิงค์เด็คจากฐานข้อมูล</span>
+            </button>
           </div>
           <span id="fav-deck-slot-status" class="text-[11px] font-bold text-emerald-300">💡 จัดการ์ดที่ชอบแล้วกด "💾 บันทึกเด็คโปรด" เก็บไว้ใช้ได้เลย!</span>
         </div>
@@ -1504,6 +1508,10 @@
               <div class="text-[11px] text-slate-300">🐲 <span id="deck-m-count">0</span> | 🔮 <span id="deck-s-count">0</span> | 🪤 <span id="deck-t-count">0</span> (ซ้ำไม่เกิน 3 ใบ)</div>
             </div>
             <div class="flex items-center gap-1.5">
+              <button type="button" onclick="manualSyncDeckFromCloud(event)" class="only-mobile-916 px-2.5 py-1.5 rounded-xl bg-emerald-500/30 hover:bg-emerald-400 hover:text-slate-950 border border-emerald-400 text-emerald-200 font-black text-xs shadow flex items-center gap-1" title="ดึงเด็กล่าสุดจากคอมพิวเตอร์">
+                <span>☁️</span>
+                <span>ซิงค์เด็ค</span>
+              </button>
               <button type="button" id="btn-mobile-deck-drawer" onclick="toggleMobileDeckDrawer()" class="only-mobile-916 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-amber-400/70 text-amber-200 font-black text-xs shadow">
                 📋 ดูในเด็ค
               </button>
@@ -13552,7 +13560,7 @@
       // Use GET whenever possible because Google Apps Script Web App 302 redirects work 100% with CORS on GET!
       const isReadOrCompact = preferredMethod === 'GET' || (
         preferredMethod === 'AUTO' &&
-        (['syncAll', 'ping', 'login', 'changeUserId', 'grantRareCard'].includes(action) || bodyStr.length < 1200)
+        (['syncAll', 'ping', 'login', 'changeUserId', 'grantRareCard', 'getDeck', 'saveDeck', 'saveProfileAndDeck'].includes(action) || bodyStr.length < 3500)
       );
 
       if (isReadOrCompact) {
@@ -14243,8 +14251,12 @@
               <span>การ์ดก่อนหน้า</span>
             </button>
             <div class="text-center leading-tight">
-              <div class="text-[11px] font-black text-amber-300">
-                🃏 ใบที่ <span class="text-cyan-300 font-mono text-xs">${mobileDeckCarouselIdx + 1}</span> / <span class="font-mono">${filtered.length}</span>
+              <div class="flex items-center justify-center gap-1.5">
+                <span class="text-[11px] font-black text-amber-300">🃏 ใบที่ <span class="text-cyan-300 font-mono text-xs">${mobileDeckCarouselIdx + 1}</span>/<span class="font-mono">${filtered.length}</span></span>
+                <button type="button" onclick="manualSyncDeckFromCloud(event)" class="px-2 py-0.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[10px] shadow flex items-center gap-0.5" title="กดดึงเด็คจากคอมพิวเตอร์">
+                  <span>☁️</span>
+                  <span>ซิงค์เด็ค</span>
+                </button>
               </div>
               <div class="flex items-center justify-center gap-1 mt-0.5">
                 <button type="button" onclick="stepMobileDeckCarousel(-10)" class="px-1.5 py-0.2 rounded bg-slate-800 text-amber-200 font-mono font-bold text-[9px] border border-amber-500/40">-10</button>
@@ -22454,7 +22466,7 @@
       return changed;
     }
 
-    // Fast, reliable push of current user's deck + favorite decks to Google Sheet
+    // Fast, reliable push of current user's deck + favorite decks to Google Sheet (with DB Loading Modal)
     async function pushUserDeckToCloudNow(showNotification = false) {
       sanitizeRareCardsOwnership();
       if (isPlayerLoggedIn && userProfile.username) {
@@ -22471,11 +22483,8 @@
         return false;
       }
 
-      const t0 = performance.now();
-      window._localDeckSaveLockUntil = Date.now() + 10000;
-      setCloudDbStatusUI("⏳ กำลังบันทึกเด็คของคุณลงฐานข้อมูล Google Sheet...", true);
-
-      const mem = membersDb.find(m => m && m.username && m.username.toLowerCase() === userProfile.username.toLowerCase());
+      const uid = userProfile.username;
+      const mem = membersDb.find(m => m && m.username && m.username.toLowerCase() === uid.toLowerCase());
       const packedDeckObj = packCloudDeckAndFavorites(userDeck, userFavoriteDecks);
       if (mem) {
         mem.savedDeck = JSON.parse(JSON.stringify(userDeck));
@@ -22484,10 +22493,13 @@
       }
       saveState();
 
-      // Build compact payload WITHOUT 30KB base64 photoDataUrl so it can be sent via fast CORS-safe GET or POST!
+      window._localDeckSaveLockUntil = Date.now() + 10000;
+      setCloudDbStatusUI("⏳ กำลังบันทึกเด็คของคุณลงฐานข้อมูล Google Sheet...", true);
+
+      // Build compact payload without base64 photo for rapid synchronization
       const compactPayload = {
-        userId: userProfile.username,
-        displayName: userProfile.name || userProfile.username,
+        userId: uid,
+        displayName: userProfile.name || uid,
         classroom: userProfile.classroom || "ป.6",
         school: "โรงเรียนบ้านเขาล้อ",
         rankTier: getRankTierInfo(userProfile.rankRp || 1000).tier,
@@ -22495,36 +22507,49 @@
         wins: Number(userProfile.wins || 0),
         losses: Number(userProfile.losses || 0),
         avgScore100: Number(userProfile.avgScore || userProfile.lastAiScore || 0),
-        rareCards: getRareCardsOwnedByUser(userProfile.username).map(c => c.id),
-        deck: packedDeckObj,
-        savedDeck: packedDeckObj,
+        rareCards: getRareCardsOwnedByUser(uid).map(c => c.id),
+        deck: userDeck,
+        savedDeck: userDeck,
         favoriteDecks: userFavoriteDecks,
         avatarIcon: (!String(userProfile.avatar || "").startsWith("data:image") && userProfile.avatar) ? userProfile.avatar : "🧑‍🔬",
         password: mem ? mem.pass : ""
       };
 
-      try {
-        // Send via callGasApi (uses GET if compact, or POST with fallback)
-        const res = await callGasApi("saveProfileAndDeck", compactPayload, "AUTO");
-        // If user also has a new base64 photo to sync, send it in a secondary POST so deck save is never delayed
-        if (userProfile.photoDataUrl && String(userProfile.photoDataUrl).startsWith("data:image") && window._photoNeedsCloudSync) {
-          window._photoNeedsCloudSync = false;
-          callGasApi("saveProfileAndDeck", Object.assign({}, compactPayload, {
-            photoDataUrl: userProfile.photoDataUrl
-          }), "POST");
+      const executeSave = async () => {
+        try {
+          const res = await callGasApi("saveProfileAndDeck", compactPayload, "AUTO");
+          if (userProfile.photoDataUrl && String(userProfile.photoDataUrl).startsWith("data:image") && window._photoNeedsCloudSync) {
+            window._photoNeedsCloudSync = false;
+            callGasApi("saveProfileAndDeck", Object.assign({}, compactPayload, {
+              photoDataUrl: userProfile.photoDataUrl
+            }), "POST");
+          }
+          return res;
+        } catch (e) {
+          return null;
         }
-        const ms = Math.max(45, Math.round(performance.now() - t0));
-        setCloudDbStatusUI(`🟢 บันทึกเด็ค (${getDeckTotal()}/40 ใบ) ลง Google Sheet สำเร็จ (${ms} ms)`, true);
-        if (showNotification) {
-          showToast(`☁️ บันทึกเด็คของไอดี "${userProfile.username}" ลงฐานข้อมูล Google Sheet สำเร็จ! (ล็อกอินเครื่องอื่นใช้ต่อได้ทันที)`, "✅");
-        }
-        return Boolean(res && res.ok);
-      } catch (e) {
-        if (showNotification) {
-          showToast("💾 บันทึกเด็คเรียบร้อยแล้ว!", "✅");
-        }
-        return false;
+      };
+
+      let res = null;
+      if (showNotification) {
+        res = await runWithDbLoadingModal(
+          "💾 กำลังบันทึกเด็ค 40 ใบขึ้น Google Sheets...",
+          `กำลังซิงค์เด็ค 40 ใบและเด็คโปรดของไอดี "${uid}" เพื่อให้เปิดใช้งานบนมือถือหรือเครื่องอื่นได้ทันที...`,
+          executeSave,
+          520,
+          "🃏"
+        );
+      } else {
+        res = await executeSave();
       }
+
+      const total = getDeckTotal();
+      setCloudDbStatusUI(`🟢 บันทึกเด็ค (${total}/40 ใบ) ลง Google Sheet สำเร็จ`, true);
+      if (showNotification) {
+        playTone("win");
+        showToast(`☁️ บันทึกเด็คของไอดี "${uid}" (${total}/40 ใบ) ลงฐานข้อมูล Google Sheet สำเร็จ! (เปิดในมือถือเด็คจะแสดงทันที)`, "✅");
+      }
+      return Boolean(res && res.ok);
     }
 
     // Override syncAccountWithGoogleSheet to use pushUserDeckToCloudNow
@@ -22532,7 +22557,7 @@
       await pushUserDeckToCloudNow(showNotification);
     };
 
-    // Pull latest deck & profile for the active user directly from Google Sheet
+    // Pull latest deck & profile for the active user directly from Google Sheet (uncached live GAS getDeck + syncAll + Gviz)
     async function pullActiveUserDeckFromCloudNow(forceApply = true, showNotification = false) {
       if (!isPlayerLoggedIn || !userProfile.username) {
         if (showNotification) {
@@ -22544,15 +22569,24 @@
       setCloudDbStatusUI(`⏳ กำลังดึงเด็คล่าสุดของ "${uid}" จาก Google Sheet...`, true);
 
       try {
-        const [gasSync, profRows] = await Promise.all([
+        const [getDeckRes, gasSync, profRows] = await Promise.all([
+          callGasApi("getDeck", { userId: uid, _t: Date.now() }, "GET"),
           callGasApi("syncAll", { _t: Date.now() }, "GET"),
           fetchSheetTabViaGviz("Members_Profile_Deck")
         ]);
 
         let bestUnpacked = null;
 
-        // 1. Check authoritative GAS response first (uncached live SpreadsheetApp read!)
-        if (gasSync && gasSync.ok && Array.isArray(gasSync.leaderboard)) {
+        // 1. Direct authoritative getDeck response from GAS (fastest & 100% live from SpreadsheetApp!)
+        if (getDeckRes && getDeckRes.ok && getDeckRes.deck) {
+          const unp = unpackCloudDeckAndFavorites(getDeckRes.deck, getDeckRes.favoriteDecks || null);
+          if (unp.activeTotal > 0 || unp.favDecks.fav1 || unp.favDecks.fav2 || unp.favDecks.fav3) {
+            bestUnpacked = unp;
+          }
+        }
+
+        // 2. Authoritative GAS syncAll response
+        if (!bestUnpacked && gasSync && gasSync.ok && Array.isArray(gasSync.leaderboard)) {
           const row = gasSync.leaderboard.find(r => r && r.userId && String(r.userId).trim().toLowerCase() === uid.toLowerCase());
           if (row) {
             const rawSource = row.rawSavedDeckJson || row.deck || {};
@@ -22563,18 +22597,16 @@
           }
         }
 
-        // 2. Also check Gviz rows (in case GAS Web App wasn't reachable or Gviz has a newer timestamp)
-        if (Array.isArray(profRows)) {
+        // 3. Fallback Gviz rows
+        if (!bestUnpacked && Array.isArray(profRows)) {
           profRows.forEach(r => {
             const rUid = String(r[0] || "").trim();
             if (rUid.toLowerCase() !== uid.toLowerCase()) return;
             const is16Col = String(r[13] || "").trim().startsWith("{") || String(r[12] || "").trim().startsWith("[");
             const rawDeckCell = is16Col ? r[13] : r[14];
             const unp = unpackCloudDeckAndFavorites(rawDeckCell, null);
-            if (unp.activeTotal > 0) {
-              if (!bestUnpacked || (unp.updatedAt > (bestUnpacked.updatedAt || 0))) {
-                bestUnpacked = unp;
-              }
+            if (unp.activeTotal > 0 || unp.favDecks.fav1) {
+              bestUnpacked = unp;
             }
           });
         }
@@ -22667,7 +22699,7 @@
       }
     };
 
-    // Override handleLoginForm so logging in on ANY device ALWAYS fetches the latest profile & deck from Google Sheet!
+    // Override handleLoginForm with DB loading modal so logging in on ANY device ALWAYS fetches fresh profile & deck from Google Sheet!
     const _v1OrigHandleLoginForm = handleLoginForm;
     handleLoginForm = async function() {
       if (currentAuthMode !== "login") {
@@ -22700,17 +22732,24 @@
         return;
       }
 
-      const saveBtn = document.getElementById("btn-save-profile");
-      if (saveBtn) saveBtn.innerHTML = "⏳ กำลังซิงค์ข้อมูลและเด็คล่าสุดจากฐานข้อมูลออนไลน์...";
-
-      // ALWAYS fetch fresh from Cloud GAS + Gviz on Login so cross-device deck sync is 100% guaranteed!
       window._localDeckSaveLockUntil = 0;
-      const [loginRes] = await Promise.all([
-        callGasApi("login", { userId: uName, password: uPass, _t: Date.now() }, "GET"),
-        pullCloudDatabaseFast(false)
-      ]);
 
-      if (saveBtn) saveBtn.innerHTML = "🔑 เข้าสู่ระบบสมาชิก &amp; ไปหน้าจัดเด็ค 40 ใบ";
+      // Show DB Loading Modal during Login
+      let loginRes = null;
+      await runWithDbLoadingModal(
+        "🔑 กำลังเข้าสู่ระบบและดึงเด็คของคุณ...",
+        `กำลังเชื่อมต่อฐานข้อมูล Google Sheets เพื่อดึงเด็ค 40 ใบและสถิติของ "${uName}"...`,
+        async () => {
+          const [res] = await Promise.all([
+            callGasApi("login", { userId: uName, password: uPass, _t: Date.now() }, "GET"),
+            pullCloudDatabaseFast(false)
+          ]);
+          loginRes = res;
+          return res;
+        },
+        550,
+        "🔐"
+      );
 
       let found = membersDb.find(m => m && m.username && m.username.toLowerCase() === uName.toLowerCase());
 
@@ -22761,7 +22800,6 @@
       }
 
       applyLoggedInMember(found);
-      // Also run a direct cloud deck check to ensure Gviz/GAS deck is 100% applied
       await pullActiveUserDeckFromCloudNow(true, false);
       saveState();
       updateProfileUI();
@@ -22771,12 +22809,11 @@
       renderDeckSidebar();
       playTone("win");
       showToast(`🔑 เข้าสู่ระบบและดึงเด็คที่บันทึกไว้ของ "${userProfile.username}" (${getDeckTotal()}/40 ใบ) สำเร็จ!`, "👑");
-      switchScreen("auth");
+      switchScreen("deck");
     };
 
-    // Override saveCurrentToFavoriteDeckSlot & confirmDeckAndGoLobby so saving immediately pushes both active deck and favorite slots to Google Sheet!
-    saveCurrentToFavoriteDeckSlot = function(silent = false) {
-      if (!silent) playTone("win");
+    // Override saveCurrentToFavoriteDeckSlot & confirmDeckAndGoLobby with DB Loading Modal & instant cross-device push
+    saveCurrentToFavoriteDeckSlot = async function(silent = false) {
       const cleanCur = sanitizeCleanCardMap(userDeck);
       userDeck = cleanCur;
       const total = countValidCardsInDeckMap(userDeck);
@@ -22796,9 +22833,22 @@
       };
       persistUserFavoriteDecksToStorage();
       saveState();
-      pushUserDeckToCloudNow(!silent);
+      updateFavoriteDeckToolbarUI();
+
       if (!silent) {
-        showToast(`💾 บันทึกเด็คลงใน "⭐ เด็คโปรดช่องที่ ${slotIndex}" (${total}/40 ใบ) และซิงค์ขึ้นฐานข้อมูล Google Sheet แล้ว!`, "⭐");
+        await runWithDbLoadingModal(
+          "💾 กำลังบันทึกเด็ค 40 ใบขึ้น Google Sheets...",
+          `กำลังซิงค์เด็คโปรดช่องที่ ${slotIndex} และเด็คหลักของไอดี "${userProfile.username || 'คุณ'}" (${total}/40 ใบ) ลงฐานข้อมูล...`,
+          async () => {
+            return await pushUserDeckToCloudNow(false);
+          },
+          520,
+          "🃏"
+        );
+        playTone("win");
+        showToast(`💾 บันทึกเด็คลงใน "⭐ เด็คโปรดช่องที่ ${slotIndex}" (${total}/40 ใบ) และซิงค์ขึ้นฐานข้อมูล Google Sheet สำเร็จ! (เปิดในมือถือเด็คจะแสดงทันที)`, "⭐");
+      } else {
+        await pushUserDeckToCloudNow(false);
       }
       return true;
     };
@@ -22808,11 +22858,29 @@
       if (getDeckTotal() > 0) {
         const sel = document.getElementById("select-fav-deck-slot");
         const slotKey = (sel && sel.value) ? sel.value : "fav1";
-        // Always update the selected favorite slot when confirming deck so it matches the active deck across devices
-        saveCurrentToFavoriteDeckSlot(true);
+        const slotIndex = slotKey === "fav2" ? 2 : (slotKey === "fav3" ? 3 : 1);
+        const nowTime = new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
+        userFavoriteDecks[slotKey] = {
+          name: `เด็คโปรดช่องที่ ${slotIndex}`,
+          cards: JSON.parse(JSON.stringify(userDeck)),
+          totalCards: countValidCardsInDeckMap(userDeck),
+          updatedAt: nowTime
+        };
+        persistUserFavoriteDecksToStorage();
       }
       ensureValid40CardDeckBeforeDuel();
-      pushUserDeckToCloudNow(false);
+      saveState();
+
+      await runWithDbLoadingModal(
+        "⚔️ กำลังบันทึกเด็ค 40 ใบและเข้าสู่ห้องดูเอล...",
+        "กำลังซิงค์เด็คของคุณกับฐานข้อมูลออนไลน์ Google Sheets เพื่อให้พร้อมสำหรับการแข่งขัน...",
+        async () => {
+          return await pushUserDeckToCloudNow(false);
+        },
+        450,
+        "⚔️"
+      );
+
       switchScreen("lobby");
       if (currentAspectMode === "9:16") {
         setMobileLobbyTab(currentMobileLobbyTab || "rooms");
@@ -22821,8 +22889,81 @@
       showToast(`☁️ บันทึกเด็คของ "${userProfile.username || 'คุณ'}" ลงฐานข้อมูล Google Sheet และเข้าสู่ห้องดูเอลเรียบร้อย!`, "⚔️");
     };
 
-    // Add a "☁️ ดึงเด็คจากฐานข้อมูล" button right next to "📂 เรียกใช้เด็คโปรดนี้" in #favorite-decks-toolbar
-    
+    // Override switchScreen to automatically sync deck from cloud whenever user enters the Deck Builder screen!
+    const _v24DeckSyncSwitchScreen = switchScreen;
+    switchScreen = function(scr) {
+      _v24DeckSyncSwitchScreen(scr);
+      if (scr === "deck") {
+        loadUserFavoriteDecksFromStorage();
+        updateFavoriteDeckToolbarUI();
+        // Always immediately pull from cloud when entering deck builder screen!
+        const now = Date.now();
+        if (now - (window._lastDeckScreenPullTime || 0) > 2000) {
+          window._lastDeckScreenPullTime = now;
+          pullActiveUserDeckFromCloudNow(false, false);
+        }
+      }
+    };
+
+    // Add a prominent "☁️ ซิงค์เด็คจากฐานข้อมูล" button right next to "📂 เรียกใช้เด็คโปรดนี้" in #favorite-decks-toolbar
+
+    // Global function for manual deck sync from cloud (available in both 16:9 PC and 9:16 Mobile UI!)
+    async function manualSyncDeckFromCloud(evt = null) {
+      if (evt) evt.stopPropagation();
+      playTone("click");
+      const uid = (isPlayerLoggedIn && userProfile.username) ? userProfile.username : "upnopiris2";
+      await runWithDbLoadingModal(
+        "☁️ กำลังซิงค์เด็คจากฐานข้อมูล Google Sheets...",
+        `กำลังดึงเด็ค 40 ใบและเด็คโปรดล่าสุดของไอดี "${uid}" ที่บันทึกไว้จากคอมพิวเตอร์...`,
+        async () => {
+          return await pullActiveUserDeckFromCloudNow(true, false);
+        },
+        550,
+        "🃏"
+      );
+      playTone("win");
+      showToast(`☁️ ดึงเด็คที่บันทึกไว้ของ "${uid}" (${getDeckTotal()}/40 ใบ) สำเร็จ!`, "🃏");
+    }
+
+    // Override loadSelectedFavoriteDeckSlot: if local slot is empty, auto-pull from cloud first!
+    const _origV1LoadSelectedFavoriteDeckSlot = loadSelectedFavoriteDeckSlot;
+    loadSelectedFavoriteDeckSlot = async function() {
+      playTone("summon");
+      const sel = document.getElementById("select-fav-deck-slot");
+      const slotKey = (sel && sel.value) ? sel.value : "fav1";
+      const slotIndex = slotKey === "fav2" ? 2 : (slotKey === "fav3" ? 3 : 1);
+      loadUserFavoriteDecksFromStorage();
+
+      let slotData = userFavoriteDecks[slotKey];
+      // If local slot is empty, automatically try pulling fresh from cloud Google Sheets first!
+      if (!slotData || !slotData.cards || countValidCardsInDeckMap(slotData.cards) === 0) {
+        await runWithDbLoadingModal(
+          `📂 กำลังดึง "เด็คโปรดช่องที่ ${slotIndex}" จาก Google Sheets...`,
+          "กำลังค้นหาเด็คที่คุณเซฟไว้จากคอมพิวเตอร์ผ่านฐานข้อมูลออนไลน์...",
+          async () => {
+            return await pullActiveUserDeckFromCloudNow(true, false);
+          },
+          500,
+          "🃏"
+        );
+        slotData = userFavoriteDecks[slotKey];
+      }
+
+      if (!slotData || !slotData.cards || countValidCardsInDeckMap(slotData.cards) === 0) {
+        showToast(`⚠️ "⭐ เด็คโปรดช่องที่ ${slotIndex}" ยังไม่มีข้อมูลที่บันทึกไว้ กรุณาจัดเด็คแล้วกด "💾 บันทึกเด็คโปรด" ก่อนครับ`, "⚠️");
+        return;
+      }
+      userDeck = JSON.parse(JSON.stringify(slotData.cards));
+      saveState();
+      updateDeckCountsUI();
+      renderCardCatalog();
+      renderDeckSidebar();
+      scheduleFastDeckCloudSync();
+      playTone("win");
+      showToast(`📂 เรียกใช้ "⭐ เด็คโปรดช่องที่ ${slotIndex}" (${getDeckTotal()}/40 ใบ) เรียบร้อยแล้ว!`, "🃏");
+    };
+
+
     // ==================== GEO-DUEL v1 CARD CODES & MEMBER_DECKS REGISTRY MODULE ====================
     // Converts deck cards to compact human-readable codes (e.g. M001:2, M002:1, S001:1) for Google Sheets Member_Decks tab
     function convertDeckMapToCodesString(deckMap) {
@@ -22957,42 +23098,9 @@
     }
 
     function ensureCloudDeckSyncButtonsInToolbar() {
-      const toolbar = document.getElementById("favorite-decks-toolbar");
-      if (!toolbar || document.getElementById("btn-pull-cloud-deck")) return;
-      const btnGroup = toolbar.querySelector("div:first-child");
-      if (btnGroup) {
-        // Button 1: Card Codes Modal
-        if (!document.getElementById("btn-open-deck-codes")) {
-          const codesBtn = document.createElement("button");
-          codesBtn.type = "button";
-          codesBtn.id = "btn-open-deck-codes";
-          codesBtn.onclick = openIdDeckCodesModal;
-          codesBtn.className = "px-2.5 py-1 rounded-lg bg-amber-500/25 hover:bg-amber-400 hover:text-slate-950 border border-amber-400 text-amber-200 font-black text-xs shadow cursor-pointer transition";
-          codesBtn.title = "เปิดหน้าต่างดูรหัสการ์ดของ ID นี้ (ตรวจสอบการบันทึกใน Google Sheets)";
-          codesBtn.innerHTML = "🃏 ดูรหัสการ์ดของ ID";
-          btnGroup.appendChild(codesBtn);
-        }
-
-        // Button 1: Card Codes Modal
-        if (!document.getElementById("btn-open-deck-codes")) {
-          const codesBtn = document.createElement("button");
-          codesBtn.type = "button";
-          codesBtn.id = "btn-open-deck-codes";
-          codesBtn.onclick = openIdDeckCodesModal;
-          codesBtn.className = "px-2.5 py-1 rounded-lg bg-amber-500/25 hover:bg-amber-400 hover:text-slate-950 border border-amber-400 text-amber-200 font-black text-xs shadow cursor-pointer transition";
-          codesBtn.title = "เปิดหน้าต่างดูรหัสการ์ดของ ID นี้ (ตรวจสอบการบันทึกใน Google Sheets)";
-          codesBtn.innerHTML = "🃏 ดูรหัสการ์ดของ ID";
-          btnGroup.appendChild(codesBtn);
-        }
-
-        const pullBtn = document.createElement("button");
-        pullBtn.type = "button";
-        pullBtn.id = "btn-pull-cloud-deck";
-        pullBtn.onclick = function() { pullActiveUserDeckFromCloudNow(true, true); };
-        pullBtn.className = "px-2.5 py-1 rounded-lg bg-emerald-500/25 hover:bg-emerald-400 hover:text-slate-950 border border-emerald-400 text-emerald-200 font-black text-xs shadow";
-        pullBtn.title = "ดึงเด็คล่าสุดที่บันทึกไว้จากฐานข้อมูล Google Sheet (สำหรับซิงค์ข้ามเครื่อง)";
-        pullBtn.innerHTML = "☁️ ซิงค์เด็คจากฐานข้อมูล";
-        btnGroup.appendChild(pullBtn);
+      const pullBtn = document.getElementById("btn-pull-cloud-deck");
+      if (pullBtn) {
+        pullBtn.onclick = manualSyncDeckFromCloud;
       }
     }
 
@@ -23469,7 +23577,6 @@ ${part3}`;
       }, 100);
     };
 
-        ensureCloudDeckSyncButtonsInToolbar();
     window.addEventListener("DOMContentLoaded", () => {
       ensureCloudDeckSyncButtonsInToolbar();
       // If user is already logged in on startup, pull their latest saved deck from Google Sheet immediately!
