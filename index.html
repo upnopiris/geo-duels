@@ -8,14 +8,6 @@
 -->
 <html lang="th" class="dark">
 <head>
-<!-- 1. ไอคอนสำหรับคอมพิวเตอร์ -->
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-<!-- 2. ไอคอนสำหรับ iPhone / iPad -->
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<!-- 3. ไฟล์ไอคอนสำหรับมือถือ Android -->
-<link rel="manifest" href="site.webmanifest">
   <meta charset="UTF-8" />
   <meta name="referrer" content="no-referrer" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -995,8 +987,8 @@
     </div>
   </div>
 
-  <!-- LIVE VOICE READER SUBTITLE BAR (CLEAR THAI TTS FOR KIDS WITH CONTROLS) -->
-  <div id="tts-reading-bar" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-[96] hidden max-w-3xl w-[94vw] royal-frame px-4 py-3 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-[0_0_40px_rgba(0,240,255,0.5)]">
+  <!-- LIVE VOICE READER SUBTITLE BAR (CLEAR THAI TTS FOR KIDS WITH CONTROLS - TOP POSITIONED) -->
+  <div id="tts-reading-bar" class="fixed top-2 left-1/2 -translate-x-1/2 z-[2147483620] hidden max-w-3xl w-[94vw] royal-frame px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-2 shadow-[0_0_40px_rgba(0,240,255,0.5)]">
     <div class="flex items-center gap-3 min-w-0 w-full sm:w-auto flex-1">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-300 to-amber-600 text-slate-950 flex items-center justify-center text-2xl animate-bounce flex-shrink-0 shadow">🗣️</div>
       <div class="min-w-0 flex-1">
@@ -6744,9 +6736,7 @@
         const starPill = (zType === 'm' && card.stars)
           ? `<span class="absolute bottom-0.5 left-0.5 z-20 px-1 rounded bg-slate-950/90 border border-amber-400/70 text-amber-300 font-mono font-black text-[7px] sm:text-[8px] leading-none pointer-events-none">⭐${card.stars}</span>`
           : '';
-        const dragHintPill = isAttackSource
-          ? `<span class="absolute inset-x-0.5 top-1/2 -translate-y-1/2 z-30 text-center py-0.5 px-1 rounded bg-red-600/95 border border-yellow-200 text-white font-black text-[8px] sm:text-[9px] shadow-xl pointer-events-none animate-bounce">👉 ลากไปชนศัตรู!</span>`
-          : '';
+        const dragHintPill = '';
         const dragAttr = canDragAttack ? `onpointerdown="startMonsterCardDrag(event, ${side}, ${idx})"` : '';
 
         return `
@@ -20400,6 +20390,636 @@
 
     ensureDuelExitConfirmModalExists();
     window.addEventListener("DOMContentLoaded", ensureDuelExitConfirmModalExists);
+
+    // ==================== GEO-DUEL v1 MOBILE 3-POINT FIX MODULE ====================
+    // Fix 1: Card Draw overlay (#btn-draw-phase-card) & flying draw animation (#combat-fx-layer)
+    //        moved outside the playmat board clipping container to the top-most layer (z-index: 2147483600+)
+    //        so the full Draw Card popup and drawn card are 100% visible in mobile mode.
+    // Fix 2: Voice Reading bar (#tts-reading-bar) positioned at the TOP of the screen so it NEVER covers
+    //        the player's hand cards at the bottom, and automatically closes immediately when reading finishes
+    //        (also auto-closing #mobile-card-info-tab-popup when reading completes).
+    // Fix 3: Pre-attack recommendation/guidance toasts & overlays removed so nothing covers the target cards
+    //        when selecting or tapping a card to attack.
+
+    function injectV1MobileThreeFixesStyles() {
+      if (document.getElementById("v1-mobile-three-fixes-styles")) return;
+      const st = document.createElement("style");
+      st.id = "v1-mobile-three-fixes-styles";
+      st.textContent = `
+        /* ============================================================================
+           FIX 1: CARD DRAW OVERLAY & FLYING CARD ON TOP-MOST LAYER (OUTSIDE BOARD FRAME)
+           ============================================================================ */
+        #btn-draw-phase-card {
+          position: fixed !important;
+          inset: 0 !important;
+          width: 100vw !important;
+          height: 100dvh !important;
+          max-width: 100vw !important;
+          max-height: 100dvh !important;
+          z-index: 2147483600 !important;
+          margin: 0 !important;
+          padding: 12px !important;
+          box-sizing: border-box !important;
+        }
+        #btn-draw-phase-card.hidden {
+          display: none !important;
+        }
+        body.ui-mode-mobile-916 #btn-draw-phase-card > div.royal-frame {
+          width: min(92vw, 356px) !important;
+          max-width: 356px !important;
+          max-height: 88dvh !important;
+          padding: 16px 14px !important;
+          margin: auto !important;
+          border-radius: 22px !important;
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 10px !important;
+          box-sizing: border-box !important;
+        }
+        body.ui-mode-mobile-916 #btn-draw-phase-card > div.royal-frame > * {
+          margin-top: 0 !important;
+          margin-bottom: 0 !important;
+        }
+        body.ui-mode-mobile-916 #btn-draw-phase-card h3 {
+          font-size: 22px !important;
+          line-height: 1.2 !important;
+        }
+        body.ui-mode-mobile-916 #btn-draw-phase-card .deck-stack-3d {
+          width: 108px !important;
+          height: 150px !important;
+        }
+        body.ui-mode-mobile-916 #btn-draw-phase-card p {
+          font-size: 12.5px !important;
+          line-height: 1.35 !important;
+        }
+        body.ui-mode-mobile-916 #btn-draw-phase-card button {
+          padding: 11px 14px !important;
+          font-size: 16px !important;
+          border-radius: 14px !important;
+        }
+
+        /* Also elevate #slot-choice-popup & #combat-fx-layer (flying drawn card) to top-most layer */
+        #slot-choice-popup {
+          position: fixed !important;
+          inset: 0 !important;
+          width: 100vw !important;
+          height: 100dvh !important;
+          z-index: 2147483590 !important;
+        }
+        #slot-choice-popup.hidden {
+          display: none !important;
+        }
+        #combat-fx-layer {
+          position: fixed !important;
+          inset: 0 !important;
+          width: 100vw !important;
+          height: 100dvh !important;
+          z-index: 2147483610 !important;
+          pointer-events: none !important;
+          overflow: visible !important;
+        }
+
+        /* ============================================================================
+           FIX 2: VOICE READING BAR AT TOP OF SCREEN (NEVER COVERS HAND CARDS AT BOTTOM)
+           ============================================================================ */
+        #tts-reading-bar,
+        body.ui-mode-mobile-916 #tts-reading-bar {
+          position: fixed !important;
+          top: 6px !important;
+          bottom: auto !important;
+          left: 50% !important;
+          right: auto !important;
+          transform: translateX(-50%) !important;
+          z-index: 2147483620 !important;
+        }
+        #tts-reading-bar.hidden,
+        body.ui-mode-mobile-916 #tts-reading-bar.hidden {
+          display: none !important;
+        }
+        body.ui-mode-mobile-916 #tts-reading-bar {
+          width: min(94vw, 392px) !important;
+          max-width: 392px !important;
+          padding: 6px 10px !important;
+          border-radius: 14px !important;
+          gap: 5px !important;
+          background: rgba(8, 5, 20, 0.96) !important;
+          border: 1.5px solid rgba(34, 211, 238, 0.85) !important;
+          box-shadow: 0 6px 24px rgba(0, 0, 0, 0.9) !important;
+        }
+        body.ui-mode-mobile-916 #tts-reading-bar > div:first-child {
+          gap: 6px !important;
+        }
+        body.ui-mode-mobile-916 #tts-reading-bar > div:first-child > div:first-child {
+          width: 26px !important;
+          height: 26px !important;
+          font-size: 14px !important;
+          border-radius: 8px !important;
+        }
+        body.ui-mode-mobile-916 #tts-reading-text {
+          font-size: 11.5px !important;
+          line-height: 1.25 !important;
+          max-height: 2.6em !important;
+          overflow: hidden !important;
+          display: -webkit-box !important;
+          -webkit-line-clamp: 2 !important;
+          -webkit-box-orient: vertical !important;
+        }
+        body.ui-mode-mobile-916 #tts-reading-bar > div:last-child {
+          width: 100% !important;
+          justify-content: flex-end !important;
+          gap: 4px !important;
+        }
+        body.ui-mode-mobile-916 #tts-reading-bar > div:last-child button {
+          padding: 2px 7px !important;
+          font-size: 10px !important;
+          border-radius: 7px !important;
+        }
+        /* Hide the redundant locked engine button on mobile to keep the top voice bar ultra-compact */
+        body.ui-mode-mobile-916 #btn-tts-engine {
+          display: none !important;
+        }
+
+        /* Position #mobile-card-info-tab-popup near the TOP so it also avoids covering hand cards at the bottom */
+        body.ui-mode-mobile-916 #mobile-card-info-tab-popup:not(.hidden) {
+          align-items: flex-start !important;
+          padding-top: 8px !important;
+          padding-bottom: 8px !important;
+        }
+        body.ui-mode-mobile-916 #mobile-card-info-tab-frame {
+          max-height: calc(var(--dyn-vh, 100dvh) - var(--dyn-hand-card-h, 105px) - 22px) !important;
+        }
+
+        /* ============================================================================
+           FIX 3: NEVER LET TOASTS OR HINTS BLOCK TAPS ON BOARD CARDS
+           ============================================================================ */
+        #toast-box {
+          pointer-events: none !important;
+        }
+      `;
+      document.head.appendChild(st);
+    }
+
+    function elevateDrawOverlayAndPopupsToBody() {
+      injectV1MobileThreeFixesStyles();
+      const drawOverlay = document.getElementById("btn-draw-phase-card");
+      if (drawOverlay && drawOverlay.parentElement !== document.body) {
+        document.body.appendChild(drawOverlay);
+      }
+      const slotPopup = document.getElementById("slot-choice-popup");
+      if (slotPopup && slotPopup.parentElement !== document.body) {
+        document.body.appendChild(slotPopup);
+      }
+      const fxLayer = document.getElementById("combat-fx-layer");
+      if (fxLayer && fxLayer.parentElement !== document.body) {
+        document.body.appendChild(fxLayer);
+      }
+      const ttsBar = document.getElementById("tts-reading-bar");
+      if (ttsBar && ttsBar.parentElement !== document.body) {
+        document.body.appendChild(ttsBar);
+      }
+    }
+
+    function syncDrawOverlayTopLayerVisibility() {
+      const drawOverlay = document.getElementById("btn-draw-phase-card");
+      if (!drawOverlay) return;
+      const duelArena = document.getElementById("duel-arena");
+      const isArenaVisible = Boolean(duelArena && !duelArena.classList.contains("hidden"));
+      const mySide = (duelState && duelState.mode === "hotseat") ? duelState.activePlayer : 0;
+      const shouldShow = Boolean(
+        isArenaVisible &&
+        duelState &&
+        duelState.active &&
+        !isSpectatorMode &&
+        duelState.activePlayer === mySide &&
+        duelState.phase === "draw"
+      );
+      drawOverlay.classList.toggle("hidden", !shouldShow);
+      if (!isArenaVisible || !duelState || !duelState.active) {
+        document.getElementById("slot-choice-popup")?.classList.add("hidden");
+      }
+    }
+
+    // Ensure flying drawn card in animateCardDrawFromDeck is always on the top-most layer and never clipped at screen edges
+    const _v1OrigAnimateCardDrawFromDeck = animateCardDrawFromDeck;
+    animateCardDrawFromDeck = function(side, drawnCard, onComplete) {
+      elevateDrawOverlayAndPopupsToBody();
+      if (side === 0 && currentAspectMode === "9:16") {
+        closeMobileCardInfoTab();
+      }
+      const layer = document.getElementById("combat-fx-layer");
+      const deckEl = document.getElementById(side === 0 ? "board-player-deck" : "board-opp-deck");
+      const handEl = document.getElementById(side === 0 ? "player-hand-dock" : "opp-top-hand-bar");
+
+      if (!layer || !deckEl || !handEl || !drawnCard) {
+        if (onComplete) onComplete();
+        return;
+      }
+
+      playTone("deal");
+      const vw = window.innerWidth || document.documentElement.clientWidth || 360;
+      const vh = window.innerHeight || document.documentElement.clientHeight || 640;
+      const r1 = deckEl.getBoundingClientRect();
+      const r2 = handEl.getBoundingClientRect();
+      const padX = 64;
+      const padY = 86;
+      const x1 = Math.max(padX, Math.min(vw - padX, r1.left + r1.width / 2));
+      const y1 = Math.max(padY, Math.min(vh - padY, r1.top + r1.height / 2));
+      const x2 = Math.max(padX, Math.min(vw - padX, r2.left + r2.width / 2));
+      const y2 = Math.max(padY, Math.min(vh - padY, r2.top + r2.height / 2));
+
+      const flyCard = document.createElement("div");
+      flyCard.style.position = "fixed";
+      flyCard.style.left = `${x1}px`;
+      flyCard.style.top = `${y1}px`;
+      flyCard.style.transform = "translate(-50%, -50%) scale(0.75) rotate(-8deg)";
+      flyCard.style.transition = "left 0.58s cubic-bezier(0.22, 1, 0.36, 1), top 0.58s cubic-bezier(0.22, 1, 0.36, 1), transform 0.58s cubic-bezier(0.22, 1, 0.36, 1)";
+      flyCard.style.zIndex = "2147483615";
+      flyCard.style.pointerEvents = "none";
+
+      if (side === 0) {
+        const hdUrl = getDriveFullCardUrl(drawnCard, "w400");
+        const theme = getCardThemeClass(drawnCard);
+        flyCard.innerHTML = `
+          <div class="w-28 h-40 rounded-xl p-1.5 ${theme} border-2 border-yellow-200 shadow-[0_0_40px_rgba(0,240,255,0.95)] flex flex-col justify-between relative overflow-hidden">
+            ${hdUrl ? `<img src="${hdUrl}" class="absolute inset-0 w-full h-full object-fill bg-[#090616] z-10 pointer-events-none" onerror="this.style.display=\x27none\x27" />` : ""}
+            <div class="relative z-20 bg-slate-950/90 px-1.5 py-0.5 rounded text-[10px] font-black text-amber-300 truncate text-center border border-amber-400">🃏 จั่วได้: ${drawnCard.name}</div>
+          </div>
+        `;
+      } else {
+        const backStyle = document.getElementById("board-opp-deck-visual")?.getAttribute("style") || "";
+        flyCard.innerHTML = `
+          <div class="w-24 h-36 rounded-xl border-2 border-amber-300 bg-cover bg-center shadow-[0_0_30px_rgba(245,158,11,0.9)] flex items-end justify-center p-1" style='${backStyle}'>
+            <span class="px-1.5 py-0.5 rounded bg-slate-950/95 text-[9px] font-black text-amber-300">🃏 จั่วการ์ด 1 ใบ</span>
+          </div>
+        `;
+      }
+
+      layer.appendChild(flyCard);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          flyCard.style.left = `${x2}px`;
+          flyCard.style.top = `${y2}px`;
+          flyCard.style.transform = "translate(-50%, -50%) scale(1.05) rotate(0deg)";
+        });
+      });
+
+      registerDuelTimeout(() => {
+        flyCard.remove();
+        if (onComplete) onComplete();
+      }, 610);
+    };
+
+    // ============================================================================
+    // FIX 2: VOICE READING AUTO-CLOSES IMMEDIATELY WHEN FINISHED & STAYS AT TOP
+    // ============================================================================
+    let ttsChunkWatchdogTimer = null;
+
+    const _v1OrigStopSpeaking = stopSpeaking;
+    stopSpeaking = function() {
+      if (ttsChunkWatchdogTimer) {
+        clearTimeout(ttsChunkWatchdogTimer);
+        ttsChunkWatchdogTimer = null;
+      }
+      _v1OrigStopSpeaking();
+      const bar = document.getElementById("tts-reading-bar");
+      if (bar) bar.classList.add("hidden");
+    };
+
+    speakThaiText = function(text, evt = null) {
+      if (evt) evt.stopPropagation();
+      const raw = String(text || "").trim();
+      if (!raw) return;
+      lastSpokenRawText = raw;
+      stopSpeaking();
+      elevateDrawOverlayAndPopupsToBody();
+
+      const mySession = ++activeTtsSessionId;
+      const normalized = normalizeThaiForSpeech(raw);
+      if (!normalized) return;
+
+      const chunks = splitThaiIntoChunks(normalized, 130);
+      const bar = document.getElementById("tts-reading-bar");
+      const txtEl = document.getElementById("tts-reading-text");
+      const progEl = document.getElementById("tts-chunk-progress");
+
+      try {
+        if (bgmAudio && !bgmAudio.paused) {
+          savedBgmVolBeforeTts = bgmAudio.volume;
+          bgmAudio.volume = Math.min(bgmAudio.volume, 0.08);
+        }
+      } catch (e) {}
+
+      if (bar) bar.classList.remove("hidden");
+
+      function clearChunkWatchdog() {
+        if (ttsChunkWatchdogTimer) {
+          clearTimeout(ttsChunkWatchdogTimer);
+          ttsChunkWatchdogTimer = null;
+        }
+      }
+
+      function updateSubtitleUI(idx) {
+        if (txtEl) txtEl.textContent = chunks[idx] || normalized;
+        if (progEl) progEl.textContent = `${idx + 1}/${chunks.length}`;
+      }
+
+      function finishSessionImmediate() {
+        if (mySession !== activeTtsSessionId) return;
+        clearChunkWatchdog();
+        if (ttsKeepAliveTimer) {
+          clearInterval(ttsKeepAliveTimer);
+          ttsKeepAliveTimer = null;
+        }
+        restoreBgmAfterSpeech();
+        if (bar) bar.classList.add("hidden");
+        // Also close the mobile card info tab when reading finishes in mobile mode
+        if (currentAspectMode === "9:16") {
+          closeMobileCardInfoTab();
+        }
+      }
+
+      function applyFastPlaybackRate(audio) {
+        try {
+          audio.preservesPitch = true;
+          audio.mozPreservesPitch = true;
+          audio.webkitPreservesPitch = true;
+          audio.defaultPlaybackRate = ttsSpeechRate || 1.2;
+          audio.playbackRate = ttsSpeechRate || 1.2;
+        } catch (e) {}
+      }
+
+      function armChunkWatchdog(chunkStr, onTimeoutAdvance) {
+        clearChunkWatchdog();
+        const estMs = Math.max(3800, Math.min(13000, Math.ceil((chunkStr || "").length * 105) + 1800));
+        ttsChunkWatchdogTimer = setTimeout(() => {
+          if (mySession !== activeTtsSessionId) return;
+          onTimeoutAdvance();
+        }, estMs);
+      }
+
+      function playChunkViaCloudAudio(idx) {
+        if (mySession !== activeTtsSessionId) return;
+        if (idx >= chunks.length) {
+          finishSessionImmediate();
+          return;
+        }
+        updateSubtitleUI(idx);
+        let chunkDone = false;
+        const advanceNext = () => {
+          if (chunkDone || mySession !== activeTtsSessionId) return;
+          chunkDone = true;
+          clearChunkWatchdog();
+          playChunkViaCloudAudio(idx + 1);
+        };
+
+        armChunkWatchdog(chunks[idx], advanceNext);
+
+        try {
+          const primaryUrl = "https://translate.googleapis.com/translate_tts?ie=UTF-8&tl=th&client=gtx&q=" + encodeURIComponent(chunks[idx]);
+          const backupUrl = "https://translate.google.com/translate_tts?ie=UTF-8&tl=th&client=tw-ob&q=" + encodeURIComponent(chunks[idx]);
+          const audio = new Audio(primaryUrl);
+          audio.referrerPolicy = "no-referrer";
+          currentTtsAudio = audio;
+          applyFastPlaybackRate(audio);
+          audio.onloadedmetadata = () => {
+            applyFastPlaybackRate(audio);
+            if (audio.duration && isFinite(audio.duration) && audio.duration > 0) {
+              const durMs = Math.ceil((audio.duration / (ttsSpeechRate || 1.2)) * 1000) + 900;
+              clearChunkWatchdog();
+              ttsChunkWatchdogTimer = setTimeout(advanceNext, Math.max(1500, Math.min(15000, durMs)));
+            }
+          };
+          audio.onplay = () => applyFastPlaybackRate(audio);
+          audio.onplaying = () => applyFastPlaybackRate(audio);
+          audio.onended = advanceNext;
+
+          let triedBackup = false;
+          const tryBackupOrNative = () => {
+            if (chunkDone || mySession !== activeTtsSessionId) return;
+            if (!triedBackup) {
+              triedBackup = true;
+              try {
+                audio.src = backupUrl;
+                applyFastPlaybackRate(audio);
+                const p2 = audio.play();
+                if (p2 && p2.catch) p2.catch(() => {
+                  if (!chunkDone) {
+                    chunkDone = true;
+                    clearChunkWatchdog();
+                    playChunkViaNativeSpeech(idx, true);
+                  }
+                });
+                return;
+              } catch (e2) {}
+            }
+            chunkDone = true;
+            clearChunkWatchdog();
+            playChunkViaNativeSpeech(idx, true);
+          };
+          audio.onerror = tryBackupOrNative;
+          const playPromise = audio.play();
+          if (playPromise && playPromise.catch) {
+            playPromise.catch(tryBackupOrNative);
+          }
+        } catch (e) {
+          chunkDone = true;
+          clearChunkWatchdog();
+          playChunkViaNativeSpeech(idx, true);
+        }
+      }
+
+      function playChunkViaNativeSpeech(idx, isFallbackFromCloud = false) {
+        if (mySession !== activeTtsSessionId) return;
+        if (idx >= chunks.length) {
+          finishSessionImmediate();
+          return;
+        }
+        updateSubtitleUI(idx);
+        let chunkDone = false;
+        const advanceNextNative = () => {
+          if (chunkDone || mySession !== activeTtsSessionId) return;
+          chunkDone = true;
+          clearChunkWatchdog();
+          playChunkViaNativeSpeech(idx + 1, isFallbackFromCloud);
+        };
+
+        armChunkWatchdog(chunks[idx], advanceNextNative);
+
+        try {
+          if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(chunks[idx]);
+            utter.lang = "th-TH";
+            utter.rate = Math.min(1.6, ttsSpeechRate || 1.2);
+            utter.pitch = 1.02;
+            const v = findBestThaiVoice();
+            if (v) utter.voice = v;
+
+            utter.onend = advanceNextNative;
+            utter.onerror = () => {
+              if (chunkDone || mySession !== activeTtsSessionId) return;
+              chunkDone = true;
+              clearChunkWatchdog();
+              if (!isFallbackFromCloud) {
+                playChunkViaCloudAudio(idx);
+              } else {
+                setTimeout(() => playChunkViaNativeSpeech(idx + 1, true), 1200);
+              }
+            };
+            window.speechSynthesis.speak(utter);
+            return;
+          }
+        } catch (e) {}
+        setTimeout(() => {
+          if (mySession === activeTtsSessionId) finishSessionImmediate();
+        }, 2500);
+      }
+
+      playChunkViaCloudAudio(0);
+    };
+
+    // ============================================================================
+    // FIX 3: REMOVE PRE-ATTACK RECOMMENDATION / GUIDANCE SO TARGET CARDS ARE NEVER COVERED
+    // ============================================================================
+    function hideToastBoxImmediately() {
+      if (typeof toastTimer !== "undefined" && toastTimer) {
+        clearTimeout(toastTimer);
+        toastTimer = null;
+      }
+      const box = document.getElementById("toast-box");
+      if (box) box.classList.add("hidden");
+    }
+
+    // Filter out pre-attack recommendation toasts in showToast so they never pop up over enemy cards
+    const _v1OrigShowToast = showToast;
+    showToast = function(msg, icon = "⚡") {
+      const s = String(msg || "");
+      if (
+        s.includes("ลากการ์ด") ||
+        s.includes("คลิกที่การ์ดคู่ต่อสู้") ||
+        s.includes("คลิกมอนสเตอร์ของคุณเพื่อสั่งโจมตี") ||
+        s.includes("ยังเหลือการโจมตีครั้งที่ 2") ||
+        s.includes("โจมตีครั้งที่ 1 สำเร็จ! กดปุ่ม")
+      ) {
+        hideToastBoxImmediately();
+        return;
+      }
+      _v1OrigShowToast(msg, icon);
+    };
+
+    // Override enterBattlePhase so it enters Battle Phase cleanly without popping up a toast over the board
+    enterBattlePhase = function() {
+      if (isSpectatorMode || !duelState || !duelState.active) return;
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      if (duelState.activePlayer !== mySide) return;
+      if (duelState.phase === "draw") {
+        playerClickDrawPhase();
+        return;
+      }
+      if (duelState.turnCount === 1) {
+        const pl = duelState.players[mySide];
+        const hasStalactite = pl && pl.monsters.some(m => m && !m.faceDown && m.position === "atk" && m.id === "M036");
+        if (!hasStalactite) {
+          _v1OrigShowToast("กติกาข้อ 4.3: ผู้เล่นลำดับที่ 1 ห้ามทำการโจมตีในเทิร์นแรก!", "🚫");
+          return;
+        }
+      }
+      if (duelState.iceAgeTurnsLeft > 0) {
+        _v1OrigShowToast(`อยู่ในช่วงยุคน้ำแข็งอีก ${duelState.iceAgeTurnsLeft} เทิร์น มอนสเตอร์ถูกแช่แข็งห้ามโจมตี!`, "❄️");
+        return;
+      }
+      hideToastBoxImmediately();
+      closeMobileCardInfoTab();
+      duelState.phase = "battle";
+      renderDuelArena();
+    };
+
+    // Override prepareMonsterAttack so it NEVER shows a recommendation banner/toast covering enemy cards
+    prepareMonsterAttack = function(slotIdx) {
+      if (isSpectatorMode || !duelState || !duelState.active) return;
+      const mySide = duelState.activePlayer;
+      const pl = duelState.players[mySide];
+      const opp = duelState.players[1 - mySide];
+      const attacker = pl.monsters[slotIdx];
+      if (!canMonsterDeclareAttackV15(mySide, attacker, true)) return;
+
+      hideToastBoxImmediately();
+      closeMobileCardInfoTab();
+
+      if (duelState.phase !== "battle") {
+        duelState.phase = "battle";
+      }
+      duelState.pendingAttackFromMonsterIdx = slotIdx;
+      const oppMonstersWithIdx = opp.monsters.map((m, idx) => ({ m, idx })).filter(x => x.m !== null);
+      if (oppMonstersWithIdx.length === 0 || attacker.id === "M006" || attacker.id === "SP07") {
+        if (oppMonstersWithIdx.length === 0) {
+          performDirectAttack();
+          return;
+        }
+      }
+      renderDuelArena();
+    };
+
+    // Also ensure renderDuelArena keeps #btn-draw-phase-card synced at top layer AND hides floating board badges while targeting an attack
+    const _v1OrigRenderDuelArena = renderDuelArena;
+    renderDuelArena = function() {
+      elevateDrawOverlayAndPopupsToBody();
+      _v1OrigRenderDuelArena();
+      syncDrawOverlayTopLayerVisibility();
+
+      // If player is currently choosing an attack target, remove any floating .mob-board-read-btn on the board so nothing covers the cards
+      if (duelState && duelState.pendingAttackFromMonsterIdx !== null) {
+        hideToastBoxImmediately();
+        document.querySelectorAll(".mob-board-read-btn").forEach(el => el.remove());
+      }
+    };
+
+    // In Mobile Mode, if player is in Battle Phase and taps an opponent's monster directly (even before clicking "สั่งโจมตี"),
+    // if the player has a selected or single ready attacker, attack immediately instead of popping up the info tab!
+    const _v1OrigHandleZoneClick = handleZoneClick;
+    handleZoneClick = function(side, zType, idx) {
+      if (!isSpectatorMode && duelState && duelState.active) {
+        const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+        if (
+          duelState.activePlayer === mySide &&
+          side !== mySide &&
+          zType === "m" &&
+          duelState.players[side]?.monsters?.[idx]
+        ) {
+          if (duelState.pendingAttackFromMonsterIdx !== null) {
+            hideToastBoxImmediately();
+            tryAttackEnemySlot(mySide, duelState.pendingAttackFromMonsterIdx, side, idx);
+            return;
+          }
+          // If in battle phase and user selected one of their own attacking monsters previously, let tapping enemy monster attack directly!
+          if (
+            duelState.phase === "battle" &&
+            duelState.selectedRef &&
+            duelState.selectedRef.side === mySide &&
+            duelState.selectedRef.zoneType === "m"
+          ) {
+            const candIdx = duelState.selectedRef.index;
+            const candM = duelState.players[mySide]?.monsters?.[candIdx];
+            if (candM && canMonsterDeclareAttackV15(mySide, candM, false)) {
+              hideToastBoxImmediately();
+              duelState.pendingAttackFromMonsterIdx = candIdx;
+              tryAttackEnemySlot(mySide, candIdx, side, idx);
+              return;
+            }
+          }
+        }
+      }
+      _v1OrigHandleZoneClick(side, zType, idx);
+    };
+
+    elevateDrawOverlayAndPopupsToBody();
+    window.addEventListener("DOMContentLoaded", () => {
+      elevateDrawOverlayAndPopupsToBody();
+      syncDrawOverlayTopLayerVisibility();
+    });
+    setInterval(syncDrawOverlayTopLayerVisibility, 300);
 
   </script>
 </body>
