@@ -993,7 +993,7 @@
       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-300 to-amber-600 text-slate-950 flex items-center justify-center text-2xl animate-bounce flex-shrink-0 shadow">🗣️</div>
       <div class="min-w-0 flex-1">
         <div class="flex items-center gap-2">
-          <span class="text-[11px] font-black text-cyan-300 uppercase tracking-wider">กำลังอ่านออกเสียงภาษาไทยชัดพิเศษ</span>
+          <span id="tts-provider-badge" class="text-[11px] font-black text-cyan-300 uppercase tracking-wider">🎙️ เสียงพากย์เกม AI (Speech API / Cloud แท้)</span>
           <span id="tts-chunk-progress" class="px-2 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-400/50 text-[10px] font-mono font-bold text-amber-200">1/1</span>
         </div>
         <div id="tts-reading-text" class="text-sm sm:text-base font-extrabold text-amber-100 leading-snug break-words">...</div>
@@ -6218,8 +6218,8 @@
 
       playTone('summon');
       const actorName = duelState.players[actorSide]?.name || 'ผู้เล่น';
-      if (actorSide === 1 || autoSpeakOnSelect) {
-        speakThaiText(`${actorSide === 0 ? 'คุณ' : actorName} เปิดใช้งาน ${card.name}. ${card.effect || extraNote || ''}`);
+      if (autoSpeakOnSelect && actorSide === 0) {
+        speakThaiText(`เปิดใช้งาน ${card.name} ครับ`);
       }
       badgeEl.textContent = `${actorSide === 0 ? '✨ คุณ' : '⚠️ ' + actorName} • ${badgeText}`;
       titleEl.textContent = card.name;
@@ -7391,9 +7391,8 @@
           const freeSlot = pl.monsters.findIndex(x => x === null);
           if (hIdx !== -1 && freeSlot !== -1) {
             const sp = pl.hand.splice(hIdx, 1)[0];
-            sp.position = 'atk'; sp.faceDown = false; sp.summonedTurn = duelState.turnCount; sp.maxAttacks = getMonsterBaseMaxAttacks(sp); sp.attacksLeft = sp.maxAttacks;
-            pl.monsters[freeSlot] = sp;
             logBattle(`👑 <strong>เจ้าชายพอร์ฟิรี</strong> อัญเชิญพิเศษ <strong>${sp.name}</strong> ลงสนาม!`);
+            specialSummonToField(side, sp, freeSlot);
             renderDuelArena();
           }
         });
@@ -7428,10 +7427,9 @@
             pl.graveyard.push(m);
             if (pl.hand.includes(picked)) pl.hand.splice(pl.hand.indexOf(picked), 1);
             else if (pl.deck.includes(picked)) pl.deck.splice(pl.deck.indexOf(picked), 1);
-            picked.position = 'atk'; picked.faceDown = false; picked.summonedTurn = duelState.turnCount; picked.maxAttacks = getMonsterBaseMaxAttacks(picked); picked.attacksLeft = picked.maxAttacks;
-            pl.monsters[slotIdx] = picked;
             if (side === 0) duelState.telemetry.geologicalCombos.push(`สไลม์แมกม่า เรียก ${picked.name}`);
             logBattle(`🌋 <strong>สไลม์แมกม่า</strong> หลอมตัวเรียก <strong>${picked.name}</strong> ลงสนาม!`);
+            specialSummonToField(side, picked, slotIdx);
             renderDuelArena();
           });
         }
@@ -7444,9 +7442,8 @@
           const freeSlot = pl.monsters.findIndex(x => x === null);
           if (freeSlot !== -1) {
             pl.graveyard.splice(pl.graveyard.indexOf(picked), 1);
-            picked.position = 'atk'; picked.faceDown = false; picked.maxAttacks = getMonsterBaseMaxAttacks(picked); picked.attacksLeft = picked.maxAttacks;
-            pl.monsters[freeSlot] = picked;
             logBattle(`🧱 <strong>แม่มดศิลาแลง</strong> ชุบชีวิต <strong>${picked.name}</strong> ลงสนาม!`);
+            specialSummonToField(side, picked, freeSlot);
             renderDuelArena();
           }
         });
@@ -7482,9 +7479,9 @@
           const freeSlot = pl.monsters.findIndex(x => x === null);
           if (oppIdx !== -1 && freeSlot !== -1) {
             opp.monsters[oppIdx] = null;
-            stolen.faceDown = false; stolen.position = 'atk'; stolen.maxAttacks = getMonsterBaseMaxAttacks(stolen); stolen.attacksLeft = stolen.maxAttacks; stolen.stolenUntilEndOfTurn = true;
-            pl.monsters[freeSlot] = stolen;
+            stolen.faceDown = false; stolen.maxAttacks = getMonsterBaseMaxAttacks(stolen); stolen.attacksLeft = stolen.maxAttacks; stolen.stolenUntilEndOfTurn = true;
             logBattle(`🔮 <strong>แม่มดอเมทิสต์</strong> สะกดจิตควบคุม <strong>${stolen.name}</strong> มาเป็นของฝ่ายเรา!`);
+            specialSummonToField(side, stolen, freeSlot);
             renderDuelArena();
           }
         });
@@ -7502,11 +7499,12 @@
         const dino = cloneCardInstance(CARD_MAP['M009']);
         dino.name = 'ไดโนเสาร์ฟอสซิลดึกดำบรรพ์ (ฟักจากไข่)';
         dino.atk = 2200; dino.def = 1800; dino.atkDisplay = '2200'; dino.defDisplay = '1800';
-        dino.position = 'atk'; dino.faceDown = false;
-        pl.monsters[slotIdx] = dino;
+        pl.monsters[slotIdx] = null;
+        pl.graveyard.push(m);
         if (side === 0) duelState.telemetry.geologicalCombos.push('ฟักไข่ไดโนเสาร์ดึกดำบรรพ์');
         logBattle(`🦖 <strong>ไข่ไดโนเสาร์</strong> ฟักตัวออกเป็น <strong>${dino.name} (ATK 2200 / DEF 1800)</strong>!`);
-        showToast('ไข่ไดโนเสาร์ฟักตัวเป็นไดโนเสาร์โบราณ ATK 2200!', '🦖');
+        showToast('ไข่ไดโนเสาร์ฟักตัวเป็นไดโนเสาร์โบราณ!', '🦖');
+        specialSummonToField(side, dino, slotIdx);
       } else if (m.id === 'M096') {
         const targets = opp.monsters.filter(x => x && x.currentDef <= 1500);
         openSelectorModal('🦅 นกกินหิน: เลือกกินมอนสเตอร์พลังป้องกันต่ำของศัตรู', targets, eaten => {
@@ -7551,15 +7549,15 @@
             } else {
               pl.graveyard.push(pl.hand.splice(item.index, 1)[0]);
             }
+            pl.monsters[slotIdx] = null;
             pl.graveyard.push(m);
             const glassGolem = cloneCardInstance(CARD_MAP['M118']);
-            glassGolem.position = 'atk'; glassGolem.faceDown = false;
             glassGolem.maxAttacks = getMonsterBaseMaxAttacks(glassGolem);
             glassGolem.attacksLeft = glassGolem.maxAttacks;
-            pl.monsters[slotIdx] = glassGolem;
             if (side === 0) duelState.telemetry.geologicalCombos.push('หลอมทรายแก้วเป็น โทเคนโกเลมแก้ว');
             logBattle(`🔥 <strong>วิญญาณทรายแก้ว</strong> หลอมรวมกับ <strong>${item.card.name}</strong> กลายเป็น <strong>โทเคนโกเลมแก้ว (ATK 2500 / DEF 2000)</strong>!`);
             showToast('หลอมรวม "โทเคนโกเลมแก้ว (2500/2000)" สำเร็จ!', '🔮');
+            specialSummonToField(side, glassGolem, slotIdx);
             renderDuelArena();
           }
         );
@@ -7670,8 +7668,6 @@
         const freeSlot = pl.monsters.findIndex(x => x === null);
         if (freeSlot === -1) return;
         pl.hand.splice(handIdx, 1);
-        card.position = 'atk'; card.faceDown = false; card.summonedTurn = duelState.turnCount;
-        pl.monsters[freeSlot] = card;
         const oppIdx = opp.monsters.findIndex(Boolean);
         if (oppIdx !== -1) {
           const bounced = opp.monsters[oppIdx];
@@ -7680,6 +7676,7 @@
           logBattle(`🌊 <strong>เลวีอาธานรอยเลื่อน (3800/3000)</strong> ปะทุขึ้นจากรอยเลื่อนใต้สมุทร! พัด <strong>${bounced.name}</strong> กลับเข้ากองการ์ด!`);
         }
         duelState.selectedRef = { side, zoneType: 'm', index: freeSlot };
+        specialSummonToField(side, card, freeSlot);
         renderDuelArena();
       } else if (card.id === 'M126') {
         const freeSlot = pl.monsters.findIndex(x => x === null);
@@ -9811,9 +9808,8 @@
         const fIdx = pl.deck.findIndex(c => c.category === 'monster' && c.stars <= 4 && (c.geoTags.isFossil || c.attribute === 'ดิน'));
         if (fIdx !== -1 && pl.monsters[idx] === null) {
           const replacement = pl.deck.splice(fIdx, 1)[0];
-          replacement.position = 'def'; replacement.faceDown = false;
-          pl.monsters[idx] = replacement;
           logBattle(`🦴 เอฟเฟกต์ <strong>ทหารโครงกระดูกฟอสซิล</strong>: เรียก <strong>${replacement.name}</strong> จากชั้นหินในกองการ์ดขึ้นมาแทนที่ทันที!`);
+          specialSummonToField(side, replacement, idx);
         }
       }
       if (m.id === 'M038') {
@@ -18959,7 +18955,6 @@
         bottomBarBtns[0].onclick = function(ev) {
           if (ev) ev.stopPropagation();
           openMobileCardInfoTab(c.id, { source: "deck" });
-          speakCardById(c.id, ev);
         };
       }
     };
@@ -20740,9 +20735,334 @@
     };
 
     // ============================================================================
-    // FIX 2: VOICE READING AUTO-CLOSES IMMEDIATELY WHEN FINISHED & STAYS AT TOP
+    // FIX 2 & POLITE, CONCISE SPEECH API VOICEOVER ENGINE:
+    // - Speaks ONLY when explicitly requested by the user, ONLY what is necessary, and ALWAYS in polite Thai ("ครับ").
+    // - Primary: Speech API ("sk_hatwvaj3trw4gzndxbmj2z5dtzy3330w7b32bgmya6a")
+    //   with strict verbatim reading instructions (never rambles, never improvises, never chats).
+    // - Automatic Quota-Exhausted Fallback: 100% Free Cloud Neural Thai Voiceover ONLY!
+    // - STRICTLY NO ROBOT VOICE: window.speechSynthesis is 100% disabled & never called!
+    // - Auto-closes #tts-reading-bar (and #mobile-card-info-tab-popup) immediately when done.
     // ============================================================================
+    const GEO_SPEECH_API_KEY = "sk_hatwvaj3trw4gzndxbmj2z5dtzy3330w7b32bgmya6a";
+    window.GEO_SPEECH_API_KEY = GEO_SPEECH_API_KEY;
+
+    // Default natural, polite reading speed
+    ttsSpeechRate = 1.12;
+
     let ttsChunkWatchdogTimer = null;
+    const speechAudioBlobCache = new Map(); // text -> { url, sourceLabel }
+    let elevenLabsQuotaExhausted = false;
+    let pollinationsKeyQuotaExhausted = false;
+    let resolvedElevenLabsVoiceId = "JBFqnCBsd6RMkjVDRZzb";
+    let elevenLabsVoiceChecked = false;
+
+    async function resolveBestElevenLabsVoiceId() {
+      if (elevenLabsVoiceChecked || elevenLabsQuotaExhausted) return resolvedElevenLabsVoiceId;
+      elevenLabsVoiceChecked = true;
+      try {
+        const ctrl = new AbortController();
+        const tid = setTimeout(() => ctrl.abort(), 2000);
+        const res = await fetch("https://api.elevenlabs.io/v1/voices", {
+          method: "GET",
+          headers: { "xi-api-key": GEO_SPEECH_API_KEY },
+          signal: ctrl.signal
+        });
+        clearTimeout(tid);
+        if (res.status === 401 || res.status === 402 || res.status === 403 || res.status === 429) {
+          elevenLabsQuotaExhausted = true;
+          return resolvedElevenLabsVoiceId;
+        }
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.voices) && data.voices.length > 0) {
+            const customV = data.voices.find(v => v && v.category && v.category !== "premade");
+            const thaiV = data.voices.find(v => v && JSON.stringify(v).toLowerCase().includes("thai"));
+            const chosen = thaiV || customV || data.voices[0];
+            if (chosen && chosen.voice_id) {
+              resolvedElevenLabsVoiceId = chosen.voice_id;
+            }
+          }
+        }
+      } catch (e) {}
+      return resolvedElevenLabsVoiceId;
+    }
+
+    // Attempt synthesis via Speech API (ElevenLabs Neural -> Pollinations Strict Verbatim Audio -> Free Cloud Neural)
+    async function fetchExpressiveSpeechBlobUrl(chunkText) {
+      const cleanKey = String(chunkText || "").trim();
+      if (!cleanKey) return null;
+      if (speechAudioBlobCache.has(cleanKey)) {
+        return speechAudioBlobCache.get(cleanKey);
+      }
+
+      // 1. Try ElevenLabs Multilingual v2 / Flash v2.5 with calm, polite voice settings
+      if (!elevenLabsQuotaExhausted && GEO_SPEECH_API_KEY) {
+        const voiceId = await resolveBestElevenLabsVoiceId();
+        if (!elevenLabsQuotaExhausted) {
+          const modelsToTry = ["eleven_flash_v2_5", "eleven_multilingual_v2"];
+          for (const modelId of modelsToTry) {
+            try {
+              const ctrl = new AbortController();
+              const tid = setTimeout(() => ctrl.abort(), 3800);
+              const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`, {
+                method: "POST",
+                headers: {
+                  "xi-api-key": GEO_SPEECH_API_KEY,
+                  "Content-Type": "application/json",
+                  "Accept": "audio/mpeg"
+                },
+                body: JSON.stringify({
+                  text: cleanKey,
+                  model_id: modelId,
+                  voice_settings: {
+                    stability: 0.72,
+                    similarity_boost: 0.80,
+                    style: 0.15,
+                    use_speaker_boost: true
+                  }
+                }),
+                signal: ctrl.signal
+              });
+              clearTimeout(tid);
+
+              if (res.status === 401 || res.status === 402 || res.status === 403 || res.status === 429) {
+                elevenLabsQuotaExhausted = true;
+                break;
+              }
+              if (res.ok) {
+                const blob = await res.blob();
+                if (blob && blob.size > 300) {
+                  const blobUrl = URL.createObjectURL(blob);
+                  const entry = { url: blobUrl, sourceLabel: "🎙️ เสียงอ่านสุภาพ (Speech API)", isApi: true };
+                  speechAudioBlobCache.set(cleanKey, entry);
+                  return entry;
+                }
+              }
+            } catch (e) {
+              break;
+            }
+          }
+        }
+      }
+
+      // 2. Try Pollinations Neural Speech API with STRICT verbatim instruction so it NEVER rambles or chats
+      if (!pollinationsKeyQuotaExhausted && GEO_SPEECH_API_KEY) {
+        try {
+          const ctrl = new AbortController();
+          const tid = setTimeout(() => ctrl.abort(), 3800);
+          const strictVerbatimInput = `กรุณาอ่านออกเสียงข้อความภาษาไทยนี้ตามตัวอักษรเท่านั้น ด้วยน้ำเสียงสุภาพเรียบร้อย ห้ามพูดคำอื่นเพิ่ม ห้ามทักทาย และห้ามพูดนอกเรื่องเด็ดขาด: "${cleanKey}"`;
+          const res = await fetch("https://gen.pollinations.ai/v1/audio/speech", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${GEO_SPEECH_API_KEY}`,
+              "Content-Type": "application/json",
+              "Accept": "audio/mpeg"
+            },
+            body: JSON.stringify({
+              model: "openai-audio",
+              input: strictVerbatimInput,
+              voice: "nova"
+            }),
+            signal: ctrl.signal
+          });
+          clearTimeout(tid);
+
+          if (res.status === 401 || res.status === 402 || res.status === 403 || res.status === 429) {
+            pollinationsKeyQuotaExhausted = true;
+          } else if (res.ok) {
+            const cType = (res.headers.get("content-type") || "").toLowerCase();
+            if (cType.includes("audio") || cType.includes("octet-stream") || cType.includes("mpeg")) {
+              const blob = await res.blob();
+              if (blob && blob.size > 300) {
+                const blobUrl = URL.createObjectURL(blob);
+                const entry = { url: blobUrl, sourceLabel: "🎙️ เสียงอ่านสุภาพ (Speech API)", isApi: true };
+                speechAudioBlobCache.set(cleanKey, entry);
+                return entry;
+              }
+            }
+          }
+        } catch (e) {}
+      }
+
+      // 3. Free Cloud Neural TTS Fetch (reads the exact polite Thai text verbatim without any extra words)
+      const cloudUrls = [
+        `https://translate.googleapis.com/translate_tts?ie=UTF-8&tl=th&client=gtx&ttsspeed=1&q=${encodeURIComponent(cleanKey)}`,
+        `https://translate.google.com/translate_tts?ie=UTF-8&tl=th&client=tw-ob&ttsspeed=1&q=${encodeURIComponent(cleanKey)}`,
+        `https://clients5.google.com/translate_tts?ie=UTF-8&tl=th&client=dict-chrome-ex&q=${encodeURIComponent(cleanKey)}`
+      ];
+
+      for (const cUrl of cloudUrls) {
+        try {
+          const ctrl3 = new AbortController();
+          const tid3 = setTimeout(() => ctrl3.abort(), 2400);
+          const r3 = await fetch(cUrl, {
+            method: "GET",
+            referrerPolicy: "no-referrer",
+            credentials: "omit",
+            signal: ctrl3.signal
+          });
+          clearTimeout(tid3);
+          if (r3.ok) {
+            const b3 = await r3.blob();
+            if (b3 && b3.size > 200) {
+              const bUrl = URL.createObjectURL(b3);
+              const entry3 = { url: bUrl, sourceLabel: "☁️ เสียงอ่านภาษาไทย (กระชับ สุภาพ)", isApi: false };
+              speechAudioBlobCache.set(cleanKey, entry3);
+              return entry3;
+            }
+          }
+        } catch (e3) {}
+      }
+
+      return {
+        url: cloudUrls[0],
+        backupUrls: [cloudUrls[1], cloudUrls[2]],
+        sourceLabel: "☁️ เสียงอ่านภาษาไทย (กระชับ สุภาพ)",
+        isApi: false
+      };
+    }
+
+    function createNoReferrerCloudAudioElement(srcUrl, rate = 1.12) {
+      const a = document.createElement("audio");
+      a.setAttribute("referrerpolicy", "no-referrer");
+      try { a.referrerPolicy = "no-referrer"; } catch (e) {}
+      a.preload = "auto";
+      try {
+        a.preservesPitch = true;
+        a.mozPreservesPitch = true;
+        a.webkitPreservesPitch = true;
+        a.defaultPlaybackRate = rate;
+        a.playbackRate = rate;
+      } catch (e) {}
+      a.src = srcUrl;
+      return a;
+    }
+
+    // Helper to trim text to concise, polite sentences
+    function makeConcisePoliteThai(text, maxChars = 120) {
+      let s = String(text || "")
+        .replace(/\([^)]*\)/g, " ")
+        .replace(/[!！]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (!s) return "";
+      if (s.length > maxChars) {
+        const cut = s.slice(0, maxChars);
+        const lastSpace = cut.lastIndexOf(" ");
+        s = (lastSpace > 40 ? cut.slice(0, lastSpace) : cut).trim();
+      }
+      s = s.replace(/[.。]+$/g, "").trim();
+      if (!s.endsWith("ครับ") && !s.endsWith("ค่ะ")) {
+        s += " ครับ";
+      }
+      return s;
+    }
+
+    // Concise, polite card reading: ONLY speaks the card name, ATK/DEF (for monsters), and brief core ability
+    buildCardSpeechText = function(card) {
+      if (!card) return "";
+      const cleanName = String(card.name || "").replace(/\([^)]*\)/g, "").trim();
+      if (card.category === "monster") {
+        const atkVal = card.currentAtk ?? card.atk;
+        const defVal = card.currentDef ?? card.def;
+        const coreDetail = card.effect
+          ? `ความสามารถคือ ${card.effect}`
+          : (card.scienceFact ? card.scienceFact : "");
+        const base = `การ์ด${cleanName} พลังโจมตี ${atkVal} พลังป้องกัน ${defVal} ${coreDetail}`;
+        return makeConcisePoliteThai(base, 140);
+      } else {
+        const catName = card.category === "spell" ? "การ์ดเวทมนตร์" : "การ์ดกับดัก";
+        const coreDetail = card.effect || card.scienceFact || "";
+        const base = `${catName} ${cleanName} ${coreDetail}`;
+        return makeConcisePoliteThai(base, 135);
+      }
+    };
+
+    // Polite, concise selected card reading in duel
+    speakSelectedDuelCard = function(evt = null) {
+      if (evt) evt.stopPropagation();
+      if (!duelState.selectedRef) {
+        showToast("กรุณาเลือกการ์ดก่อนกดอ่านออกเสียงครับ", "🗣️");
+        return;
+      }
+      const { side, zoneType, index } = duelState.selectedRef;
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      const pl = duelState.players[side];
+      const card = zoneType === "hand" ? pl.hand[index] : (zoneType === "m" ? pl.monsters[index] : pl.spellTraps[index]);
+      if (!card) return;
+      if (card.faceDown && side !== mySide) {
+        speakThaiText("การ์ดใบนี้ยังหมอบอยู่ครับ");
+        return;
+      }
+      speakThaiText(buildCardSpeechText(card));
+    };
+
+    // Polite, concise post-duel AI evaluation summary reading (only key grade, score, and 1 main tip)
+    speakAiSummaryReport = function(evt = null) {
+      if (evt) evt.stopPropagation();
+      const ev = computeAiDuelEvaluation();
+      const mainTip = (ev.improvements && ev.improvements[0])
+        ? `คำแนะนำคือ ${ev.improvements[0]}`
+        : `ทำผลงานได้ดีมาก`;
+      const summary = makeConcisePoliteThai(
+        `ผลการประเมินของคุณได้เกรด ${ev.rank} คะแนนรวม ${ev.total100} เต็ม 100 คะแนน ${mainTip}`,
+        155
+      );
+      speakThaiText(summary);
+    };
+
+    // Polite, concise Cloud AI Coach API request (strictly 1-2 polite sentences, no rambling!)
+    requestCloudAiCommentary = async function() {
+      playTone("click");
+      const box = document.getElementById("cloud-ai-commentary-box");
+      const txt = document.getElementById("cloud-ai-commentary-text");
+      if (box) box.classList.remove("hidden");
+      const ev = computeAiDuelEvaluation();
+      if (txt) txt.textContent = "⏳ กำลังประมวลผลคำแนะนำสั้นๆ...";
+
+      const prompt = `คุณคือครูผู้สอนวิทยาศาสตร์ที่สุภาพเรียบร้อย ช่วยสรุปผลและให้คำแนะนำการเล่นเกมการ์ดธรณีวิทยาของ ${userProfile.name} (ได้เกรด ${ev.rank} คะแนน ${ev.total100}/100) แบบสั้นกระชับที่สุด เพียง 1 ถึง 2 ประโยคเท่านั้น ใช้ถ้อยคำสุภาพ ลงท้ายด้วยครับ พูดเฉพาะใจความสำคัญ ห้ามพูดเยิ่นเย้อหรือนอกเรื่องเด็ดขาด`;
+
+      try {
+        const ctrl = new AbortController();
+        const tid = setTimeout(() => ctrl.abort(), 5000);
+        const resp = await fetch("https://text.pollinations.ai/" + encodeURIComponent(prompt), {
+          signal: ctrl.signal
+        });
+        clearTimeout(tid);
+        if (resp.ok) {
+          const rawReply = (await resp.text() || "").trim();
+          if (rawReply.length > 8) {
+            const politeReply = makeConcisePoliteThai(rawReply, 160);
+            if (txt) txt.textContent = politeReply;
+            speakThaiText(politeReply);
+            return;
+          }
+        }
+      } catch (e) {}
+
+      const fallbackMsg = `คุณ ${userProfile.name} ได้เกรด ${ev.rank} คะแนนรวม ${ev.total100} เต็ม 100 คะแนน แนะนำให้ใช้การ์ดเวทมนตร์ควบคู่กับการหมอบการ์ดกับดักเพื่อเพิ่มความได้เปรียบครับ`;
+      if (txt) txt.textContent = fallbackMsg;
+      speakThaiText(fallbackMsg);
+    };
+
+    toggleTtsSpeed = function() {
+      if (ttsSpeechRate < 1.15) ttsSpeechRate = 1.22;
+      else if (ttsSpeechRate < 1.28) ttsSpeechRate = 1.32;
+      else ttsSpeechRate = 1.12;
+
+      const btn = document.getElementById("btn-tts-speed");
+      if (btn) {
+        if (ttsSpeechRate >= 1.28) btn.textContent = "🚀 อ่านไว (1.3x)";
+        else if (ttsSpeechRate >= 1.18) btn.textContent = "⚡ อ่านกระชับ (1.2x)";
+        else btn.textContent = "🎙️ อ่านปกติ (1.1x)";
+      }
+      if (currentTtsAudio) {
+        try {
+          currentTtsAudio.defaultPlaybackRate = ttsSpeechRate;
+          currentTtsAudio.playbackRate = ttsSpeechRate;
+        } catch (e) {}
+      }
+    };
 
     const _v1OrigStopSpeaking = stopSpeaking;
     stopSpeaking = function() {
@@ -20750,6 +21070,11 @@
         clearTimeout(ttsChunkWatchdogTimer);
         ttsChunkWatchdogTimer = null;
       }
+      try {
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+        }
+      } catch (e) {}
       _v1OrigStopSpeaking();
       const bar = document.getElementById("tts-reading-bar");
       if (bar) bar.classList.add("hidden");
@@ -20759,18 +21084,20 @@
       if (evt) evt.stopPropagation();
       const raw = String(text || "").trim();
       if (!raw) return;
-      lastSpokenRawText = raw;
+      const politeRaw = makeConcisePoliteThai(raw, 165);
+      lastSpokenRawText = politeRaw;
       stopSpeaking();
       elevateDrawOverlayAndPopupsToBody();
 
       const mySession = ++activeTtsSessionId;
-      const normalized = normalizeThaiForSpeech(raw);
+      const normalized = normalizeThaiForSpeech(politeRaw);
       if (!normalized) return;
 
-      const chunks = splitThaiIntoChunks(normalized, 130);
+      const chunks = splitThaiIntoChunks(normalized, 150).slice(0, 2);
       const bar = document.getElementById("tts-reading-bar");
       const txtEl = document.getElementById("tts-reading-text");
       const progEl = document.getElementById("tts-chunk-progress");
+      const badgeEl = document.getElementById("tts-provider-badge");
 
       try {
         if (bgmAudio && !bgmAudio.paused) {
@@ -20788,9 +21115,10 @@
         }
       }
 
-      function updateSubtitleUI(idx) {
+      function updateSubtitleUI(idx, sourceLabel = "") {
         if (txtEl) txtEl.textContent = chunks[idx] || normalized;
         if (progEl) progEl.textContent = `${idx + 1}/${chunks.length}`;
+        if (badgeEl && sourceLabel) badgeEl.textContent = sourceLabel;
       }
 
       function finishSessionImmediate() {
@@ -20807,144 +21135,103 @@
         }
       }
 
-      function applyFastPlaybackRate(audio) {
+      function applyPlaybackRate(audio, isApiSource) {
         try {
+          const targetRate = isApiSource ? Math.max(1.0, ttsSpeechRate - 0.06) : (ttsSpeechRate || 1.12);
           audio.preservesPitch = true;
           audio.mozPreservesPitch = true;
           audio.webkitPreservesPitch = true;
-          audio.defaultPlaybackRate = ttsSpeechRate || 1.2;
-          audio.playbackRate = ttsSpeechRate || 1.2;
+          audio.defaultPlaybackRate = targetRate;
+          audio.playbackRate = targetRate;
+          audio.volume = Math.min(1, Math.max(0.85, voVolume || 0.95));
         } catch (e) {}
       }
 
       function armChunkWatchdog(chunkStr, onTimeoutAdvance) {
         clearChunkWatchdog();
-        const estMs = Math.max(3800, Math.min(13000, Math.ceil((chunkStr || "").length * 105) + 1800));
+        const estMs = Math.max(3800, Math.min(11500, Math.ceil((chunkStr || "").length * 105) + 1600));
         ttsChunkWatchdogTimer = setTimeout(() => {
           if (mySession !== activeTtsSessionId) return;
           onTimeoutAdvance();
         }, estMs);
       }
 
-      function playChunkViaCloudAudio(idx) {
+      async function playChunkExpressiveCloudOnly(idx) {
         if (mySession !== activeTtsSessionId) return;
         if (idx >= chunks.length) {
           finishSessionImmediate();
           return;
         }
-        updateSubtitleUI(idx);
+
+        const chunkStr = chunks[idx];
+        updateSubtitleUI(idx, "🎙️ กำลังอ่านข้อมูลการ์ด...");
+
         let chunkDone = false;
         const advanceNext = () => {
           if (chunkDone || mySession !== activeTtsSessionId) return;
           chunkDone = true;
           clearChunkWatchdog();
-          playChunkViaCloudAudio(idx + 1);
+          playChunkExpressiveCloudOnly(idx + 1);
         };
 
-        armChunkWatchdog(chunks[idx], advanceNext);
+        armChunkWatchdog(chunkStr, advanceNext);
 
-        try {
-          const primaryUrl = "https://translate.googleapis.com/translate_tts?ie=UTF-8&tl=th&client=gtx&q=" + encodeURIComponent(chunks[idx]);
-          const backupUrl = "https://translate.google.com/translate_tts?ie=UTF-8&tl=th&client=tw-ob&q=" + encodeURIComponent(chunks[idx]);
-          const audio = new Audio(primaryUrl);
-          audio.referrerPolicy = "no-referrer";
-          currentTtsAudio = audio;
-          applyFastPlaybackRate(audio);
-          audio.onloadedmetadata = () => {
-            applyFastPlaybackRate(audio);
-            if (audio.duration && isFinite(audio.duration) && audio.duration > 0) {
-              const durMs = Math.ceil((audio.duration / (ttsSpeechRate || 1.2)) * 1000) + 900;
-              clearChunkWatchdog();
-              ttsChunkWatchdogTimer = setTimeout(advanceNext, Math.max(1500, Math.min(15000, durMs)));
-            }
-          };
-          audio.onplay = () => applyFastPlaybackRate(audio);
-          audio.onplaying = () => applyFastPlaybackRate(audio);
-          audio.onended = advanceNext;
-
-          let triedBackup = false;
-          const tryBackupOrNative = () => {
-            if (chunkDone || mySession !== activeTtsSessionId) return;
-            if (!triedBackup) {
-              triedBackup = true;
-              try {
-                audio.src = backupUrl;
-                applyFastPlaybackRate(audio);
-                const p2 = audio.play();
-                if (p2 && p2.catch) p2.catch(() => {
-                  if (!chunkDone) {
-                    chunkDone = true;
-                    clearChunkWatchdog();
-                    playChunkViaNativeSpeech(idx, true);
-                  }
-                });
-                return;
-              } catch (e2) {}
-            }
-            chunkDone = true;
-            clearChunkWatchdog();
-            playChunkViaNativeSpeech(idx, true);
-          };
-          audio.onerror = tryBackupOrNative;
-          const playPromise = audio.play();
-          if (playPromise && playPromise.catch) {
-            playPromise.catch(tryBackupOrNative);
-          }
-        } catch (e) {
-          chunkDone = true;
-          clearChunkWatchdog();
-          playChunkViaNativeSpeech(idx, true);
+        if (idx + 1 < chunks.length) {
+          fetchExpressiveSpeechBlobUrl(chunks[idx + 1]).catch(() => {});
         }
-      }
 
-      function playChunkViaNativeSpeech(idx, isFallbackFromCloud = false) {
-        if (mySession !== activeTtsSessionId) return;
-        if (idx >= chunks.length) {
-          finishSessionImmediate();
+        const resolved = await fetchExpressiveSpeechBlobUrl(chunkStr);
+        if (mySession !== activeTtsSessionId || chunkDone) return;
+
+        if (!resolved || !resolved.url) {
+          advanceNext();
           return;
         }
-        updateSubtitleUI(idx);
-        let chunkDone = false;
-        const advanceNextNative = () => {
+
+        updateSubtitleUI(idx, resolved.sourceLabel || "☁️ เสียงอ่านภาษาไทย (สุภาพ)");
+
+        const candidateUrls = [resolved.url, ...(resolved.backupUrls || [])].filter(Boolean);
+        let urlTryIdx = 0;
+
+        function tryPlayCandidateUrl() {
           if (chunkDone || mySession !== activeTtsSessionId) return;
-          chunkDone = true;
-          clearChunkWatchdog();
-          playChunkViaNativeSpeech(idx + 1, isFallbackFromCloud);
-        };
-
-        armChunkWatchdog(chunks[idx], advanceNextNative);
-
-        try {
-          if ("speechSynthesis" in window) {
-            window.speechSynthesis.cancel();
-            const utter = new SpeechSynthesisUtterance(chunks[idx]);
-            utter.lang = "th-TH";
-            utter.rate = Math.min(1.6, ttsSpeechRate || 1.2);
-            utter.pitch = 1.02;
-            const v = findBestThaiVoice();
-            if (v) utter.voice = v;
-
-            utter.onend = advanceNextNative;
-            utter.onerror = () => {
-              if (chunkDone || mySession !== activeTtsSessionId) return;
-              chunkDone = true;
-              clearChunkWatchdog();
-              if (!isFallbackFromCloud) {
-                playChunkViaCloudAudio(idx);
-              } else {
-                setTimeout(() => playChunkViaNativeSpeech(idx + 1, true), 1200);
-              }
-            };
-            window.speechSynthesis.speak(utter);
+          if (urlTryIdx >= candidateUrls.length) {
+            setTimeout(advanceNext, 1000);
             return;
           }
-        } catch (e) {}
-        setTimeout(() => {
-          if (mySession === activeTtsSessionId) finishSessionImmediate();
-        }, 2500);
+          const currentUrl = candidateUrls[urlTryIdx++];
+          const rateToUse = resolved.isApi ? Math.max(1.0, ttsSpeechRate - 0.06) : (ttsSpeechRate || 1.12);
+          const audio = createNoReferrerCloudAudioElement(currentUrl, rateToUse);
+          currentTtsAudio = audio;
+          applyPlaybackRate(audio, resolved.isApi);
+
+          audio.onloadedmetadata = () => {
+            applyPlaybackRate(audio, resolved.isApi);
+            if (audio.duration && isFinite(audio.duration) && audio.duration > 0) {
+              const durMs = Math.ceil((audio.duration / rateToUse) * 1000) + 500;
+              clearChunkWatchdog();
+              ttsChunkWatchdogTimer = setTimeout(advanceNext, Math.max(1200, Math.min(12500, durMs)));
+            }
+          };
+          audio.onplay = () => applyPlaybackRate(audio, resolved.isApi);
+          audio.onplaying = () => applyPlaybackRate(audio, resolved.isApi);
+          audio.onended = advanceNext;
+          audio.onerror = () => {
+            tryPlayCandidateUrl();
+          };
+
+          const playPromise = audio.play();
+          if (playPromise && playPromise.catch) {
+            playPromise.catch(() => {
+              tryPlayCandidateUrl();
+            });
+          }
+        }
+
+        tryPlayCandidateUrl();
       }
 
-      playChunkViaCloudAudio(0);
+      playChunkExpressiveCloudOnly(0);
     };
 
     // ============================================================================
@@ -21429,6 +21716,463 @@
       syncDrawOverlayTopLayerVisibility();
     });
     setInterval(syncDrawOverlayTopLayerVisibility, 250);
+
+    // ==================== GEO-DUEL v1 MODULE: T028 CONTINUOUS CLEANUP & SUMMON POSITION CHOICE (ATK vs DEF) ====================
+    // 1. Fixes "เขตหวงห้าม (T028)" (and all continuous spells/traps) so when T028 is destroyed or leaves the field,
+    //    its effect in continuousEffects is immediately cleared and Level 5+ monsters can attack normally.
+    // 2. Prompts the player before placing a monster on the field via Tribute Summon, Spell Summon, Graveyard Revival,
+    //    or Monster/Deck Effect (when the card has no forced-position condition) to choose between:
+    //    - ⚔️ ตั้งโจมตี (Attack Position)
+    //    - 🛡️ ตั้งรับ / ป้องกัน (Defense Position)
+
+    function syncActiveContinuousEffectsWithField() {
+      if (!duelState || !Array.isArray(duelState.players)) return;
+      if (!Array.isArray(duelState.continuousEffects)) {
+        duelState.continuousEffects = [[], []];
+      }
+      [0, 1].forEach(s => {
+        const pl = duelState.players[s];
+        if (!pl || !Array.isArray(pl.spellTraps)) {
+          duelState.continuousEffects[s] = [];
+          return;
+        }
+        // Only keep continuous effect IDs for cards that are ACTUALLY face-up on the field right now!
+        const activeOnBoardIds = [];
+        pl.spellTraps.forEach(st => {
+          if (st && !st.faceDown && (st.subtype === "continuous" || st.subtype === "continuous_trap" || CONTINUOUS_TRAP_IDS.has(st.id))) {
+            activeOnBoardIds.push(st.id);
+          }
+        });
+        duelState.continuousEffects[s] = activeOnBoardIds;
+      });
+    }
+
+    // Override isLevel5AttackBlockedByT028 so it NEVER relies on a stale continuousEffects entry after T028 is destroyed!
+    isLevel5AttackBlockedByT028 = function(attSide, attacker, autoFlipSetTrap = true) {
+      if (!attacker || attacker.stars < 5) return false;
+      syncActiveContinuousEffectsWithField();
+
+      const defSide = 1 - attSide;
+      const attPl = duelState.players?.[attSide];
+      const defPl = duelState.players?.[defSide];
+
+      // Check trap immunity first (M013, M042, M122, SP01, or M109 Turquoise Shield)
+      const hasTurquoiseShield = attPl && Array.isArray(attPl.monsters) && attPl.monsters.some(m => m && !m.faceDown && m.id === "M109");
+      if (attacker.id === "M013" || attacker.id === "M042" || attacker.id === "M122" || attacker.trapImmune || hasTurquoiseShield) {
+        return false;
+      }
+
+      // 1. Check if T028 is currently face-up on the field (in spellTraps)
+      const faceUpT028OnBoard = [...(attPl?.spellTraps || []), ...(defPl?.spellTraps || [])].some(
+        st => st && !st.faceDown && st.id === "T028"
+      );
+      if (faceUpT028OnBoard) {
+        return true;
+      }
+
+      // 2. If not face-up yet, check if defender has T028 set face-down on the board -> auto-flip it face-up!
+      if (autoFlipSetTrap && defPl && Array.isArray(defPl.spellTraps)) {
+        const setIdx = defPl.spellTraps.findIndex(st => st && st.faceDown && st.id === "T028");
+        if (setIdx !== -1) {
+          const trap = defPl.spellTraps[setIdx];
+          trap.faceDown = false;
+          syncActiveContinuousEffectsWithField();
+          playElementalSfx("trap_spring");
+          logBattle(`🚧 กับดักต่อเนื่อง <strong>เขตหวงห้าม (T028)</strong> เปิดหงายทำงานทันที! ห้ามมอนสเตอร์ระดับ 5 ดาวขึ้นไป (${attacker.name} ⭐${attacker.stars}) โจมตี!`);
+          showToast(`🚧 กับดัก "เขตหวงห้าม (T028)" ทำงาน! ห้ามมอนสเตอร์เลเวล 5 ขึ้นไป (${attacker.name}) โจมตี!`, "🚧");
+          renderDuelArena();
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    // Hook updateDynamicStats & cleanupOrphanedEquips so continuousEffects is ALWAYS synced when any S/T is destroyed
+    const _v1PreT028UpdateDynamicStats = updateDynamicStats;
+    updateDynamicStats = function() {
+      syncActiveContinuousEffectsWithField();
+      _v1PreT028UpdateDynamicStats();
+      syncActiveContinuousEffectsWithField();
+    };
+
+    // ============================================================================
+    // SUMMON POSITION CHOICE MODAL (⚔️ ตั้งโจมตี vs 🛡️ ตั้งรับ/ป้องกัน)
+    // ============================================================================
+    window._summonPosModalQueue = [];
+    window._summonPosModalActive = null;
+
+    function isHumanControlledSide(side) {
+      if (isSpectatorMode || !duelState || !duelState.active) return false;
+      if (duelState.mode === "hotseat") return true;
+      return side === 0;
+    }
+
+    function ensureSummonPositionChoiceModalExists() {
+      if (document.getElementById("modal-summon-position-choice")) return;
+      const modal = document.createElement("div");
+      modal.id = "modal-summon-position-choice";
+      modal.className = "hidden fixed inset-0 z-[2147483645] bg-slate-950/88 backdrop-blur-md flex items-center justify-center p-3 select-none";
+      modal.innerHTML = `
+        <div class="royal-frame w-full max-w-sm rounded-3xl p-4 sm:p-5 bg-gradient-to-b from-[#16102c] via-[#0b0718] to-[#120b24] border-2 border-amber-400 shadow-[0_0_55px_rgba(250,204,21,0.75)] text-white space-y-3" onclick="event.stopPropagation()">
+          <div class="flex items-center justify-between gap-2 border-b border-amber-400/40 pb-2">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="w-8 h-8 rounded-xl bg-amber-400/25 border border-amber-300 flex items-center justify-center text-lg shadow flex-shrink-0">⚡</span>
+              <div class="min-w-0">
+                <h3 id="summon-pos-modal-title" class="font-black text-sm sm:text-base text-amber-300 truncate leading-tight">เลือกท่าอัญเชิญลงสนาม</h3>
+                <p id="summon-pos-modal-subtitle" class="text-[11px] text-cyan-200 font-bold truncate">ต้องการวางในท่าตั้งโจมตี หรือ ตั้งรับ (ป้องกัน)?</p>
+              </div>
+            </div>
+            <button id="btn-summon-pos-speak" type="button" class="px-2.5 py-1 rounded-xl bg-cyan-500/25 hover:bg-cyan-400/40 border border-cyan-300 text-cyan-100 font-black text-[11px] flex-shrink-0">
+              🔊 อ่าน
+            </button>
+          </div>
+
+          <div class="flex items-center gap-3 bg-[#070512]/95 border border-amber-500/40 rounded-2xl p-2.5">
+            <div id="summon-pos-card-visual" class="w-[88px] h-[126px] flex-shrink-0 flex items-center justify-center"></div>
+            <div class="flex-1 min-w-0 space-y-1.5 text-left">
+              <div id="summon-pos-card-name" class="font-black text-sm sm:text-base text-amber-300 truncate">ชื่อมอนสเตอร์</div>
+              <div id="summon-pos-card-meta" class="text-[11px] font-bold text-cyan-200">⭐ 4 ดาว • ธาตุดิน</div>
+              <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+                <div class="px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-400/60 text-center">
+                  <div class="text-[9.5px] font-bold text-amber-200">⚔️ โจมตี (ATK)</div>
+                  <div id="summon-pos-card-atk" class="font-mono font-black text-xs sm:text-sm text-yellow-300">2000</div>
+                </div>
+                <div class="px-2 py-1 rounded-lg bg-cyan-500/20 border border-cyan-400/60 text-center">
+                  <div class="text-[9.5px] font-bold text-cyan-200">🛡️ ตั้งรับ (DEF)</div>
+                  <div id="summon-pos-card-def" class="font-mono font-black text-xs sm:text-sm text-cyan-300">2000</div>
+                </div>
+              </div>
+              <div id="summon-pos-card-effect" class="text-[10.5px] text-slate-300 line-clamp-2 leading-snug bg-slate-900/90 px-2 py-1 rounded border border-slate-700"></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5 pt-1">
+            <button id="btn-choose-summon-atk" type="button" onclick="resolveSummonPositionModalChoice('atk', false)"
+              class="py-3 px-3 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-orange-500 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm border-2 border-white shadow-[0_0_20px_rgba(251,191,36,0.7)] flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
+              <span class="text-base leading-none">⚔️ ตั้งโจมตี</span>
+              <span id="btn-choose-summon-atk-sub" class="text-[10px] font-mono font-extrabold opacity-90">ATK 2000 (แนวตั้ง)</span>
+            </button>
+            <button id="btn-choose-summon-def" type="button" onclick="resolveSummonPositionModalChoice('def', false)"
+              class="py-3 px-3 rounded-2xl bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm border-2 border-white shadow-[0_0_20px_rgba(34,211,238,0.7)] flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
+              <span class="text-base leading-none">🛡️ ตั้งรับ (ป้องกัน)</span>
+              <span id="btn-choose-summon-def-sub" class="text-[10px] font-mono font-extrabold opacity-90">DEF 2000 (แนวนอน)</span>
+            </button>
+          </div>
+
+          <div id="summon-pos-extra-row" class="hidden pt-0.5 flex items-center justify-between gap-2">
+            <button id="btn-choose-summon-set" type="button" onclick="resolveSummonPositionModalChoice('def', true)"
+              class="flex-1 py-1.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-cyan-400/50 text-cyan-200 font-bold text-[11px]">
+              🪤 หมอบคว่ำหน้าป้องกัน
+            </button>
+            <button id="btn-cancel-summon-pos" type="button" onclick="cancelSummonPositionModalChoice()"
+              class="py-1.5 px-3 rounded-xl bg-rose-950/80 hover:bg-rose-900 border border-rose-400/50 text-rose-200 font-bold text-[11px]">
+              ✕ ยกเลิก
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function showNextSummonPositionModalFromQueue() {
+      if (window._summonPosModalActive || window._summonPosModalQueue.length === 0) return;
+      ensureSummonPositionChoiceModalExists();
+      const nextReq = window._summonPosModalQueue.shift();
+      window._summonPosModalActive = nextReq;
+
+      const { card, options } = nextReq;
+      const modal = document.getElementById("modal-summon-position-choice");
+      const titleEl = document.getElementById("summon-pos-modal-title");
+      const subEl = document.getElementById("summon-pos-modal-subtitle");
+      const visEl = document.getElementById("summon-pos-card-visual");
+      const nameEl = document.getElementById("summon-pos-card-name");
+      const metaEl = document.getElementById("summon-pos-card-meta");
+      const atkEl = document.getElementById("summon-pos-card-atk");
+      const defEl = document.getElementById("summon-pos-card-def");
+      const effEl = document.getElementById("summon-pos-card-effect");
+      const atkSubEl = document.getElementById("btn-choose-summon-atk-sub");
+      const defSubEl = document.getElementById("btn-choose-summon-def-sub");
+      const extraRowEl = document.getElementById("summon-pos-extra-row");
+      const setBtnEl = document.getElementById("btn-choose-summon-set");
+      const cancelBtnEl = document.getElementById("btn-cancel-summon-pos");
+      const spkBtnEl = document.getElementById("btn-summon-pos-speak");
+
+      const curAtk = (card.currentAtk ?? card.atk) + (card.bonusAtk || 0);
+      const curDef = (card.currentDef ?? card.def) + (card.bonusDef || 0);
+
+      if (titleEl) titleEl.textContent = (options && options.title) || "⚡ เลือกท่าลงสนามก่อนอัญเชิญ";
+      if (subEl) subEl.textContent = (options && options.subtitle) || "เลือกท่าตั้งโจมตี หรือ ตั้งรับ (ป้องกัน)";
+      if (visEl) visEl.innerHTML = renderYgoCardVisual(card, "w-[84px] h-[122px]");
+      if (nameEl) nameEl.textContent = card.name || "มอนสเตอร์";
+      if (metaEl) metaEl.textContent = `⭐ ${card.stars || 4} ดาว • ธาตุ${card.attribute || "ดิน"} • เผ่า${card.race || "หิน"}`;
+      if (atkEl) atkEl.textContent = curAtk;
+      if (defEl) defEl.textContent = curDef;
+      if (effEl) effEl.textContent = card.effect || "มอนสเตอร์สายโจมตีและป้องกันพื้นฐาน";
+      if (atkSubEl) atkSubEl.textContent = `ATK ${curAtk} (แนวตั้ง)`;
+      if (defSubEl) defSubEl.textContent = `DEF ${curDef} (แนวนอน)`;
+      if (spkBtnEl) {
+        spkBtnEl.onclick = function(ev) {
+          if (ev) ev.stopPropagation();
+          speakCardById(card.id, ev);
+        };
+      }
+
+      const showExtra = Boolean(options && (options.allowFaceDownSet || options.allowCancel));
+      if (extraRowEl) extraRowEl.classList.toggle("hidden", !showExtra);
+      if (setBtnEl) setBtnEl.classList.toggle("hidden", !(options && options.allowFaceDownSet));
+      if (cancelBtnEl) cancelBtnEl.classList.toggle("hidden", !(options && options.allowCancel));
+
+      if (modal) {
+        modal.classList.remove("hidden");
+      }
+      playTone("click");
+    }
+
+    function openSummonPositionChoiceModal(card, options, onChoose) {
+      if (!card) {
+        if (onChoose) onChoose("atk", false);
+        return;
+      }
+      window._summonPosModalQueue.push({ card, options: options || {}, onChoose });
+      showNextSummonPositionModalFromQueue();
+    }
+
+    function resolveSummonPositionModalChoice(chosenPos, isFaceDown = false) {
+      playTone("click");
+      const active = window._summonPosModalActive;
+      window._summonPosModalActive = null;
+      const modal = document.getElementById("modal-summon-position-choice");
+      if (modal) modal.classList.add("hidden");
+
+      if (active && typeof active.onChoose === "function") {
+        active.onChoose(chosenPos || "atk", Boolean(isFaceDown));
+      }
+      setTimeout(showNextSummonPositionModalFromQueue, 60);
+    }
+
+    function cancelSummonPositionModalChoice() {
+      playTone("click");
+      const active = window._summonPosModalActive;
+      window._summonPosModalActive = null;
+      const modal = document.getElementById("modal-summon-position-choice");
+      if (modal) modal.classList.add("hidden");
+
+      if (active && active.options && typeof active.options.onCancel === "function") {
+        active.options.onCancel();
+      }
+      setTimeout(showNextSummonPositionModalFromQueue, 60);
+    }
+
+    // Upgrade placeMonsterOnField to support face-up Defense Position (for Tribute Summon in Defense Position!)
+    placeMonsterOnField = function(side, handIdx, slotIdx, pos, isSpecial = false, faceDownOverride = null) {
+      playTone("summon");
+      const pl = duelState.players[side];
+      const card = pl.hand.splice(handIdx, 1)[0];
+      if (!card) return;
+      card.position = pos;
+      card.faceDown = (faceDownOverride !== null && faceDownOverride !== undefined)
+        ? Boolean(faceDownOverride)
+        : (pos === "def");
+      card.summonedTurn = duelState.turnCount;
+      card.maxAttacks = getMonsterBaseMaxAttacks(card);
+      card.attacksLeft = card.maxAttacks || 1;
+      card.changedPosThisTurn = false;
+      pl.monsters[slotIdx] = card;
+      if (!isSpecial) pl.normalSummonedThisTurn = true;
+      duelState.selectedRef = { side, zoneType: "m", index: slotIdx };
+
+      if (side === 0 && duelState.telemetry) {
+        duelState.telemetry.monstersSummoned.push(card.name);
+        recordCardUsedForScience(card);
+      }
+
+      if (!card.faceDown) {
+        if (card.stars >= 5 || card.atk >= 2200 || card.def >= 2500) {
+          triggerEpicCutIn(card, card.stars >= 7 ? "👑 อัญเชิญราชันย์ธรณีพิภพ!" : "⚡ อัญเชิญมอนสเตอร์ระดับสูง!");
+        }
+        if (card.stars >= 7) playVoice("vo_laugh");
+        const posText = pos === "def" ? `ท่าตั้งรับ (DEF ${card.def})` : `ท่าตั้งโจมตี (ATK ${card.atk})`;
+        showDuelistSpeechBubble(side, `จงออกมา! ${card.name} (${posText})!`);
+        logBattle(`🐲 <strong>${pl.name}</strong> อัญเชิญ <strong>${card.name}</strong> ใน<strong>${posText}</strong> ลงช่องที่ ${slotIdx + 1}!`);
+        setScienceBanner(card);
+        triggerOnSummonEffects(side, card, slotIdx);
+        checkOpponentSummonTraps(1 - side, side, slotIdx);
+      } else {
+        logBattle(`🛡️ <strong>${pl.name}</strong> วางหมอบการ์ดมอนสเตอร์ป้องกันลงช่องที่ ${slotIdx + 1}`);
+      }
+      updateDynamicStats();
+      syncP2P();
+      renderDuelArena();
+    };
+
+    // Upgrade initiateSummon so Tribute Summoning (Level 5+ monsters) ALWAYS asks whether to summon in Attack or Defense Position before placing on the field!
+    initiateSummon = function(handIdx, pos, preferredSlotIdx = null) {
+      if (typeof blockIfSpectatorClicked === "function" && blockIfSpectatorClicked()) return;
+      if (duelState.phase === "draw") { playerClickDrawPhase(); return; }
+      if (duelState.phase === "battle") { duelState.phase = "main2"; duelState.pendingAttackFromMonsterIdx = null; }
+      const side = duelState.activePlayer;
+      const pl = duelState.players[side];
+      const card = pl?.hand?.[handIdx];
+      if (!card) return;
+
+      if (pl.normalSummonedThisTurn) {
+        showToast("คุณอัญเชิญมอนสเตอร์ปกติครบ 1 ตัวในเทิร์นนี้แล้ว! (ใช้การ์ดเวทอัญเชิญพิเศษเพิ่มเติมได้)", "⚠️");
+        return;
+      }
+
+      const neededTributes = card.id === "M122" ? 3 : (card.stars >= 7 ? 2 : (card.stars >= 5 ? 1 : 0));
+      const fieldCandidates = [];
+      pl.monsters.forEach((m, idx) => {
+        if (m) fieldCandidates.push({ card: m, source: "field", index: idx });
+      });
+
+      if (neededTributes > 0) {
+        if (fieldCandidates.length < neededTributes) {
+          showToast(`มอนสเตอร์ระดับ ${card.stars} ดาว ต้องสังเวยมอนสเตอร์ในสนาม ${neededTributes} ตัวก่อน! (หรือใช้การ์ดเวทอัญเชิญพิเศษ)`, "🚫");
+          return;
+        }
+        openTributeSelectorModal(
+          `🔥 เลือกมอนสเตอร์ในสนาม ${neededTributes} ตัวเพื่อบูชายันต์อัญเชิญ "${card.name}"`,
+          `เลือกตัวที่จะสังเวยให้ครบ ${neededTributes} ใบ (จากนั้นระบบจะถามว่าจะวางตั้งโจมตีหรือตั้งรับ)`,
+          fieldCandidates,
+          neededTributes,
+          chosenItems => {
+            const executeTributePlacement = (chosenPos, isFaceDownSet) => {
+              chosenItems.forEach(item => {
+                const sac = pl.monsters[item.index];
+                if (sac) {
+                  if (side === 0 && duelState.telemetry) {
+                    duelState.telemetry.tributesPerformed.push({ sacrificed: sac.name, summoned: card.name });
+                    if (sac.currentAtk < card.atk) duelState.telemetry.smartTributesCount++;
+                  }
+                  pl.graveyard.push(sac);
+                  pl.monsters[item.index] = null;
+                  logBattle(`🔥 <strong>${pl.name}</strong> เลือกสังเวย <strong>${sac.name}</strong> ลงสุสาน`);
+                }
+              });
+              if (card.id === "M122") {
+                pl.lp = Math.max(100, Math.floor(pl.lp / 2));
+                logBattle(`🌋 จ่าย LP ครึ่งหนึ่งเพื่ออัญเชิญ <strong>อวตารแก่นโลกชั้นใน (5000/5000)</strong>!`);
+              }
+              const currentHandIdx = pl.hand.indexOf(card);
+              const firstTributedSlot = chosenItems[0] ? chosenItems[0].index : -1;
+              const slot = (preferredSlotIdx !== null && pl.monsters[preferredSlotIdx] === null)
+                ? preferredSlotIdx
+                : (firstTributedSlot !== -1 && pl.monsters[firstTributedSlot] === null
+                    ? firstTributedSlot
+                    : pl.monsters.findIndex(m => m === null));
+              if (currentHandIdx !== -1 && slot !== -1) {
+                placeMonsterOnField(side, currentHandIdx, slot, chosenPos, false, isFaceDownSet);
+              }
+            };
+
+            if (isHumanControlledSide(side)) {
+              openSummonPositionChoiceModal(
+                card,
+                {
+                  title: `🔥 เลือกท่าลงสนามจากการบูชายันต์`,
+                  subtitle: `ต้องการวาง "${card.name}" ในท่าตั้งโจมตี หรือ ตั้งรับ (ป้องกัน)?`,
+                  allowFaceDownSet: true,
+                  allowCancel: true
+                },
+                (chosenPos, isFaceDownSet) => {
+                  executeTributePlacement(chosenPos, isFaceDownSet);
+                }
+              );
+            } else {
+              executeTributePlacement(pos || "atk", false);
+            }
+          }
+        );
+        return;
+      }
+
+      const emptySlot = (preferredSlotIdx !== null && pl.monsters[preferredSlotIdx] === null)
+        ? preferredSlotIdx
+        : pl.monsters.findIndex(m => m === null);
+      if (emptySlot === -1) {
+        showToast("โซนมอนสเตอร์ทั้ง 5 ช่องเต็มแล้ว!", "⚠️");
+        return;
+      }
+
+      placeMonsterOnField(side, handIdx, emptySlot, pos);
+    };
+
+    // Upgrade specialSummonToField so ANY monster called via Spell, Graveyard Revival, Deck, or Monster Effect
+    // (when there is no forced position condition) asks the human player whether to place it in Attack or Defense Position!
+    specialSummonToField = function(side, monsterCard, preferredSlot = -1, forcedPos = null, onAfterPlaced = null) {
+      const pl = duelState.players?.[side];
+      if (!pl || !monsterCard) return false;
+
+      const finalizeSpecialSummonPlacement = (chosenPos) => {
+        let slot = (preferredSlot !== -1 && preferredSlot !== null && pl.monsters[preferredSlot] === null)
+          ? preferredSlot
+          : pl.monsters.findIndex(m => m === null);
+        if (slot === -1) return false;
+
+        monsterCard.position = chosenPos === "def" ? "def" : "atk";
+        monsterCard.faceDown = false;
+        monsterCard.summonedTurn = duelState.turnCount;
+        monsterCard.maxAttacks = getMonsterBaseMaxAttacks(monsterCard);
+        monsterCard.attacksLeft = monsterCard.maxAttacks || 1;
+        monsterCard.changedPosThisTurn = false;
+        pl.monsters[slot] = monsterCard;
+
+        playTone("summon");
+        triggerEpicCutIn(
+          monsterCard,
+          monsterCard.position === "def" ? "🛡️ อัญเชิญพิเศษตั้งรับธรณีวิทยา!" : "🌋 อัญเชิญพิเศษตั้งโจมตีธรณีวิทยา!"
+        );
+        if (monsterCard.stars >= 7) playVoice("vo_laugh");
+        if (side === 0 && duelState.telemetry) {
+          duelState.telemetry.monstersSummoned.push(monsterCard.name);
+          recordCardUsedForScience(monsterCard);
+        }
+        const posLabel = monsterCard.position === "def"
+          ? `ท่าตั้งรับ/ป้องกัน (DEF ${monsterCard.currentDef ?? monsterCard.def})`
+          : `ท่าตั้งโจมตี (ATK ${monsterCard.currentAtk ?? monsterCard.atk})`;
+        logBattle(`✨ <strong>${pl.name}</strong> อัญเชิญพิเศษ <strong>${monsterCard.name}</strong> ลงช่องที่ ${slot + 1} ใน<strong>${posLabel}</strong>!`);
+        triggerOnSummonEffects(side, monsterCard, slot);
+        checkOpponentSummonTraps(1 - side, side, slot);
+        updateDynamicStats();
+        syncP2P();
+        renderDuelArena();
+        if (typeof onAfterPlaced === "function") onAfterPlaced(slot);
+        return true;
+      };
+
+      // Check that at least 1 slot is or will be available
+      const hasSlotNow = (preferredSlot !== -1 && preferredSlot !== null && pl.monsters[preferredSlot] === null) || pl.monsters.some(m => m === null);
+      if (!hasSlotNow) return false;
+
+      if (forcedPos === "atk" || forcedPos === "def") {
+        return finalizeSpecialSummonPlacement(forcedPos);
+      }
+
+      if (isHumanControlledSide(side)) {
+        openSummonPositionChoiceModal(
+          monsterCard,
+          {
+            title: `⚡ เลือกท่าอัญเชิญ "${monsterCard.name}" ลงสนาม`,
+            subtitle: `ต้องการวางมอนสเตอร์ในท่าตั้งโจมตี หรือ ตั้งรับ (ป้องกัน)?`,
+            allowFaceDownSet: false,
+            allowCancel: false
+          },
+          (chosenPos) => {
+            finalizeSpecialSummonPlacement(chosenPos);
+          }
+        );
+        return true;
+      }
+
+      // Bot AI: pick Defense if DEF is significantly higher than ATK (e.g. M002 Granite Fortress 1000/3200), otherwise Attack
+      const botPos = ((monsterCard.def || 0) > (monsterCard.atk || 0) + 400) ? "def" : "atk";
+      return finalizeSpecialSummonPlacement(botPos);
+    };
+
+    ensureSummonPositionChoiceModalExists();
+    window.addEventListener("DOMContentLoaded", ensureSummonPositionChoiceModalExists);
 
   </script>
 </body>
