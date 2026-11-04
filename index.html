@@ -2198,7 +2198,7 @@
               </div>
             </div>
             <div class="flex flex-col sm:flex-row gap-2">
-              <input id="input-gas-webapp-url" type="text" value="https://script.google.com/macros/s/AKfycbyKiEEvRfKDbZnmnS9nqPOE8FUUYAdk7nMfuDnEVWizl_BiAMfb04gWwa-qSD84xLb-5A/exec" placeholder="วางลิงก์ Google Apps Script Web App URL (https://script.google.com/macros/s/.../exec)" class="flex-1 px-3 py-1.5 rounded-xl bg-black border border-slate-700 text-xs text-cyan-200 font-mono" />
+              <input id="input-gas-webapp-url" type="text" value="https://script.google.com/macros/s/AKfycbxzCPOgJ2NJrDWoUCDsiX0jpsyrtEvwvTBV1aWdcT1DbAZZR35T2iQCoLK0Hw9CfZw4GQ/exec" placeholder="วางลิงก์ Google Apps Script Web App URL (https://script.google.com/macros/s/.../exec)" class="flex-1 px-3 py-1.5 rounded-xl bg-black border border-slate-700 text-xs text-cyan-200 font-mono" />
               <button onclick="saveGasWebAppUrl()" class="px-3.5 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs whitespace-nowrap">
                 🔗 บันทึก Web App URL
               </button>
@@ -2642,6 +2642,63 @@
   </div>
 
   <!-- ==================== v1 MODALS: DB SYNC SPINNER, ROOM RESERVATION & PASSWORD PROMPT ==================== -->
+    <!-- ==================== MODAL: CARD DATA & DECK CODES PER ID (หน้าต่างข้อมูลการ์ดและรหัสเด็คของแต่ละ ID) ==================== -->
+  <div id="modal-id-deck-codes" class="hidden fixed inset-0 z-[140] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 select-none">
+    <div class="royal-frame rounded-3xl max-w-lg w-full p-4 sm:p-5 text-left space-y-3.5 border-2 border-amber-400 shadow-[0_0_80px_rgba(251,191,36,0.5)]">
+      <div class="flex items-center justify-between pb-2 border-b border-amber-400/30">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🃏</span>
+          <div>
+            <h3 class="text-base sm:text-lg font-black text-amber-300 gold-glow-text">
+              ข้อมูลการ์ดและรหัสเด็คของ ID: <span id="deck-codes-modal-uid" class="font-mono text-cyan-300">upnopiris2</span>
+            </h3>
+            <p class="text-[11px] text-slate-300 font-bold">บันทึกออนไลน์ลงแผ่นงาน Google Sheets <strong>"Member_Decks"</strong> เรียบร้อยแล้ว</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeIdDeckCodesModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white font-black text-sm flex items-center justify-center transition">✕</button>
+      </div>
+
+      <!-- Deck Summary Pill -->
+      <div class="bg-black/60 p-2.5 rounded-2xl border border-amber-400/40 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-1.5 font-black text-white">
+          <span class="px-2 py-0.5 rounded-full bg-emerald-500/25 border border-emerald-400 text-emerald-300" id="deck-codes-modal-total">⭐ 40/40 ใบ</span>
+          <span class="text-slate-300 font-bold" id="deck-codes-modal-type-counts">มอนสเตอร์ 25 | เวท 10 | กับดัก 5</span>
+        </div>
+        <span class="text-[10.5px] font-mono text-amber-200" id="deck-codes-modal-updated">อัปเดต: ล่าสุด</span>
+      </div>
+
+      <!-- Card Codes Textarea -->
+      <div class="space-y-1">
+        <div class="flex items-center justify-between text-xs font-black text-amber-200">
+          <span>📝 รหัสการ์ดในเด็ค (Card Codes String):</span>
+          <span class="text-[10px] text-slate-400 font-normal">รหัสสั้นประหยัดพื้นที่ ไม่เปลืองดาต้า</span>
+        </div>
+        <textarea id="deck-codes-textarea" rows="4" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 font-mono text-[11px] text-cyan-200 focus:border-cyan-400 focus:outline-none leading-relaxed select-all" readonly></textarea>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+        <button type="button" onclick="copyDeckCodesToClipboard()" class="py-2 px-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:brightness-110 active:scale-95 text-slate-950 font-black text-xs flex items-center justify-center gap-1 shadow-lg cursor-pointer">
+          <span>📋 คัดลอกรหัส</span>
+        </button>
+        <button type="button" onclick="importDeckCodesFromInput()" class="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-black text-xs flex items-center justify-center gap-1 shadow cursor-pointer">
+          <span>📥 นำเข้ารหัส</span>
+        </button>
+        <button type="button" onclick="pushCurrentDeckCodesToCloudNow()" class="py-2 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center justify-center gap-1 shadow-lg cursor-pointer">
+          <span>☁️ ซิงค์ขึ้นชีต</span>
+        </button>
+        <button type="button" onclick="pullCurrentDeckCodesFromCloudNow()" class="py-2 px-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-black text-xs flex items-center justify-center gap-1 shadow-lg cursor-pointer">
+          <span>🔄 ดึงจากชีต</span>
+        </button>
+      </div>
+
+      <!-- Google Sheet Direct Link Note -->
+      <div class="text-[10.5px] text-slate-400 text-center pt-1 border-t border-slate-800">
+        🔗 ตรวจสอบข้อมูลใน Google Sheets แผ่นงาน <strong>"Member_Decks"</strong> ได้ตลอดเวลา
+      </div>
+    </div>
+  </div>
+
   <!-- 1. DATABASE VERIFICATION & SYNC LOADING SPINNER MODAL (REQ 1, 2, 3) -->
   <div id="modal-room-db-loading" class="hidden fixed inset-0 z-[140] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 select-none">
     <div class="royal-frame rounded-3xl max-w-md w-full p-6 text-center space-y-4 border-2 border-cyan-400 shadow-[0_0_70px_rgba(6,182,212,0.75)]">
@@ -6053,14 +6110,50 @@
         title = '⚡ MOTION GRAPHIC ⚡',
         subtitle = '',
         damageText = '',
-        duration = 1280,
-        onComplete = null
+        duration = 1100,
+        onComplete = null,
+        force = false
       } = options;
 
       const layer = document.getElementById('motion-graphic-layer');
       if (!layer || !sourceCard) {
         if (onComplete) onComplete();
         return;
+      }
+
+      // Curate Battle Motion Graphics: Do not freeze screen for ordinary minion attacks!
+      // Only play cinematic motion graphic for Bosses, Aces (7-8 stars, 2500+ ATK), Rare cards (SP),
+      // lethal game-ending attacks, or major elemental advantages.
+      if (mode === 'attack' && !force) {
+        const sc = sourceCard;
+        const tc = targetCard;
+        const scAtk = sc.currentAtk ?? sc.atk ?? 0;
+        const tcAtk = tc ? (tc.currentAtk ?? tc.atk ?? 0) : 0;
+        const isBossOrAce = (
+          (sc.stars && sc.stars >= 7) ||
+          scAtk >= 2500 ||
+          (tc && tc.stars && tc.stars >= 7) ||
+          tcAtk >= 2500 ||
+          String(sc.id || '').startsWith('SP') ||
+          (tc && String(tc.id || '').startsWith('SP')) ||
+          ['M001', 'M002', 'M094', 'M122'].includes(sc.id)
+        );
+        const isLethalOrDirect = (
+          title.includes('โดยตรง') ||
+          title.includes('ตัดสินเกม') ||
+          title.includes('ปิดฉาก') ||
+          (damageText && damageText.includes('LP'))
+        );
+        const hasAdvantage = (
+          subtitle.includes('ชนะทาง') ||
+          subtitle.includes('ย่อยสลาย') ||
+          subtitle.includes('แพ้พลัง') ||
+          subtitle.includes('สะท้อน')
+        );
+        if (!isBossOrAce && !isLethalOrDirect && !hasAdvantage) {
+          if (onComplete) onComplete();
+          return;
+        }
       }
 
       const profile = getCardElementalVisualProfile(sourceCard, mode);
@@ -10705,11 +10798,11 @@
 
 
     // ==================== GEO-DUEL v1 MASTER UPGRADE MODULE (ALL 11 USER REQUESTS) ====================
-    APP_DATA.googleAppsScriptCode = "/**\n * ============================================================================\n * GEO-DUEL ONLINE (v1 Master) — GOOGLE APPS SCRIPT BACKEND (Code.gs)\n * โรงเรียนบ้านเขาล้อ (เขาล้อประชานุทิศ) | นวัตกรรมสื่อการเรียนรู้วิทยาศาสตร์ ป.6\n * โฟลเดอร์ Google Drive: https://drive.google.com/drive/folders/1Wiou1QPjq6j01K0hMhLcYUKUZBmtQDXN\n * Google Sheet Database: https://docs.google.com/spreadsheets/d/1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM/edit\n * ============================================================================\n * วิธีติดตั้งและ Deploy Web App:\n * 1. เปิดไฟล์ Google Sheet:\n *    https://docs.google.com/spreadsheets/d/1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM/edit\n * 2. ไปที่เมนู ส่วนขยาย (Extensions) > Apps Script\n * 3. ลบโค้ดเดิมออกทั้งหมด แล้ววางโค้ดไฟล์นี้ลงไป กดบันทึก (Save / Ctrl+S)\n * 4. กดปุ่ม \"ทำให้ใช้งานได้\" (Deploy) > \"การทำให้ใช้งานได้รายการใหม่\" (New deployment)\n * 5. เลือกประเภทเป็น \"เว็บแอป\" (Web app):\n *    - ดำเนินการในฐานะ (Execute as): \"ฉัน\" (Me)\n *    - ผู้ที่มีสิทธิ์เข้าถึง (Who has access): \"ทุกคน\" (Anyone)\n * 6. กด Deploy แล้วคัดลอก Web App URL (ลงท้ายด้วย /exec) นำมาแจ้งหรือวางในเกม GEO-DUEL\n * ============================================================================\n */\n\nconst SPREADSHEET_ID = '1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM';\nconst DRIVE_FOLDER_ID = '1Wiou1QPjq6j01K0hMhLcYUKUZBmtQDXN';\nconst RARE_CARDS_FOLDER_ID = '1cSmx54cU9b2acAvdv85VYyLElFfV4DS-';\n\nconst TAB_AUTH = 'Accounts_Auth';            // 7 คอลัมน์ (A-G): แยกเก็บ User_ID และรหัสผ่าน\nconst TAB_PROFILE = 'Members_Profile_Deck';  // 17 คอลัมน์ (A-Q): โปรไฟล์ เด็ค 40 ใบ สถิติ แรงก์ คะแนน และรูปโปรไฟล์\nconst TAB_MATCHES = 'Match_Evaluation_Logs'; // 19 คอลัมน์ (A-S): ประวัติการดูเอลและคะแนนตามหลักสูตรวิทยาศาสตร์ มฐ. ว 3.2 ป.6/1-ป.6/2\nconst TAB_RARES = 'Rare_Cards_Registry';     // 13 คอลัมน์ (A-M): ทะเบียนการ์ดแรร์ SP01-SP10 และผู้ถือครอง (คอลัมน์ J-K)\nconst TAB_ROOMS = 'Rooms_50_Lobby';          // 15 คอลัมน์ (A-O): สถานะห้องดูเอลออนไลน์ 50 ห้อง (Room 01 - Room 50)\n\nconst HEADERS_AUTH = [\n  'User_ID', 'Password_Hash_Or_Pin', 'Role', 'Account_Status',\n  'Created_At', 'Last_Login_At', 'Previous_User_ID'\n];\n\nconst HEADERS_PROFILE = [\n  'User_ID', 'Student_Full_Name', 'Classroom', 'Avatar_Icon',\n  'Profile_Photo_DataURI', 'Rank_Tier', 'Rank_RP', 'Wins',\n  'Losses', 'Games_Played', 'Win_Rate_Pct', 'Avg_Play_Score_100',\n  'Avg_Play_Score_20', 'Last_Evaluation_Grade', 'Saved_Deck_40_JSON',\n  'Granted_Rare_Cards', 'Updated_At'\n];\n\nconst HEADERS_MATCHES = [\n  'Log_ID', 'Timestamp', 'User_ID', 'Student_Full_Name',\n  'Opponent_Name', 'Opponent_Rank_Tier', 'Match_Mode', 'Match_Result',\n  'RP_Change', 'New_Rank_RP', 'New_Rank_Tier', 'Total_Score_100',\n  'Score_Out_Of_20', 'Grade_Rank', 'Geo_Mastery_30', 'Tribute_Resource_25',\n  'Combat_Math_25', 'Survival_Speed_20', 'Science_Curriculum_Summary'\n];\n\nconst HEADERS_RARES = [\n  'Card_ID', 'Card_Name_TH', 'Card_Name_EN', 'Card_Category',\n  'Attribute_Element', 'Level_Stars_ATK_DEF', 'Card_Effect', 'Special_Quote',\n  'Serial_Number', 'Exclusive_Owner_ID', 'Exclusive_Owner_Name',\n  'Drive_Image_Link', 'Drive_Folder_Link'\n];\n\nconst HEADERS_ROOMS = [\n  'Room_No', 'Room_Name', 'Room_Status', 'Host_Duelist_ID',\n  'Host_Duelist_Name', 'Challenger_Duelist_ID', 'Challenger_Duelist_Name',\n  'Spectators_Count', 'Duel_Turn_Count', 'Turn_Timer_Seconds',\n  'Host_Deck_Archetype', 'Challenger_Deck_Archetype', 'Active_Match_ID',\n  'Player_Meta_JSON', 'Live_State_JSON'\n];\n\nfunction getDb() {\n  try {\n    return SpreadsheetApp.openById(SPREADSHEET_ID);\n  } catch (e) {\n    return SpreadsheetApp.getActiveSpreadsheet();\n  }\n}\n\nfunction ensureSheet(ss, name, headers) {\n  let sh = ss.getSheetByName(name);\n  if (!sh) {\n    sh = ss.insertSheet(name);\n    sh.appendRow(headers);\n  } else if (sh.getLastRow() === 0) {\n    sh.appendRow(headers);\n  }\n  return sh;\n}\n\nfunction initAllSheets() {\n  const ss = getDb();\n  ensureSheet(ss, TAB_AUTH, HEADERS_AUTH);\n  const shProf = ensureSheet(ss, TAB_PROFILE, HEADERS_PROFILE);\n  ensureSheet(ss, TAB_MATCHES, HEADERS_MATCHES);\n  ensureSheet(ss, TAB_RARES, HEADERS_RARES);\n  const shRooms = ensureSheet(ss, TAB_ROOMS, HEADERS_ROOMS);\n\n  repairProfileRowsIfNeeded(shProf);\n  ensureAll50RoomsExist(shRooms);\n  return ss;\n}\n\n/**\n * ซ่อมแถวใน Members_Profile_Deck อัตโนมัติ หากเคยถูกบันทึกด้วยโครงสร้าง 16 คอลัมน์แบบเก่า\n * ให้กลับมาตรงกับตาราง 17 คอลัมน์ (A-Q) อย่างถูกต้อง\n */\nfunction repairProfileRowsIfNeeded(shProf) {\n  if (!shProf || shProf.getLastRow() < 2) return;\n  const range = shProf.getDataRange();\n  const rows = range.getValues();\n  for (let i = 1; i < rows.length; i++) {\n    const r = rows[i];\n    const colD = String(r[3] || '').trim();\n    const colN = String(r[13] || '').trim();\n    const colO = String(r[14] || '').trim();\n    const isOld16Col = (colD === 'โรงเรียนบ้านเขาล้อ') || (colN.startsWith('{') && (colO.startsWith('data:image') || colO === '' || !colO.startsWith('{')));\n    if (isOld16Col) {\n      const uid = String(r[0] || '').trim();\n      const fullName = String(r[1] || uid).trim();\n      const classroom = String(r[2] || 'ป.6').trim();\n      const rankTier = String(r[4] || 'Bronze').trim();\n      const rankRp = Number(r[5] || 1000);\n      const wins = Number(r[7] || 0);\n      const losses = Number(r[8] || 0);\n      const games = wins + losses;\n      const winRate = games > 0 ? Math.round((wins / games) * 1000) / 10 : 0;\n      const avg100 = Number(r[10] || 0);\n      const avg20 = Math.round((avg100 / 5) * 100) / 100;\n      const grade = avg100 >= 90 ? 'S+' : (avg100 >= 82 ? 'S' : (avg100 >= 74 ? 'A' : (avg100 > 0 ? 'B' : '-')));\n      const rareJson = String(r[12] || '[]').trim().startsWith('[') ? String(r[12]).trim() : '[]';\n      const deckJson = colN.startsWith('{') ? colN : '{}';\n      const rawAv = colO;\n      const avatarIcon = (rawAv && !rawAv.startsWith('data:image')) ? rawAv : '🧑‍🔬';\n      const photoUri = (rawAv && rawAv.startsWith('data:image')) ? rawAv : '';\n      const updatedAt = String(r[15] || Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss'));\n\n      const fixedRow = [\n        uid, fullName, classroom, avatarIcon, photoUri,\n        rankTier, rankRp, wins, losses, games,\n        winRate, avg100, avg20, grade, deckJson,\n        rareJson, updatedAt\n      ];\n      shProf.getRange(i + 1, 1, 1, 17).setValues([fixedRow]);\n    }\n  }\n}\n\n/**\n * ตรวจสอบให้มีครบทั้ง 50 ห้อง (Room 01 - Room 50)\n */\nfunction ensureAll50RoomsExist(shRooms) {\n  if (!shRooms) return;\n  const rows = shRooms.getDataRange().getValues();\n  const existingNums = {};\n  for (let i = 1; i < rows.length; i++) {\n    const rNo = parseRoomNumber(rows[i][0]);\n    if (rNo >= 1 && rNo <= 50) existingNums[rNo] = true;\n  }\n  for (let n = 1; n <= 50; n++) {\n    if (!existingNums[n]) {\n      const codeStr = 'Room ' + (n < 10 ? '0' + n : n);\n      const defaultName = n === 50\n        ? 'มหาวิหารฟาโรห์ราชันย์ธรณี 50'\n        : (n === 49 ? 'ห้องประลองชิงชนะเลิศ Tournament 49' : ('ห้องประลองศิลาอิสระ ' + (n < 10 ? '0' + n : n)));\n      shRooms.appendRow([codeStr, defaultName, 'empty', '', '', '', '', '', '', '', '', '', '', '', '']);\n    }\n  }\n}\n\nfunction parseRoomNumber(val) {\n  if (typeof val === 'number') return val;\n  const m = String(val || '').match(/\\d+/);\n  return m ? parseInt(m[0], 10) : 0;\n}\n\nfunction jsonResponse(obj) {\n  return ContentService\n    .createTextOutput(JSON.stringify(obj))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction doGet(e) {\n  const params = (e && e.parameter) ? e.parameter : {};\n  const action = params.action || 'ping';\n  return handleRequest(action, params);\n}\n\nfunction doPost(e) {\n  let body = {};\n  try {\n    if (e && e.postData && e.postData.contents) {\n      body = JSON.parse(e.postData.contents);\n    }\n  } catch (err) {\n    body = (e && e.parameter) ? e.parameter : {};\n  }\n  const action = body.action || (e && e.parameter && e.parameter.action) || 'ping';\n  return handleRequest(action, body);\n}\n\nfunction handleRequest(action, data) {\n  const lock = LockService.getScriptLock();\n  lock.waitLock(10000);\n  try {\n    const ss = initAllSheets();\n    const nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');\n\n    // 0. ดึงข้อมูลทั้งหมด (Ping / SyncAll)\n    if (action === 'ping' || action === 'syncAll') {\n      return jsonResponse({\n        ok: true,\n        spreadsheetId: ss.getId(),\n        timestamp: nowStr,\n        rareRegistry: readRareRegistry(ss),\n        rooms: readAllRooms(ss),\n        leaderboard: readLeaderboard(ss),\n        members: readAllMembers(ss),\n        matches: readRecentMatches(ss, 100)\n      });\n    }\n\n    // 1. สมัครสมาชิกใหม่ (แยกเก็บ User_ID/Password ใน Accounts_Auth และโปรไฟล์ 17 คอลัมน์ใน Members_Profile_Deck)\n    if (action === 'register') {\n      const userId = String(data.userId || '').trim();\n      const password = String(data.password || '').trim();\n      if (!userId || !password) {\n        return jsonResponse({ ok: false, error: 'กรุณากรอก User ID และรหัสผ่านให้ครบถ้วน' });\n      }\n\n      const shAuth = ss.getSheetByName(TAB_AUTH);\n      const authRows = shAuth.getDataRange().getValues();\n      let authExists = false;\n      for (let i = 1; i < authRows.length; i++) {\n        if (String(authRows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n          authExists = true;\n          break;\n        }\n      }\n\n      if (!authExists) {\n        shAuth.appendRow([\n          userId,\n          \"'\" + password,\n          String(data.role || 'MEMBER').toUpperCase(),\n          'ACTIVE',\n          nowStr,\n          nowStr,\n          'Registered via GEO-DUEL'\n        ]);\n      }\n\n      const shProf = ss.getSheetByName(TAB_PROFILE);\n      const profRows = shProf.getDataRange().getValues();\n      let profExists = false;\n      for (let i = 1; i < profRows.length; i++) {\n        if (String(profRows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n          profExists = true;\n          break;\n        }\n      }\n\n      if (!profExists) {\n        const rawAvatar = String(data.avatar || '').trim();\n        const avatarIcon = String(data.avatarIcon || (!rawAvatar.startsWith('data:image') && rawAvatar ? rawAvatar : '🧑‍🔬'));\n        const photoDataUri = String(data.photoDataUrl || (rawAvatar.startsWith('data:image') ? rawAvatar : ''));\n        const deckObj = safeJsonParse(data.savedDeck || data.deck, {});\n        const rareArr = safeJsonParse(data.rareCards, []);\n        const rankRp = Number(data.rankPoints ?? data.rankRp ?? 1000);\n        const rankTier = String(data.rankTier || 'Bronze');\n\n        shProf.appendRow([\n          userId,\n          data.fullName || data.displayName || userId,\n          data.classroom || 'ป.6',\n          avatarIcon,\n          photoDataUri,\n          rankTier,\n          rankRp,\n          0, 0, 0, 0, 0, 0,\n          '-',\n          JSON.stringify(deckObj),\n          JSON.stringify(rareArr),\n          nowStr\n        ]);\n      }\n\n      return jsonResponse({\n        ok: true,\n        message: authExists ? 'อัปเดตสถานะสมาชิกแล้ว' : 'สมัครสมาชิกสำเร็จ',\n        userId: userId\n      });\n    }\n\n    // 2. เข้าสู่ระบบ (ตรวจสอบรหัสผ่านจาก Accounts_Auth และดึงโปรไฟล์จาก Members_Profile_Deck)\n    if (action === 'login') {\n      const userId = String(data.userId || '').trim();\n      const password = String(data.password || '').trim();\n      const shAuth = ss.getSheetByName(TAB_AUTH);\n      const authRows = shAuth.getDataRange().getValues();\n      let foundAuth = false;\n      for (let i = 1; i < authRows.length; i++) {\n        const rowUser = String(authRows[i][0]).trim();\n        const rowPass = String(authRows[i][1]).replace(/^'/, '').trim();\n        if (rowUser.toLowerCase() === userId.toLowerCase()) {\n          if (rowPass !== password) {\n            return jsonResponse({ ok: false, error: 'รหัสผ่านไม่ถูกต้อง' });\n          }\n          shAuth.getRange(i + 1, 6).setValue(nowStr);\n          foundAuth = true;\n          break;\n        }\n      }\n      if (!foundAuth) {\n        return jsonResponse({ ok: false, error: 'ไม่พบบัญชีผู้ใช้ \"' + userId + '\" ในระบบ' });\n      }\n      const profile = getMemberProfile(ss, userId);\n      return jsonResponse({ ok: true, profile: profile, rareRegistry: readRareRegistry(ss) });\n    }\n\n    // 3. เปลี่ยน User ID ของผู้เล่น (อัปเดตครบทุกแท็บ: Auth, Profile, Rare Cards คอลัมน์ J, Match Logs)\n    if (action === 'changeUserId') {\n      const oldId = String(data.oldUserId || '').trim();\n      const newId = String(data.newUserId || '').trim();\n      if (!oldId || !newId) return jsonResponse({ ok: false, error: 'ข้อมูลไม่ครบถ้วน' });\n\n      const shAuth = ss.getSheetByName(TAB_AUTH);\n      const authRows = shAuth.getDataRange().getValues();\n      for (let i = 1; i < authRows.length; i++) {\n        if (String(authRows[i][0]).trim().toLowerCase() === newId.toLowerCase() && newId.toLowerCase() !== oldId.toLowerCase()) {\n          return jsonResponse({ ok: false, error: 'User ID \"' + newId + '\" ซ้ำกับสมาชิกคนอื่น กรุณาใช้ชื่ออื่น' });\n        }\n      }\n      for (let i = 1; i < authRows.length; i++) {\n        if (String(authRows[i][0]).trim().toLowerCase() === oldId.toLowerCase()) {\n          shAuth.getRange(i + 1, 1).setValue(newId);\n          shAuth.getRange(i + 1, 7).setValue(oldId);\n        }\n      }\n\n      const shProf = ss.getSheetByName(TAB_PROFILE);\n      const profRows = shProf.getDataRange().getValues();\n      for (let i = 1; i < profRows.length; i++) {\n        if (String(profRows[i][0]).trim().toLowerCase() === oldId.toLowerCase()) {\n          shProf.getRange(i + 1, 1).setValue(newId);\n          if (data.displayName) shProf.getRange(i + 1, 2).setValue(data.displayName);\n          shProf.getRange(i + 1, 17).setValue(nowStr);\n        }\n      }\n\n      const shRares = ss.getSheetByName(TAB_RARES);\n      const rareRows = shRares.getDataRange().getValues();\n      for (let i = 1; i < rareRows.length; i++) {\n        // คอลัมน์ J (index 9, col 10) คือ Exclusive_Owner_ID\n        if (String(rareRows[i][9] || '').trim().toLowerCase() === oldId.toLowerCase()) {\n          shRares.getRange(i + 1, 10).setValue(newId);\n          if (data.displayName) shRares.getRange(i + 1, 11).setValue(data.displayName);\n        }\n      }\n\n      const shMatch = ss.getSheetByName(TAB_MATCHES);\n      const matchRows = shMatch.getDataRange().getValues();\n      for (let i = 1; i < matchRows.length; i++) {\n        if (String(matchRows[i][2] || '').trim().toLowerCase() === oldId.toLowerCase()) {\n          shMatch.getRange(i + 1, 3).setValue(newId);\n        }\n      }\n\n      return jsonResponse({ ok: true, newUserId: newId });\n    }\n\n    // 4. บันทึกโปรไฟล์ เด็ค 40 ใบ สถิติ แรงก์ และรูปโปรไฟล์ (ตรงตาม 17 คอลัมน์ A-Q)\n    if (action === 'saveProfileAndDeck' || action === 'syncProfileAndDeck') {\n      const userId = String(data.userId || '').trim();\n      if (!userId) return jsonResponse({ ok: false, error: 'Missing userId' });\n\n      const shAuth = ss.getSheetByName(TAB_AUTH);\n      if (data.password) {\n        const aRows = shAuth.getDataRange().getValues();\n        let authFound = false;\n        for (let i = 1; i < aRows.length; i++) {\n          if (String(aRows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n            shAuth.getRange(i + 1, 6).setValue(nowStr);\n            authFound = true;\n            break;\n          }\n        }\n        if (!authFound) {\n          shAuth.appendRow([\n            userId, \"'\" + String(data.password).trim(), 'MEMBER', 'ACTIVE',\n            nowStr, nowStr, 'Synced via GEO-DUEL'\n          ]);\n        }\n      }\n\n      const shProf = ss.getSheetByName(TAB_PROFILE);\n      const rows = shProf.getDataRange().getValues();\n      const rawAvatar = String(data.avatar || '').trim();\n      const incomingDeck = safeJsonParse(data.savedDeck || data.deck, null);\n      const incomingRares = safeJsonParse(data.rareCards, null);\n\n      let updated = false;\n      for (let i = 1; i < rows.length; i++) {\n        if (String(rows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n          const cur = rows[i];\n          const fullName = String(data.fullName || data.displayName || cur[1] || userId).trim();\n          const classroom = String(data.classroom || cur[2] || 'ป.6').trim();\n\n          let avatarIcon = String(cur[3] || '🧑‍🔬').trim();\n          if (avatarIcon === 'โรงเรียนบ้านเขาล้อ' || !avatarIcon) avatarIcon = '🧑‍🔬';\n          if (data.avatarIcon) {\n            avatarIcon = String(data.avatarIcon).trim();\n          } else if (rawAvatar && !rawAvatar.startsWith('data:image')) {\n            avatarIcon = rawAvatar;\n          }\n\n          let photoDataUri = String(cur[4] || '').trim();\n          if (!photoDataUri.startsWith('data:image')) photoDataUri = '';\n          if (data.photoDataUrl && String(data.photoDataUrl).startsWith('data:image')) {\n            photoDataUri = String(data.photoDataUrl).trim();\n          } else if (rawAvatar.startsWith('data:image')) {\n            photoDataUri = rawAvatar;\n          }\n\n          const rankTier = String(data.rankTier || cur[5] || 'Bronze').trim();\n          const rankRp = Number(data.rankPoints ?? data.rankRp ?? cur[6] ?? 1000);\n          const wins = Math.max(Number(data.wins ?? cur[7] ?? 0), 0);\n          const losses = Math.max(Number(data.losses ?? cur[8] ?? 0), 0);\n          const games = wins + losses;\n          const winRate = games > 0 ? Math.round((wins / games) * 1000) / 10 : 0;\n          const avg100 = Number(data.avgScore100 ?? cur[11] ?? 0);\n          const avg20 = Math.round((avg100 / 5) * 100) / 100;\n          const lastGrade = String(\n            data.lastRank || data.grade ||\n            (avg100 >= 90 ? 'S+' : (avg100 >= 82 ? 'S' : (avg100 >= 74 ? 'A' : (avg100 > 0 ? 'B' : (cur[13] && !String(cur[13]).startsWith('{') ? cur[13] : '-')))))\n          );\n\n          const existingDeckObj = safeJsonParse(cur[14], {});\n          const finalDeckObj = (incomingDeck && Object.keys(incomingDeck).length > 0) ? incomingDeck : existingDeckObj;\n\n          const existingRaresArr = safeJsonParse(cur[15], []);\n          const finalRaresArr = Array.isArray(incomingRares) ? incomingRares : existingRaresArr;\n\n          const rowValues = [\n            userId,\n            fullName,\n            classroom,\n            avatarIcon,\n            photoDataUri,\n            rankTier,\n            rankRp,\n            wins,\n            losses,\n            games,\n            winRate,\n            avg100,\n            avg20,\n            lastGrade,\n            JSON.stringify(finalDeckObj),\n            JSON.stringify(finalRaresArr),\n            nowStr\n          ];\n          shProf.getRange(i + 1, 1, 1, 17).setValues([rowValues]);\n          updated = true;\n          break;\n        }\n      }\n\n      if (!updated) {\n        const avatarIcon = String(data.avatarIcon || (!rawAvatar.startsWith('data:image') && rawAvatar ? rawAvatar : '🧑‍🔬'));\n        const photoDataUri = String(data.photoDataUrl || (rawAvatar.startsWith('data:image') ? rawAvatar : ''));\n        const wins = Number(data.wins || 0);\n        const losses = Number(data.losses || 0);\n        const games = wins + losses;\n        const winRate = games > 0 ? Math.round((wins / games) * 1000) / 10 : 0;\n        const avg100 = Number(data.avgScore100 || 0);\n        const avg20 = Math.round((avg100 / 5) * 100) / 100;\n        const lastGrade = avg100 >= 90 ? 'S+' : (avg100 >= 82 ? 'S' : (avg100 >= 74 ? 'A' : (avg100 > 0 ? 'B' : '-')));\n\n        shProf.appendRow([\n          userId,\n          data.fullName || data.displayName || userId,\n          data.classroom || 'ป.6',\n          avatarIcon,\n          photoDataUri,\n          data.rankTier || 'Bronze',\n          Number(data.rankPoints ?? data.rankRp ?? 1000),\n          wins,\n          losses,\n          games,\n          winRate,\n          avg100,\n          avg20,\n          lastGrade,\n          JSON.stringify(incomingDeck || {}),\n          JSON.stringify(incomingRares || []),\n          nowStr\n        ]);\n      }\n\n      return jsonResponse({ ok: true, userId: userId });\n    }\n\n    // 5. บันทึกผลการดูเอลและคะแนนตามหลักสูตรวิทยาศาสตร์ (ตรงตาม 19 คอลัมน์ A-S ใน Match_Evaluation_Logs)\n    if (action === 'recordMatch') {\n      const shMatch = ss.getSheetByName(TAB_MATCHES);\n      const userId = String(data.userId || '').trim();\n      const prof = userId ? getMemberProfile(ss, userId) : null;\n\n      const total100 = Number(data.totalScore100 ?? 85);\n      const score20 = Math.round((total100 / 5) * 100) / 100;\n      const logId = String(data.logId || data.matchId || ('M-' + new Date().getTime()));\n      const studentName = String(data.fullName || data.displayName || (prof ? prof.displayName : userId) || '');\n      const opponentName = String(data.opponentName || 'Bot');\n      const opponentRank = String(data.opponentRankTier || data.opponentRank || 'Bronze');\n      const matchMode = String(data.modeLabel || data.modeRoom || 'Bot Duel');\n      const matchResult = String(data.resultLabel || data.result || 'ชนะ (WIN)');\n      const rpChange = Number(data.rpDelta || 0);\n      const newRankRp = Number(data.newRankRp ?? (prof ? prof.rankPoints : 1000));\n      const newRankTier = String(data.newRankTier || (prof ? prof.rankTier : 'Bronze'));\n      const gradeRank = String(data.gradeRank || data.grade || 'A');\n      const geo30 = Number(data.geoScore ?? data.rockCycle30 ?? 26);\n      const trib25 = Number(data.tribScore ?? data.tribute25 ?? 22);\n      const math25 = Number(data.mathScore ?? data.combatMath25 ?? 21);\n      const speed20 = Number(data.speedScore ?? data.disaster20 ?? 16);\n      const summary = String(data.summaryShort || data.combosUsed || '');\n\n      shMatch.appendRow([\n        logId,\n        nowStr,\n        userId,\n        studentName,\n        opponentName,\n        opponentRank,\n        matchMode,\n        matchResult,\n        rpChange,\n        newRankRp,\n        newRankTier,\n        total100,\n        score20,\n        gradeRank,\n        geo30,\n        trib25,\n        math25,\n        speed20,\n        summary\n      ]);\n      return jsonResponse({ ok: true, logId: logId });\n    }\n\n    // 6. แอดมินมอบหรือถอนการ์ดแรร์ SP01-SP10 (บันทึกในคอลัมน์ J Exclusive_Owner_ID และ K Exclusive_Owner_Name)\n    if (action === 'grantRareCard') {\n      const cardId = String(data.cardId || '').trim();\n      const targetUserId = String(data.targetUserId || '').trim();\n      if (!cardId) return jsonResponse({ ok: false, error: 'Missing cardId' });\n\n      const shRares = ss.getSheetByName(TAB_RARES);\n      const rows = shRares.getDataRange().getValues();\n      let foundRow = -1;\n      for (let i = 1; i < rows.length; i++) {\n        if (String(rows[i][0]).trim().toUpperCase() === cardId.toUpperCase()) {\n          foundRow = i + 1;\n          break;\n        }\n      }\n\n      let ownerName = '';\n      if (targetUserId) {\n        const targetProf = getMemberProfile(ss, targetUserId);\n        ownerName = targetProf ? targetProf.displayName : targetUserId;\n      }\n\n      if (foundRow === -1) {\n        shRares.appendRow([\n          cardId, data.cardName || cardId, '', '', '', '', '', '', '',\n          targetUserId, ownerName, '', ''\n        ]);\n      } else {\n        // อัปเดตเฉพาะคอลัมน์ J (col 10: Exclusive_Owner_ID) และคอลัมน์ K (col 11: Exclusive_Owner_Name)\n        shRares.getRange(foundRow, 10, 1, 2).setValues([[targetUserId, ownerName]]);\n      }\n\n      // ซิงค์รายการการ์ดแรร์กลับไปยังคอลัมน์ P (Granted_Rare_Cards) ใน Members_Profile_Deck\n      syncMemberRareCardsColumn(ss);\n\n      return jsonResponse({ ok: true, rareRegistry: readRareRegistry(ss) });\n    }\n\n    // 7. อัปเดตสถานะห้องดูเอลออนไลน์ 50 ห้อง (Rooms_50_Lobby)\n    if (action === 'updateRoom') {\n      const roomNo = parseRoomNumber(data.roomNo || 1);\n      if (roomNo < 1 || roomNo > 50) return jsonResponse({ ok: false, error: 'Invalid roomNo' });\n\n      const shRooms = ss.getSheetByName(TAB_ROOMS);\n      const rows = shRooms.getDataRange().getValues();\n      let targetRow = -1;\n      let existingName = 'ห้องประลองศิลาอิสระ ' + (roomNo < 10 ? '0' + roomNo : roomNo);\n\n      for (let i = 1; i < rows.length; i++) {\n        if (parseRoomNumber(rows[i][0]) === roomNo) {\n          targetRow = i + 1;\n          if (rows[i][1]) existingName = String(rows[i][1]);\n          break;\n        }\n      }\n\n      const roomCodeStr = 'Room ' + (roomNo < 10 ? '0' + roomNo : roomNo);\n      const statusStr = String(data.status || 'empty').toLowerCase();\n      const playerMeta = {\n        hostRankTier: data.hostRankTier || 'Bronze',\n        hostRp: Number(data.hostRp || 1000),\n        hostAvatar: data.hostAvatar || '🧑‍🔬',\n        challengerRankTier: data.challengerRankTier || 'Bronze',\n        challengerRp: Number(data.challengerRp || 1000),\n        challengerAvatar: data.challengerAvatar || '🧑‍🔬',\n        challengeTimestamp: Number(data.challengeTimestamp || 0)\n      };\n\n      const rowData = [\n        roomCodeStr,\n        data.roomName || existingName,\n        statusStr,\n        statusStr === 'empty' ? '' : String(data.hostUserId || ''),\n        statusStr === 'empty' ? '' : String(data.hostName || ''),\n        statusStr === 'empty' ? '' : String(data.challengerUserId || ''),\n        statusStr === 'empty' ? '' : String(data.challengerName || ''),\n        Number(data.spectators || 0),\n        Number(data.turnCount || 0),\n        Number(data.turnTimer || 0),\n        String(data.hostDeckArchetype || ''),\n        String(data.challengerDeckArchetype || ''),\n        String(data.activeMatchId || ''),\n        statusStr === 'empty' ? '' : JSON.stringify(playerMeta),\n        statusStr === 'empty' ? '' : JSON.stringify(data.liveState || {})\n      ];\n\n      if (targetRow === -1) {\n        shRooms.appendRow(rowData);\n      } else {\n        shRooms.getRange(targetRow, 1, 1, rowData.length).setValues([rowData]);\n      }\n\n      return jsonResponse({ ok: true, rooms: readAllRooms(ss) });\n    }\n\n    return jsonResponse({ ok: false, error: 'Unknown action: ' + action });\n  } finally {\n    lock.releaseLock();\n  }\n}\n\nfunction syncMemberRareCardsColumn(ss) {\n  const rareMap = readRareRegistry(ss);\n  const shProf = ss.getSheetByName(TAB_PROFILE);\n  if (!shProf || shProf.getLastRow() < 2) return;\n  const rows = shProf.getDataRange().getValues();\n  for (let i = 1; i < rows.length; i++) {\n    const uid = String(rows[i][0] || '').trim();\n    if (!uid) continue;\n    const owned = [];\n    Object.keys(rareMap).forEach(function(cid) {\n      if (String(rareMap[cid] || '').toLowerCase() === uid.toLowerCase()) {\n        owned.push(cid);\n      }\n    });\n    shProf.getRange(i + 1, 16).setValue(JSON.stringify(owned));\n  }\n}\n\nfunction getMemberProfile(ss, userId) {\n  const shProf = ss.getSheetByName(TAB_PROFILE);\n  if (!shProf) return null;\n  const rows = shProf.getDataRange().getValues();\n  for (let i = 1; i < rows.length; i++) {\n    if (String(rows[i][0]).trim().toLowerCase() === String(userId).trim().toLowerCase()) {\n      const r = rows[i];\n      return {\n        userId: String(r[0]).trim(),\n        displayName: String(r[1] || r[0]).trim(),\n        classroom: String(r[2] || 'ป.6').trim(),\n        avatarIcon: String(r[3] || '🧑‍🔬').trim(),\n        photoDataUrl: String(r[4] || '').trim(),\n        avatar: String(r[4] || r[3] || '🧑‍🔬').trim(),\n        school: 'โรงเรียนบ้านเขาล้อ',\n        rankTier: String(r[5] || 'Bronze').trim(),\n        rankPoints: Number(r[6] || 1000),\n        wins: Number(r[7] || 0),\n        losses: Number(r[8] || 0),\n        gamesPlayed: Number(r[9] || 0),\n        winRatePct: Number(r[10] || 0),\n        avgScore100: Number(r[11] || 0),\n        avgScore20: Number(r[12] || 0),\n        lastGrade: String(r[13] || '-').trim(),\n        deck: safeJsonParse(r[14], {}),\n        rareCards: safeJsonParse(r[15], []),\n        updatedAt: String(r[16] || '')\n      };\n    }\n  }\n  return null;\n}\n\nfunction readRareRegistry(ss) {\n  const sh = ss.getSheetByName(TAB_RARES);\n  if (!sh || sh.getLastRow() < 2) return {};\n  const rows = sh.getDataRange().getValues();\n  const map = {};\n  for (let i = 1; i < rows.length; i++) {\n    const cid = String(rows[i][0] || '').trim();\n    if (!cid || !cid.toUpperCase().startsWith('SP')) continue;\n    // อ่านจากคอลัมน์ J (index 9: Exclusive_Owner_ID) เท่านั้น\n    const ownerUid = String(rows[i][9] || '').trim();\n    if (ownerUid && !/\\s/.test(ownerUid) && ownerUid !== 'Exclusive_Owner_ID') {\n      map[cid] = ownerUid;\n    } else {\n      map[cid] = '';\n    }\n  }\n  return map;\n}\n\nfunction readAllRooms(ss) {\n  const sh = ss.getSheetByName(TAB_ROOMS);\n  if (!sh || sh.getLastRow() < 2) return [];\n  const rows = sh.getDataRange().getValues();\n  const list = [];\n  for (let i = 1; i < rows.length; i++) {\n    const r = rows[i];\n    const rNo = parseRoomNumber(r[0]);\n    if (!rNo) continue;\n    const meta = safeJsonParse(r[13], {});\n    list.push({\n      roomNo: rNo,\n      roomName: String(r[1] || ''),\n      status: String(r[2] || 'empty').toLowerCase(),\n      hostUserId: String(r[3] || ''),\n      hostName: String(r[4] || ''),\n      hostRankTier: String(meta.hostRankTier || 'Bronze'),\n      hostRp: Number(meta.hostRp || 1000),\n      hostAvatar: String(meta.hostAvatar || '🧑‍🔬'),\n      challengerUserId: String(r[5] || ''),\n      challengerName: String(r[6] || ''),\n      challengerRankTier: String(meta.challengerRankTier || 'Bronze'),\n      challengerRp: Number(meta.challengerRp || 1000),\n      challengerAvatar: String(meta.challengerAvatar || '🧑‍🔬'),\n      challengeTimestamp: Number(meta.challengeTimestamp || 0),\n      spectators: Number(r[7] || 0),\n      liveState: safeJsonParse(r[14], {})\n    });\n  }\n  return list;\n}\n\nfunction readLeaderboard(ss) {\n  const sh = ss.getSheetByName(TAB_PROFILE);\n  if (!sh || sh.getLastRow() < 2) return [];\n  const rows = sh.getDataRange().getValues();\n  const list = [];\n  for (let i = 1; i < rows.length; i++) {\n    const r = rows[i];\n    if (!r[0]) continue;\n    list.push({\n      userId: String(r[0]).trim(),\n      displayName: String(r[1] || r[0]).trim(),\n      classroom: String(r[2] || 'ป.6').trim(),\n      avatarIcon: String(r[3] || '🧑‍🔬').trim(),\n      photoDataUrl: String(r[4] || '').trim(),\n      rankTier: String(r[5] || 'Bronze').trim(),\n      rankPoints: Number(r[6] || 1000),\n      wins: Number(r[7] || 0),\n      losses: Number(r[8] || 0),\n      gamesPlayed: Number(r[9] || 0),\n      winRatePct: Number(r[10] || 0),\n      avgScore100: Number(r[11] || 0),\n      avgScore20: Number(r[12] || 0),\n      lastGrade: String(r[13] || '-').trim(),\n      deck: safeJsonParse(r[14], {}),\n      rareCards: safeJsonParse(r[15], [])\n    });\n  }\n  return list;\n}\n\nfunction readAllMembers(ss) {\n  const shAuth = ss.getSheetByName(TAB_AUTH);\n  const passMap = {};\n  if (shAuth && shAuth.getLastRow() >= 2) {\n    const aRows = shAuth.getDataRange().getValues();\n    for (let i = 1; i < aRows.length; i++) {\n      const uid = String(aRows[i][0] || '').trim().toLowerCase();\n      const pass = String(aRows[i][1] || '').replace(/^'/, '').trim();\n      if (uid) passMap[uid] = pass;\n    }\n  }\n  const list = readLeaderboard(ss);\n  list.forEach(function(m) {\n    m.password = passMap[m.userId.toLowerCase()] || '';\n  });\n  return list;\n}\n\nfunction readRecentMatches(ss, limitCount) {\n  const sh = ss.getSheetByName(TAB_MATCHES);\n  if (!sh || sh.getLastRow() < 2) return [];\n  const rows = sh.getDataRange().getValues();\n  const list = [];\n  const startIdx = Math.max(1, rows.length - (limitCount || 100));\n  for (let i = rows.length - 1; i >= startIdx; i--) {\n    const r = rows[i];\n    if (!r[0]) continue;\n    list.push({\n      logId: String(r[0]),\n      timestamp: String(r[1]),\n      userId: String(r[2]),\n      studentName: String(r[3]),\n      opponentName: String(r[4]),\n      opponentRankTier: String(r[5]),\n      matchMode: String(r[6]),\n      matchResult: String(r[7]),\n      rpChange: Number(r[8] || 0),\n      newRankRp: Number(r[9] || 1000),\n      newRankTier: String(r[10] || 'Bronze'),\n      totalScore100: Number(r[11] || 0),\n      scoreOutOf20: Number(r[12] || 0),\n      gradeRank: String(r[13] || 'A'),\n      geoMastery30: Number(r[14] || 0),\n      tributeResource25: Number(r[15] || 0),\n      combatMath25: Number(r[16] || 0),\n      survivalSpeed20: Number(r[17] || 0),\n      summary: String(r[18] || '')\n    });\n  }\n  return list;\n}\n\nfunction safeJsonParse(val, fallback) {\n  if (val === undefined || val === null || val === '') return fallback;\n  if (typeof val === 'object') return val;\n  try {\n    return JSON.parse(String(val));\n  } catch (e) {\n    return fallback;\n  }\n}\n";
+    APP_DATA.googleAppsScriptCode = "/**\n\n * ============================================================================\n\n * GEO-DUEL ONLINE (v23 High-Speed Atomic Room & PIN Edition) \u2014 GOOGLE APPS SCRIPT (Code.gs)\n\n * \u0e42\u0e23\u0e07\u0e40\u0e23\u0e35\u0e22\u0e19\u0e1a\u0e49\u0e32\u0e19\u0e40\u0e02\u0e32\u0e25\u0e49\u0e2d (\u0e40\u0e02\u0e32\u0e25\u0e49\u0e2d\u0e1b\u0e23\u0e30\u0e0a\u0e32\u0e19\u0e38\u0e17\u0e34\u0e28) | \u0e19\u0e27\u0e31\u0e15\u0e01\u0e23\u0e23\u0e21\u0e2a\u0e37\u0e48\u0e2d\u0e01\u0e32\u0e23\u0e40\u0e23\u0e35\u0e22\u0e19\u0e23\u0e39\u0e49\u0e27\u0e34\u0e17\u0e22\u0e32\u0e28\u0e32\u0e2a\u0e15\u0e23\u0e4c \u0e1b.6\n\n * \u0e42\u0e1f\u0e25\u0e40\u0e14\u0e2d\u0e23\u0e4c Google Drive: https://drive.google.com/drive/folders/1Wiou1QPjq6j01K0hMhLcYUKUZBmtQDXN\n\n * Google Sheet Database: https://docs.google.com/spreadsheets/d/1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM/edit\n\n * ============================================================================\n\n * \u0e2d\u0e31\u0e1b\u0e40\u0e01\u0e23\u0e14\u0e43\u0e2b\u0e21\u0e48\u0e43\u0e19 v24 (Cross-Device Deck & Favorite Decks Cloud Sync):\n\n * 0. \u0e23\u0e30\u0e1a\u0e1a\u0e0b\u0e34\u0e07\u0e04\u0e4c\u0e40\u0e14\u0e47\u0e04\u0e02\u0e49\u0e32\u0e21\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07 100% (Active 40-Card Deck + \u0e40\u0e14\u0e47\u0e04\u0e42\u0e1b\u0e23\u0e14 3 \u0e0a\u0e48\u0e2d\u0e07 fav1, fav2, fav3):\n\n *    \u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e41\u0e25\u0e30\u0e14\u0e36\u0e07\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e40\u0e14\u0e47\u0e04\u0e08\u0e32\u0e01\u0e04\u0e2d\u0e25\u0e31\u0e21\u0e19\u0e4c O (Saved_Deck_40_JSON) \u0e1e\u0e23\u0e49\u0e2d\u0e21\u0e2a\u0e31\u0e48\u0e07 SpreadsheetApp.flush() \u0e17\u0e31\u0e19\u0e17\u0e35\n\n * \u0e2d\u0e31\u0e1b\u0e40\u0e01\u0e23\u0e14\u0e43\u0e19 v23:\n\n * 1. \u0e23\u0e30\u0e1a\u0e1a\u0e15\u0e23\u0e27\u0e08\u0e2a\u0e2d\u0e1a\u0e04\u0e34\u0e27\u0e01\u0e32\u0e23\u0e08\u0e2d\u0e07\u0e2b\u0e49\u0e2d\u0e07 (First-Come-First-Served Atomic Lock): \u0e43\u0e04\u0e23\u0e01\u0e14\u0e08\u0e2d\u0e07\u0e01\u0e48\u0e2d\u0e19\u0e44\u0e14\u0e49\u0e19\u0e31\u0e48\u0e07\u0e01\u0e48\u0e2d\u0e19 \u0e1b\u0e49\u0e2d\u0e07\u0e01\u0e31\u0e19\u0e01\u0e32\u0e23\u0e01\u0e14\u0e0b\u0e49\u0e2d\u0e19\u0e01\u0e31\u0e19\n\n * 2. \u0e23\u0e30\u0e1a\u0e1a\u0e15\u0e31\u0e49\u0e07\u0e23\u0e2b\u0e31\u0e2a\u0e1c\u0e48\u0e32\u0e19\u0e2b\u0e49\u0e2d\u0e07\u0e14\u0e39\u0e40\u0e2d\u0e25 (Room Password / PIN): \u0e23\u0e2d\u0e07\u0e23\u0e31\u0e1a\u0e17\u0e31\u0e49\u0e07\u0e2b\u0e49\u0e2d\u0e07\u0e2a\u0e32\u0e18\u0e32\u0e23\u0e13\u0e30 (\u0e44\u0e21\u0e48\u0e43\u0e2a\u0e48\u0e23\u0e2b\u0e31\u0e2a) \u0e41\u0e25\u0e30\u0e2b\u0e49\u0e2d\u0e07\u0e25\u0e47\u0e2d\u0e01\u0e23\u0e2b\u0e31\u0e2a\u0e1c\u0e48\u0e32\u0e19\n\n * 3. \u0e23\u0e30\u0e1a\u0e1a\u0e1b\u0e0f\u0e34\u0e40\u0e2a\u0e18\u0e04\u0e33\u0e17\u0e49\u0e32 (Decline & Block per Sitting Session): \u0e40\u0e21\u0e37\u0e48\u0e2d\u0e40\u0e08\u0e49\u0e32\u0e02\u0e2d\u0e07\u0e2b\u0e49\u0e2d\u0e07\u0e1b\u0e0f\u0e34\u0e40\u0e2a\u0e18 \u0e1c\u0e39\u0e49\u0e17\u0e49\u0e32\u0e0a\u0e34\u0e07\u0e08\u0e30\u0e2d\u0e2d\u0e01\u0e08\u0e32\u0e01\u0e2b\u0e49\u0e2d\u0e07\u0e04\u0e19\u0e40\u0e14\u0e35\u0e22\u0e27\n\n *    \u0e40\u0e08\u0e49\u0e32\u0e02\u0e2d\u0e07\u0e2b\u0e49\u0e2d\u0e07\u0e22\u0e31\u0e07\u0e04\u0e07\u0e19\u0e31\u0e48\u0e07\u0e2d\u0e22\u0e39\u0e48\u0e17\u0e35\u0e48\u0e40\u0e14\u0e34\u0e21 \u0e41\u0e25\u0e30\u0e1c\u0e39\u0e49\u0e17\u0e49\u0e32\u0e0a\u0e34\u0e07\u0e04\u0e19\u0e19\u0e31\u0e49\u0e19\u0e08\u0e30\u0e17\u0e49\u0e32\u0e2b\u0e49\u0e2d\u0e07\u0e19\u0e35\u0e49\u0e0b\u0e49\u0e33\u0e44\u0e21\u0e48\u0e44\u0e14\u0e49\u0e08\u0e19\u0e01\u0e27\u0e48\u0e32\u0e40\u0e08\u0e49\u0e32\u0e02\u0e2d\u0e07\u0e2b\u0e49\u0e2d\u0e07\u0e08\u0e30\u0e25\u0e38\u0e01\u0e41\u0e25\u0e49\u0e27\u0e19\u0e31\u0e48\u0e07\u0e43\u0e2b\u0e21\u0e48\n\n * 4. \u0e04\u0e27\u0e32\u0e21\u0e40\u0e23\u0e47\u0e27\u0e2a\u0e39\u0e07\u0e2a\u0e38\u0e14 (Ultra-Fast Single-Row Room I/O + CacheService): \u0e41\u0e22\u0e01\u0e01\u0e32\u0e23\u0e14\u0e36\u0e07\u0e2a\u0e16\u0e32\u0e19\u0e30 50 \u0e2b\u0e49\u0e2d\u0e07 (syncRoomsOnly)\n\n *    \u0e41\u0e25\u0e30\u0e01\u0e32\u0e23\u0e2d\u0e31\u0e1b\u0e40\u0e14\u0e15\u0e40\u0e09\u0e1e\u0e32\u0e30\u0e41\u0e16\u0e27\u0e2b\u0e49\u0e2d\u0e07\u0e17\u0e35\u0e48\u0e40\u0e25\u0e37\u0e2d\u0e01 \u0e17\u0e33\u0e43\u0e2b\u0e49\u0e23\u0e31\u0e1a-\u0e2a\u0e48\u0e07\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e44\u0e27\u0e02\u0e36\u0e49\u0e19\u0e01\u0e27\u0e48\u0e32\u0e40\u0e14\u0e34\u0e21 4\u20135 \u0e40\u0e17\u0e48\u0e32\n\n * ============================================================================\n\n * \u0e27\u0e34\u0e18\u0e35\u0e19\u0e33\u0e44\u0e1b\u0e2d\u0e31\u0e1b\u0e40\u0e14\u0e15\u0e41\u0e25\u0e30 Deploy Web App:\n\n * 1. \u0e40\u0e1b\u0e34\u0e14\u0e44\u0e1f\u0e25\u0e4c Google Sheet:\n\n *    https://docs.google.com/spreadsheets/d/1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM/edit\n\n * 2. \u0e44\u0e1b\u0e17\u0e35\u0e48\u0e40\u0e21\u0e19\u0e39 \u0e2a\u0e48\u0e27\u0e19\u0e02\u0e22\u0e32\u0e22 (Extensions) > Apps Script\n\n * 3. \u0e25\u0e1a\u0e42\u0e04\u0e49\u0e14\u0e40\u0e14\u0e34\u0e21\u0e2d\u0e2d\u0e01\u0e17\u0e31\u0e49\u0e07\u0e2b\u0e21\u0e14 \u0e41\u0e25\u0e49\u0e27\u0e27\u0e32\u0e07\u0e42\u0e04\u0e49\u0e14\u0e44\u0e1f\u0e25\u0e4c\u0e19\u0e35\u0e49\u0e25\u0e07\u0e44\u0e1b \u0e01\u0e14\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01 (Save / Ctrl+S)\n\n * 4. \u0e01\u0e14\u0e1b\u0e38\u0e48\u0e21 \"\u0e17\u0e33\u0e43\u0e2b\u0e49\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\u0e44\u0e14\u0e49\" (Deploy) > \"\u0e01\u0e32\u0e23\u0e17\u0e33\u0e43\u0e2b\u0e49\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\u0e44\u0e14\u0e49\u0e23\u0e32\u0e22\u0e01\u0e32\u0e23\u0e43\u0e2b\u0e21\u0e48\" (New deployment)\n\n *    (\u0e2b\u0e23\u0e37\u0e2d \"\u0e08\u0e31\u0e14\u0e01\u0e32\u0e23\u0e01\u0e32\u0e23\u0e17\u0e33\u0e43\u0e2b\u0e49\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\u0e44\u0e14\u0e49\" > \u0e41\u0e01\u0e49\u0e44\u0e02\u0e40\u0e1b\u0e47\u0e19\u0e40\u0e27\u0e2d\u0e23\u0e4c\u0e0a\u0e31\u0e19\u0e43\u0e2b\u0e21\u0e48)\n\n * 5. \u0e40\u0e25\u0e37\u0e2d\u0e01\u0e1b\u0e23\u0e30\u0e40\u0e20\u0e17\u0e40\u0e1b\u0e47\u0e19 \"\u0e40\u0e27\u0e47\u0e1a\u0e41\u0e2d\u0e1b\" (Web app):\n\n *    - \u0e14\u0e33\u0e40\u0e19\u0e34\u0e19\u0e01\u0e32\u0e23\u0e43\u0e19\u0e10\u0e32\u0e19\u0e30 (Execute as): \"\u0e09\u0e31\u0e19\" (Me)\n\n *    - \u0e1c\u0e39\u0e49\u0e17\u0e35\u0e48\u0e21\u0e35\u0e2a\u0e34\u0e17\u0e18\u0e34\u0e4c\u0e40\u0e02\u0e49\u0e32\u0e16\u0e36\u0e07 (Who has access): \"\u0e17\u0e38\u0e01\u0e04\u0e19\" (Anyone)\n\n * 6. \u0e01\u0e14 Deploy \u0e41\u0e25\u0e49\u0e27\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01 Web App URL (\u0e25\u0e07\u0e17\u0e49\u0e32\u0e22\u0e14\u0e49\u0e27\u0e22 /exec) \u0e2a\u0e48\u0e07\u0e01\u0e25\u0e31\u0e1a\u0e21\u0e32\u0e2b\u0e23\u0e37\u0e2d\u0e27\u0e32\u0e07\u0e43\u0e19\u0e40\u0e01\u0e21\u0e44\u0e14\u0e49\u0e40\u0e25\u0e22\n\n * ============================================================================\n\n */\n\nconst SPREADSHEET_ID = '1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM';\n\nconst DRIVE_FOLDER_ID = '1Wiou1QPjq6j01K0hMhLcYUKUZBmtQDXN';\n\nconst RARE_CARDS_FOLDER_ID = '1cSmx54cU9b2acAvdv85VYyLElFfV4DS-';\n\nconst TAB_AUTH = 'Accounts_Auth';            // 7 \u0e04\u0e2d\u0e25\u0e31\u0e21\u0e19\u0e4c (A-G): \u0e41\u0e22\u0e01\u0e40\u0e01\u0e47\u0e1a User_ID \u0e41\u0e25\u0e30\u0e23\u0e2b\u0e31\u0e2a\u0e1c\u0e48\u0e32\u0e19\nconst TAB_PROFILE = 'Members_Profile_Deck';  // 17 \u0e04\u0e2d\u0e25\u0e31\u0e21\u0e19\u0e4c (A-Q): \u0e42\u0e1b\u0e23\u0e44\u0e1f\u0e25\u0e4c \u0e40\u0e14\u0e47\u0e04 40 \u0e43\u0e1a \u0e2a\u0e16\u0e34\u0e15\u0e34 \u0e41\u0e23\u0e07\u0e01\u0e4c \u0e04\u0e30\u0e41\u0e19\u0e19 \u0e41\u0e25\u0e30\u0e23\u0e39\u0e1b\u0e42\u0e1b\u0e23\u0e44\u0e1f\u0e25\u0e4c\nconst TAB_DECKS = 'Member_Decks';            // 9 \u0e04\u0e2d\u0e25\u0e31\u0e21\u0e19\u0e4c (A-I): \u0e2b\u0e19\u0e49\u0e32\u0e15\u0e48\u0e32\u0e07\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e23\u0e2b\u0e31\u0e2a\u0e01\u0e32\u0e23\u0e4c\u0e14\u0e41\u0e25\u0e30\u0e40\u0e14\u0e47\u0e04\u0e02\u0e2d\u0e07\u0e41\u0e15\u0e48\u0e25\u0e30 ID (Active Deck + \u0e40\u0e14\u0e47\u0e04\u0e42\u0e1b\u0e23\u0e14 3 \u0e0a\u0e48\u0e2d\u0e07)\nconst TAB_MATCHES = 'Match_Evaluation_Logs'; // 19 \u0e04\u0e2d\u0e25\u0e31\u0e21\u0e19\u0e4c (A-S): \u0e1b\u0e23\u0e30\u0e27\u0e31\u0e15\u0e34\u0e01\u0e32\u0e23\u0e14\u0e39\u0e40\u0e2d\u0e25\u0e41\u0e25\u0e30\u0e04\u0e30\u0e41\u0e19\u0e19\u0e15\u0e32\u0e21\u0e2b\u0e25\u0e31\u0e01\u0e2a\u0e39\u0e15\u0e23\u0e27\u0e34\u0e17\u0e22\u0e32\u0e28\u0e32\u0e2a\u0e15\u0e23\u0e4c \u0e21\u0e10. \u0e27 3.2 \u0e1b.6/1-\u0e1b.6/2\nconst TAB_RARES = 'Rare_Cards_Registry';     // 13 \u0e04\u0e2d\u0e25\u0e31\u0e21\u0e19\u0e4c (A-M): \u0e17\u0e30\u0e40\u0e1a\u0e35\u0e22\u0e19\u0e01\u0e32\u0e23\u0e4c\u0e14\u0e41\u0e23\u0e23\u0e4c SP01-SP10 \u0e41\u0e25\u0e30\u0e1c\u0e39\u0e49\u0e16\u0e37\u0e2d\u0e04\u0e23\u0e2d\u0e07 (\u0e04\u0e2d\u0e25\u0e31\u0e21\u0e19\u0e4c J-K)\nconst TAB_ROOMS = 'Rooms_50_Lobby';          // 15 \u0e04\u0e2d\u0e25\u0e31\u0e21\u0e19\u0e4c (A-O): \u0e2a\u0e16\u0e32\u0e19\u0e30\u0e2b\u0e49\u0e2d\u0e07\u0e14\u0e39\u0e40\u0e2d\u0e25\u0e2d\u0e2d\u0e19\u0e44\u0e25\u0e19\u0e4c 50 \u0e2b\u0e49\u0e2d\u0e07 (Room 01 - Room 50)\n\nconst ROOMS_CACHE_KEY = 'GEODUEL_V23_ROOMS_JSON';\n\nconst HEADERS_AUTH = [\n  'User_ID', 'Password_Hash_Or_Pin', 'Role', 'Account_Status',\n  'Created_At', 'Last_Login_At', 'Previous_User_ID'\n];\n\nconst HEADERS_PROFILE = [\n  'User_ID', 'Student_Full_Name', 'Classroom', 'Avatar_Icon',\n  'Profile_Photo_DataURI', 'Rank_Tier', 'Rank_RP', 'Wins',\n  'Losses', 'Games_Played', 'Win_Rate_Pct', 'Avg_Play_Score_100',\n  'Avg_Play_Score_20', 'Last_Evaluation_Grade', 'Saved_Deck_40_JSON',\n  'Granted_Rare_Cards', 'Updated_At'\n];\n\nconst HEADERS_DECKS = [\n  'User_ID', 'Student_Full_Name', 'Deck_Total_Cards', 'Active_Deck_Card_Codes',\n  'Favorite_Slot_1_Codes', 'Favorite_Slot_2_Codes', 'Favorite_Slot_3_Codes',\n  'Full_Deck_JSON', 'Updated_At'\n];\n\nconst HEADERS_MATCHES = [\n\n  'Log_ID', 'Timestamp', 'User_ID', 'Student_Full_Name',\n\n  'Opponent_Name', 'Opponent_Rank_Tier', 'Match_Mode', 'Match_Result',\n\n  'RP_Change', 'New_Rank_RP', 'New_Rank_Tier', 'Total_Score_100',\n\n  'Score_Out_Of_20', 'Grade_Rank', 'Geo_Mastery_30', 'Tribute_Resource_25',\n\n  'Combat_Math_25', 'Survival_Speed_20', 'Science_Curriculum_Summary'\n\n];\n\nconst HEADERS_RARES = [\n\n  'Card_ID', 'Card_Name_TH', 'Card_Name_EN', 'Card_Category',\n\n  'Attribute_Element', 'Level_Stars_ATK_DEF', 'Card_Effect', 'Special_Quote',\n\n  'Serial_Number', 'Exclusive_Owner_ID', 'Exclusive_Owner_Name',\n\n  'Drive_Image_Link', 'Drive_Folder_Link'\n\n];\n\nconst HEADERS_ROOMS = [\n\n  'Room_No', 'Room_Name', 'Room_Status', 'Host_Duelist_ID',\n\n  'Host_Duelist_Name', 'Challenger_Duelist_ID', 'Challenger_Duelist_Name',\n\n  'Spectators_Count', 'Duel_Turn_Count', 'Turn_Timer_Seconds',\n\n  'Host_Deck_Archetype', 'Challenger_Deck_Archetype', 'Active_Match_ID',\n\n  'Player_Meta_JSON', 'Live_State_JSON'\n\n];\n\n// \u0e41\u0e1b\u0e25\u0e07 Deck Map { M001: 2, M002: 1 } \u0e40\u0e1b\u0e47\u0e19\u0e23\u0e2b\u0e31\u0e2a\u0e02\u0e49\u0e2d\u0e04\u0e27\u0e32\u0e21\u0e2a\u0e31\u0e49\u0e19\u0e1b\u0e23\u0e30\u0e2b\u0e22\u0e31\u0e14\u0e1e\u0e37\u0e49\u0e19\u0e17\u0e35\u0e48 \"M001:2, M002:1\"\nfunction deckMapToCodesString(deckMap) {\n  if (!deckMap || typeof deckMap !== 'object') return '';\n  const entries = [];\n  const src = (deckMap.activeDeck && typeof deckMap.activeDeck === 'object') ? deckMap.activeDeck : deckMap;\n  Object.keys(src).sort().forEach(function(cid) {\n    if (cid === '_favDecks' || cid === 'favoriteDecks' || cid === '_updatedAt' || cid === 'activeDeck') return;\n    const cnt = Number(src[cid] || 0);\n    if (cnt > 0) entries.push(cid + ':' + cnt);\n  });\n  return entries.join(', ');\n}\n\n// \u0e41\u0e1b\u0e25\u0e07\u0e23\u0e2b\u0e31\u0e2a\u0e02\u0e49\u0e2d\u0e04\u0e27\u0e32\u0e21 \"M001:2, M002:1\" \u0e01\u0e25\u0e31\u0e1a\u0e40\u0e1b\u0e47\u0e19 Deck Map { M001: 2, M002: 1 }\nfunction codesStringToDeckMap(codesStr) {\n  const map = {};\n  if (!codesStr || typeof codesStr !== 'string') return map;\n  const parts = codesStr.split(',');\n  parts.forEach(function(p) {\n    const item = p.trim();\n    if (!item) return;\n    const pair = item.split(':');\n    const cid = pair[0].trim();\n    const cnt = pair[1] ? parseInt(pair[1].trim(), 10) : 1;\n    if (cid && cnt > 0) map[cid] = cnt;\n  });\n  return map;\n}\n\nfunction readAllDecksRegistry(ss) {\n  const sh = ss.getSheetByName(TAB_DECKS);\n  if (!sh || sh.getLastRow() < 2) return {};\n  const rows = sh.getDataRange().getValues();\n  const map = {};\n  for (let i = 1; i < rows.length; i++) {\n    const r = rows[i];\n    const uid = String(r[0] || '').trim();\n    if (!uid || uid.toLowerCase() === 'user_id') continue;\n    map[uid.toLowerCase()] = {\n      userId: uid,\n      playerName: String(r[1] || uid).trim(),\n      deckTotal: Number(r[2] || 0),\n      activeCodes: String(r[3] || '').trim(),\n      fav1Codes: String(r[4] || '').trim(),\n      fav2Codes: String(r[5] || '').trim(),\n      fav3Codes: String(r[6] || '').trim(),\n      updatedAt: String(r[8] || '')\n    };\n  }\n  return map;\n}\n\nfunction getDb() {\n\n  try {\n\n    return SpreadsheetApp.openById(SPREADSHEET_ID);\n\n  } catch (e) {\n\n    return SpreadsheetApp.getActiveSpreadsheet();\n\n  }\n\n}\n\nfunction ensureSheet(ss, name, headers) {\n\n  let sh = ss.getSheetByName(name);\n\n  if (!sh) {\n\n    sh = ss.insertSheet(name);\n\n    sh.appendRow(headers);\n\n  } else if (sh.getLastRow() === 0) {\n\n    sh.appendRow(headers);\n\n  }\n\n  return sh;\n\n}\n\nfunction initAllSheets() {\n\n  const ss = getDb();\n\n  ensureSheet(ss, TAB_AUTH, HEADERS_AUTH);\n  ensureSheet(ss, TAB_DECKS, HEADERS_DECKS);\n\n  const shProf = ensureSheet(ss, TAB_PROFILE, HEADERS_PROFILE);\n\n  ensureSheet(ss, TAB_MATCHES, HEADERS_MATCHES);\n\n  ensureSheet(ss, TAB_RARES, HEADERS_RARES);\n\n  const shRooms = ensureSheet(ss, TAB_ROOMS, HEADERS_ROOMS);\n\n  ensureAll50RoomsExist(shRooms);\n\n  return ss;\n\n}\n\nfunction ensureAll50RoomsExist(shRooms) {\n\n  if (!shRooms) return;\n\n  if (shRooms.getLastRow() >= 51) return; // Fast skip when all 50 rooms already exist!\n\n  const rows = shRooms.getDataRange().getValues();\n\n  const existingNums = {};\n\n  for (let i = 1; i < rows.length; i++) {\n\n    const rNo = parseRoomNumber(rows[i][0]);\n\n    if (rNo >= 1 && rNo <= 50) existingNums[rNo] = true;\n\n  }\n\n  for (let n = 1; n <= 50; n++) {\n\n    if (!existingNums[n]) {\n\n      const codeStr = 'Room ' + (n < 10 ? '0' + n : n);\n\n      const defaultName = n === 50\n\n        ? '\u0e21\u0e2b\u0e32\u0e27\u0e34\u0e2b\u0e32\u0e23\u0e1f\u0e32\u0e42\u0e23\u0e2b\u0e4c\u0e23\u0e32\u0e0a\u0e31\u0e19\u0e22\u0e4c\u0e18\u0e23\u0e13\u0e35 50'\n\n        : (n === 49 ? '\u0e2b\u0e49\u0e2d\u0e07\u0e1b\u0e23\u0e30\u0e25\u0e2d\u0e07\u0e0a\u0e34\u0e07\u0e0a\u0e19\u0e30\u0e40\u0e25\u0e34\u0e28 Tournament 49' : ('\u0e2b\u0e49\u0e2d\u0e07\u0e1b\u0e23\u0e30\u0e25\u0e2d\u0e07\u0e28\u0e34\u0e25\u0e32\u0e2d\u0e34\u0e2a\u0e23\u0e30 ' + (n < 10 ? '0' + n : n)));\n\n      shRooms.appendRow([codeStr, defaultName, 'empty', '', '', '', '', '', '', '', '', '', '', '', '']);\n\n    }\n\n  }\n\n}\n\nfunction parseRoomNumber(val) {\n\n  if (typeof val === 'number') return val;\n\n  const m = String(val || '').match(/\\d+/);\n\n  return m ? parseInt(m[0], 10) : 0;\n\n}\n\nfunction jsonResponse(obj) {\n\n  return ContentService\n\n    .createTextOutput(JSON.stringify(obj))\n\n    .setMimeType(ContentService.MimeType.JSON);\n\n}\n\nfunction doGet(e) {\n\n  const params = (e && e.parameter) ? e.parameter : {};\n\n  const action = params.action || 'ping';\n\n  return handleRequest(action, params);\n\n}\n\nfunction doPost(e) {\n\n  let body = {};\n\n  try {\n\n    if (e && e.postData && e.postData.contents) {\n\n      body = JSON.parse(e.postData.contents);\n\n    }\n\n  } catch (err) {\n\n    body = (e && e.parameter) ? e.parameter : {};\n\n  }\n\n  const action = body.action || (e && e.parameter && e.parameter.action) || 'ping';\n\n  return handleRequest(action, body);\n\n}\n\nfunction handleRequest(action, data) {\n\n  // Fast read-only path for syncRoomsOnly (no heavy LockService wait needed!)\n\n  if (action === 'syncRoomsOnly') {\n\n    try {\n\n      const cache = CacheService.getScriptCache();\n\n      const cachedStr = cache.get(ROOMS_CACHE_KEY);\n\n      if (cachedStr && !data.forceFresh) {\n\n        return jsonResponse({\n\n          ok: true,\n\n          cached: true,\n\n          timestamp: new Date().getTime(),\n\n          rooms: JSON.parse(cachedStr)\n\n        });\n\n      }\n\n      const ss = getDb();\n\n      const rooms = readAllRooms(ss);\n\n      try {\n\n        cache.put(ROOMS_CACHE_KEY, JSON.stringify(rooms), 2);\n\n      } catch (eCache) {}\n\n      return jsonResponse({\n\n        ok: true,\n\n        cached: false,\n\n        timestamp: new Date().getTime(),\n\n        rooms: rooms\n\n      });\n\n    } catch (errFast) {\n\n      return jsonResponse({ ok: false, error: String(errFast) });\n\n    }\n\n  }\n\n  const lock = LockService.getScriptLock();\n\n  lock.waitLock(10000);\n\n  try {\n\n    const ss = getDb();\n\n    const nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');\n\n    // 0. \u0e14\u0e36\u0e07\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e17\u0e31\u0e49\u0e07\u0e2b\u0e21\u0e14 (Ping / SyncAll)\n\n    if (action === 'ping' || action === 'syncAll') {\n\n      initAllSheets();\n\n      const rooms = readAllRooms(ss);\n\n      try {\n\n        CacheService.getScriptCache().put(ROOMS_CACHE_KEY, JSON.stringify(rooms), 2);\n\n      } catch (eC) {}\n\n      return jsonResponse({\n\n        ok: true,\n\n        version: 'v23',\n\n        spreadsheetId: ss.getId(),\n\n        timestamp: nowStr,\n\n        rareRegistry: readRareRegistry(ss),\n        decksRegistry: readAllDecksRegistry(ss),\n\n        rooms: rooms,\n\n        leaderboard: readLeaderboard(ss),\n\n        members: readAllMembers(ss),\n\n        matches: readRecentMatches(ss, 80)\n\n      });\n\n    }\n\n    // 7. \u0e2d\u0e31\u0e1b\u0e40\u0e14\u0e15\u0e41\u0e25\u0e30\u0e08\u0e31\u0e14\u0e01\u0e32\u0e23\u0e04\u0e34\u0e27\u0e2b\u0e49\u0e2d\u0e07\u0e14\u0e39\u0e40\u0e2d\u0e25\u0e2d\u0e2d\u0e19\u0e44\u0e25\u0e19\u0e4c 50 \u0e2b\u0e49\u0e2d\u0e07\u0e41\u0e1a\u0e1a Atomic (First-Come-First-Served, Password & Session Decline Block)\n\n    if (\n\n      action === 'updateRoom' ||\n\n      action === 'claimRoom' ||\n\n      action === 'challengeRoom' ||\n\n      action === 'declineChallenge' ||\n\n      action === 'leaveRoom'\n\n    ) {\n\n      const subAction = String(data.subAction || action || 'updateRoom').trim();\n\n      const roomNo = parseRoomNumber(data.roomNo || 1);\n\n      if (roomNo < 1 || roomNo > 50) return jsonResponse({ ok: false, error: 'Invalid roomNo' });\n\n      const shRooms = ensureSheet(ss, TAB_ROOMS, HEADERS_ROOMS);\n\n      ensureAll50RoomsExist(shRooms);\n\n      // Fast direct row lookup (row roomNo + 1 if ordered, or fallback scan)\n\n      let targetRow = roomNo + 1;\n\n      let existingRow = null;\n\n      if (shRooms.getLastRow() >= targetRow) {\n\n        const candidate = shRooms.getRange(targetRow, 1, 1, 15).getValues()[0];\n\n        if (parseRoomNumber(candidate[0]) === roomNo) {\n\n          existingRow = candidate;\n\n        }\n\n      }\n\n      if (!existingRow) {\n\n        const allRows = shRooms.getDataRange().getValues();\n\n        for (let i = 1; i < allRows.length; i++) {\n\n          if (parseRoomNumber(allRows[i][0]) === roomNo) {\n\n            targetRow = i + 1;\n\n            existingRow = allRows[i];\n\n            break;\n\n          }\n\n        }\n\n      }\n\n      const existingName = (existingRow && existingRow[1])\n\n        ? String(existingRow[1])\n\n        : ('\u0e2b\u0e49\u0e2d\u0e07\u0e1b\u0e23\u0e30\u0e25\u0e2d\u0e07\u0e28\u0e34\u0e25\u0e32\u0e2d\u0e34\u0e2a\u0e23\u0e30 ' + (roomNo < 10 ? '0' + roomNo : roomNo));\n\n      const curStatus = existingRow ? String(existingRow[2] || 'empty').trim().toLowerCase() : 'empty';\n\n      const curHostId = existingRow ? String(existingRow[3] || '').trim() : '';\n\n      const curHostName = existingRow ? String(existingRow[4] || '').trim() : '';\n\n      const curGuestId = existingRow ? String(existingRow[5] || '').trim() : '';\n\n      const prevMeta = existingRow ? safeJsonParse(existingRow[13], {}) : {};\n\n      const prevLive = existingRow ? safeJsonParse(existingRow[14], {}) : {};\n\n      // Auto-expire abandoned rooms older than 20 minutes\n\n      const nowMs = new Date().getTime();\n\n      const lastUpdatedMs = Number(prevLive.updatedAt || prevLive.pktSeq || prevMeta.challengeTimestamp || 0);\n\n      const isExpired = lastUpdatedMs > 0 && (nowMs - lastUpdatedMs > 20 * 60 * 1000);\n\n      const effectiveCurStatus = (isExpired || !curHostId) ? 'empty' : curStatus;\n\n      const incomingLive = safeJsonParse(data.liveState, null) || {};\n\n      const reqHostId = String(data.hostUserId !== undefined ? data.hostUserId : (incomingLive.senderUserId || '')).trim();\n\n      const reqGuestId = String(data.challengerUserId !== undefined ? data.challengerUserId : '').trim();\n\n      // --- CASE A: CLAIM EMPTY ROOM (First-Come, First-Served!) ---\n\n      if (subAction === 'claimRoom') {\n\n        if (\n\n          effectiveCurStatus !== 'empty' &&\n\n          curHostId &&\n\n          curHostId.toLowerCase() !== reqHostId.toLowerCase()\n\n        ) {\n\n          const roomsNow = readAllRooms(ss);\n\n          return jsonResponse({\n\n            ok: false,\n\n            errorCode: 'ROOM_ALREADY_TAKEN',\n\n            error: '\u0e2b\u0e49\u0e2d\u0e07\u0e17\u0e35\u0e48 ' + roomNo + ' \u0e21\u0e35\u0e1c\u0e39\u0e49\u0e40\u0e25\u0e48\u0e19 \"' + (curHostName || curHostId) + '\" \u0e01\u0e14\u0e08\u0e2d\u0e07\u0e19\u0e31\u0e48\u0e07\u0e44\u0e1b\u0e01\u0e48\u0e2d\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e04\u0e38\u0e13\u0e41\u0e25\u0e49\u0e27!',\n\n            currentHostId: curHostId,\n\n            currentHostName: curHostName || curHostId,\n\n            rooms: roomsNow\n\n          });\n\n        }\n\n      }\n\n      // --- CASE B: CHALLENGE WAITING ROOM (Check Host Seated, Not Declined in Session, PIN Match, No Other Challenger) ---\n\n      if (subAction === 'challengeRoom') {\n\n        if (effectiveCurStatus === 'empty' || !curHostId) {\n\n          return jsonResponse({\n\n            ok: false,\n\n            errorCode: 'ROOM_EMPTY',\n\n            error: '\u0e40\u0e08\u0e49\u0e32\u0e02\u0e2d\u0e07\u0e2b\u0e49\u0e2d\u0e07\u0e44\u0e14\u0e49\u0e25\u0e38\u0e01\u0e2d\u0e2d\u0e01\u0e08\u0e32\u0e01\u0e2b\u0e49\u0e2d\u0e07\u0e19\u0e35\u0e49\u0e44\u0e1b\u0e41\u0e25\u0e49\u0e27',\n\n            rooms: readAllRooms(ss)\n\n          });\n\n        }\n\n        if (\n\n          (effectiveCurStatus === 'challenging' || effectiveCurStatus === 'playing') &&\n\n          curGuestId &&\n\n          curGuestId.toLowerCase() !== reqGuestId.toLowerCase()\n\n        ) {\n\n          return jsonResponse({\n\n            ok: false,\n\n            errorCode: 'CHALLENGER_ALREADY_EXISTS',\n\n            error: '\u0e21\u0e35\u0e1c\u0e39\u0e49\u0e40\u0e25\u0e48\u0e19\u0e2d\u0e37\u0e48\u0e19\u0e40\u0e02\u0e49\u0e32\u0e17\u0e49\u0e32\u0e14\u0e27\u0e25\u0e43\u0e19\u0e2b\u0e49\u0e2d\u0e07\u0e19\u0e35\u0e49\u0e44\u0e1b\u0e01\u0e48\u0e2d\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e04\u0e38\u0e13\u0e40\u0e21\u0e37\u0e48\u0e2d\u0e2a\u0e31\u0e01\u0e04\u0e23\u0e39\u0e48\u0e41\u0e25\u0e49\u0e27!',\n\n            rooms: readAllRooms(ss)\n\n          });\n\n        }\n\n        const rejectedList = Array.isArray(prevLive.rejectedChallengers)\n\n          ? prevLive.rejectedChallengers\n\n          : (Array.isArray(prevMeta.rejectedChallengers) ? prevMeta.rejectedChallengers : []);\n\n        if (reqGuestId && rejectedList.map(function(x) { return String(x).toLowerCase(); }).indexOf(reqGuestId.toLowerCase()) !== -1) {\n\n          return jsonResponse({\n\n            ok: false,\n\n            errorCode: 'DECLINED_IN_SESSION',\n\n            error: '\u0e40\u0e08\u0e49\u0e32\u0e02\u0e2d\u0e07\u0e2b\u0e49\u0e2d\u0e07\u0e44\u0e14\u0e49\u0e1b\u0e0f\u0e34\u0e40\u0e2a\u0e18\u0e04\u0e33\u0e17\u0e49\u0e32\u0e02\u0e2d\u0e07\u0e04\u0e38\u0e13\u0e43\u0e19\u0e23\u0e2d\u0e1a\u0e01\u0e32\u0e23\u0e19\u0e31\u0e48\u0e07\u0e19\u0e35\u0e49\u0e41\u0e25\u0e49\u0e27 (\u0e15\u0e49\u0e2d\u0e07\u0e23\u0e2d\u0e43\u0e2b\u0e49\u0e40\u0e08\u0e49\u0e32\u0e02\u0e2d\u0e07\u0e2b\u0e49\u0e2d\u0e07\u0e25\u0e38\u0e01\u0e41\u0e25\u0e49\u0e27\u0e19\u0e31\u0e48\u0e07\u0e43\u0e2b\u0e21\u0e48)',\n\n            rooms: readAllRooms(ss)\n\n          });\n\n        }\n\n        const savedPin = String(prevLive.roomPin || prevMeta.roomPin || '').trim();\n\n        const enteredPin = String(data.enteredPin !== undefined ? data.enteredPin : (incomingLive.enteredPin || '')).trim();\n\n        if (savedPin && savedPin !== enteredPin) {\n\n          return jsonResponse({\n\n            ok: false,\n\n            errorCode: 'INVALID_PIN',\n\n            error: '\u0e23\u0e2b\u0e31\u0e2a\u0e1c\u0e48\u0e32\u0e19\u0e40\u0e02\u0e49\u0e32\u0e2b\u0e49\u0e2d\u0e07\u0e44\u0e21\u0e48\u0e16\u0e39\u0e01\u0e15\u0e49\u0e2d\u0e07!',\n\n            rooms: readAllRooms(ss)\n\n          });\n\n        }\n\n      }\n\n      // --- Compute Final Row State ---\n\n      const roomCodeStr = 'Room ' + (roomNo < 10 ? '0' + roomNo : roomNo);\n\n      let statusStr = String(data.status || effectiveCurStatus || 'empty').toLowerCase();\n\n      if (subAction === 'leaveRoom') statusStr = 'empty';\n\n      if (subAction === 'declineChallenge') statusStr = 'waiting';\n\n      if (subAction === 'claimRoom') statusStr = 'waiting';\n\n      if (subAction === 'challengeRoom') statusStr = 'challenging';\n\n      const mergedHostId = statusStr === 'empty'\n\n        ? ''\n\n        : String(data.hostUserId || curHostId || '');\n\n      const mergedHostName = statusStr === 'empty'\n\n        ? ''\n\n        : String(data.hostName || curHostName || mergedHostId || '');\n\n      let mergedChallengerId = '';\n\n      let mergedChallengerName = '';\n\n      if (statusStr === 'challenging' || statusStr === 'playing') {\n\n        mergedChallengerId = String(data.challengerUserId !== undefined ? data.challengerUserId : curGuestId);\n\n        mergedChallengerName = String(data.challengerName !== undefined ? data.challengerName : (existingRow ? existingRow[6] : ''));\n\n      }\n\n      // Maintain hostSessionId, roomPin, and rejectedChallengers across the Host's sitting session\n\n      const hostSessionId = statusStr === 'empty'\n\n        ? ''\n\n        : String(data.hostSessionId || incomingLive.hostSessionId || prevLive.hostSessionId || prevMeta.hostSessionId || ('SES_' + nowMs));\n\n      const roomPin = statusStr === 'empty'\n\n        ? ''\n\n        : String(data.roomPin !== undefined ? data.roomPin : (incomingLive.roomPin !== undefined ? incomingLive.roomPin : (prevLive.roomPin || prevMeta.roomPin || ''))).trim();\n\n      let rejectedArr = [];\n\n      if (statusStr !== 'empty') {\n\n        if (subAction === 'claimRoom') {\n\n          rejectedArr = [];\n\n        } else {\n\n          const baseRej = Array.isArray(data.rejectedChallengers)\n\n            ? data.rejectedChallengers\n\n            : (Array.isArray(incomingLive.rejectedChallengers)\n\n                ? incomingLive.rejectedChallengers\n\n                : (Array.isArray(prevLive.rejectedChallengers) ? prevLive.rejectedChallengers : (Array.isArray(prevMeta.rejectedChallengers) ? prevMeta.rejectedChallengers : [])));\n\n          rejectedArr = baseRej.slice();\n\n          if (subAction === 'declineChallenge') {\n\n            const declinedUid = String(data.declinedUserId || curGuestId || '').trim().toLowerCase();\n\n            if (declinedUid && rejectedArr.indexOf(declinedUid) === -1) {\n\n              rejectedArr.push(declinedUid);\n\n            }\n\n          }\n\n        }\n\n      }\n\n      const playerMeta = {\n\n        hostRankTier: data.hostRankTier || prevMeta.hostRankTier || 'Bronze',\n\n        hostRp: Number(data.hostRp || prevMeta.hostRp || 1000),\n\n        hostAvatar: data.hostAvatar || prevMeta.hostAvatar || '\ud83e\uddd1\u200d\ud83d\udd2c',\n\n        challengerRankTier: data.challengerRankTier || prevMeta.challengerRankTier || 'Bronze',\n\n        challengerRp: Number(data.challengerRp || prevMeta.challengerRp || 1000),\n\n        challengerAvatar: data.challengerAvatar || prevMeta.challengerAvatar || '\ud83e\uddd1\u200d\ud83d\udd2c',\n\n        challengeTimestamp: nowMs,\n\n        hostSessionId: hostSessionId,\n\n        roomPin: roomPin,\n\n        hasPassword: Boolean(roomPin),\n\n        rejectedChallengers: rejectedArr\n\n      };\n\n      const finalLiveState = statusStr === 'empty'\n\n        ? { pktSeq: nowMs, updatedAt: nowMs, status: 'empty', packet: incomingLive.packet || null }\n\n        : Object.assign({}, prevLive, incomingLive, {\n\n            pktSeq: Number(incomingLive.pktSeq || nowMs),\n\n            updatedAt: nowMs,\n\n            status: statusStr,\n\n            hostSessionId: hostSessionId,\n\n            roomPin: roomPin,\n\n            hasPassword: Boolean(roomPin),\n\n            rejectedChallengers: rejectedArr\n\n          });\n\n      const rowData = [\n\n        roomCodeStr,\n\n        data.roomName || existingName,\n\n        statusStr,\n\n        mergedHostId,\n\n        mergedHostName,\n\n        mergedChallengerId,\n\n        mergedChallengerName,\n\n        Number(data.spectators || (existingRow ? existingRow[7] : 0) || 0),\n\n        Number(data.turnCount || (existingRow ? existingRow[8] : 0) || 0),\n\n        Number(data.turnTimer || (existingRow ? existingRow[9] : 0) || 0),\n\n        String(data.hostDeckArchetype || (existingRow ? existingRow[10] : '') || ''),\n\n        String(data.challengerDeckArchetype || (existingRow ? existingRow[11] : '') || ''),\n\n        String(data.activeMatchId || (existingRow ? existingRow[12] : '') || ''),\n\n        statusStr === 'empty' ? '' : JSON.stringify(playerMeta),\n\n        JSON.stringify(finalLiveState)\n\n      ];\n\n      shRooms.getRange(targetRow, 1, 1, 15).setValues([rowData]);\n\n      const updatedRooms = readAllRooms(ss);\n\n      try {\n\n        CacheService.getScriptCache().put(ROOMS_CACHE_KEY, JSON.stringify(updatedRooms), 2);\n\n      } catch (eC2) {}\n\n      return jsonResponse({\n\n        ok: true,\n\n        roomNo: roomNo,\n\n        status: statusStr,\n\n        hostUserId: mergedHostId,\n\n        challengerUserId: mergedChallengerId,\n\n        hostSessionId: hostSessionId,\n\n        hasPassword: Boolean(roomPin),\n\n        rejectedChallengers: rejectedArr,\n\n        rooms: updatedRooms\n\n      });\n\n    }\n\n    // 1. \u0e2a\u0e21\u0e31\u0e04\u0e23\u0e2a\u0e21\u0e32\u0e0a\u0e34\u0e01\u0e43\u0e2b\u0e21\u0e48\n\n    if (action === 'register') {\n\n      const userId = String(data.userId || '').trim();\n\n      const password = String(data.password || '').trim();\n\n      if (!userId || !password) {\n\n        return jsonResponse({ ok: false, error: '\u0e01\u0e23\u0e38\u0e13\u0e32\u0e01\u0e23\u0e2d\u0e01 User ID \u0e41\u0e25\u0e30\u0e23\u0e2b\u0e31\u0e2a\u0e1c\u0e48\u0e32\u0e19\u0e43\u0e2b\u0e49\u0e04\u0e23\u0e1a\u0e16\u0e49\u0e27\u0e19' });\n\n      }\n\n      const shAuth = ensureSheet(ss, TAB_AUTH, HEADERS_AUTH);\n\n      const authRows = shAuth.getDataRange().getValues();\n\n      let authExists = false;\n\n      for (let i = 1; i < authRows.length; i++) {\n\n        if (String(authRows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n\n          authExists = true;\n\n          break;\n\n        }\n\n      }\n\n      if (!authExists) {\n\n        shAuth.appendRow([\n\n          userId,\n\n          \"'\" + password,\n\n          String(data.role || 'MEMBER').toUpperCase(),\n\n          'ACTIVE',\n\n          nowStr,\n\n          nowStr,\n\n          'Registered via GEO-DUEL'\n\n        ]);\n\n      }\n\n      const shProf = ensureSheet(ss, TAB_PROFILE, HEADERS_PROFILE);\n\n      const profRows = shProf.getDataRange().getValues();\n\n      let profExists = false;\n\n      for (let i = 1; i < profRows.length; i++) {\n\n        if (String(profRows[i][0]).trim().toLowerCase() === userId.toLowerCase()) {\n\n          profExists = true;\n\n          break;\n\n        }\n\n      }\n\n      if (!profExists) {\n\n        const rawAvatar = String(data.avatar || '').trim();\n\n        const avatarIcon = String(data.avatarIcon || (!rawAvatar.startsWith('data:image') && rawAvatar ? rawAvatar : '\ud83e\uddd1\u200d\ud83d\udd2c'));\n\n        const photoDataUri = String(data.photoDataUrl || (rawAvatar.startsWith('data:image') ? rawAvatar : ''));\n\n        const deckObj = safeJsonParse(data.savedDeck || data.deck, {});\n\n        const rareArr = safeJsonParse(data.rareCards, []);\n\n        const rankRp = Number(data.rankPoints ?? data.rankRp ?? 1000);\n\n        const rankTier = String(data.rankTier || 'Bronze');\n\n                shProf.appendRow([\n          userId,\n          data.fullName || data.displayName || userId,\n          data.classroom || '\u0e1b.6',\n          avatarIcon,\n          photoDataUri,\n          data.rankTier || 'Bronze',\n          Number(data.rankPoints ?? data.rankRp ?? 1000),\n          wins, losses, games, winRate, avg100, avg20, lastGrade,\n          packedNewDeck.packedJson,\n          JSON.stringify(incomingRares || []),\n          nowStr\n        ]);\n\n        const shDecksNew = ensureSheet(ss, TAB_DECKS, HEADERS_DECKS);\n        const actCodesNew = deckMapToCodesString(packedNewDeck.deck);\n        const f1CardsNew = (packedNewDeck.favoriteDecks && packedNewDeck.favoriteDecks.fav1 && packedNewDeck.favoriteDecks.fav1.cards) || packedNewDeck.deck;\n        shDecksNew.appendRow([\n          userId,\n          data.fullName || data.displayName || userId,\n          Object.keys(packedNewDeck.deck).reduce(function(s, k) { return s + Number(packedNewDeck.deck[k] || 0); }, 0),\n          actCodesNew,\n          deckMapToCodesString(f1CardsNew),\n          deckMapToCodesString(packedNewDeck.favoriteDecks && packedNewDeck.favoriteDecks.fav2 && packedNewDeck.favoriteDecks.fav2.cards),\n          deckMapToCodesString(packedNewDeck.favoriteDecks && packedNewDeck.favoriteDecks.fav3 && packedNewDeck.favoriteDecks.fav3.cards),\n          packedNewDeck.packedJson,\n          nowStr\n        ]);\n        SpreadsheetApp.flush();\n\n      }\n\n      const savedProf = getMemberProfile(ss, userId);\n\n      return jsonResponse({\n\n        ok: true,\n\n        userId: userId,\n\n        deck: savedProf ? savedProf.deck : {},\n\n        favoriteDecks: savedProf ? savedProf.favoriteDecks : { fav1: null, fav2: null, fav3: null },\n\n        deckUpdatedAt: savedProf ? savedProf.deckUpdatedAt : new Date().getTime()\n\n      });\n\n    }\n\n    // 5. \u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e1c\u0e25\u0e01\u0e32\u0e23\u0e14\u0e39\u0e40\u0e2d\u0e25\u0e41\u0e25\u0e30\u0e04\u0e30\u0e41\u0e19\u0e19\u0e15\u0e32\u0e21\u0e2b\u0e25\u0e31\u0e01\u0e2a\u0e39\u0e15\u0e23\u0e27\u0e34\u0e17\u0e22\u0e32\u0e28\u0e32\u0e2a\u0e15\u0e23\u0e4c\n\n    if (action === 'recordMatch') {\n\n      const shMatch = ensureSheet(ss, TAB_MATCHES, HEADERS_MATCHES);\n\n      const userId = String(data.userId || '').trim();\n\n      const prof = userId ? getMemberProfile(ss, userId) : null;\n\n      const total100 = Number(data.totalScore100 ?? 85);\n\n      const score20 = Math.round((total100 / 5) * 100) / 100;\n\n      const logId = String(data.logId || data.matchId || ('M-' + new Date().getTime()));\n\n      const studentName = String(data.fullName || data.displayName || (prof ? prof.displayName : userId) || '');\n\n      const opponentName = String(data.opponentName || 'Bot');\n\n      const opponentRank = String(data.opponentRankTier || data.opponentRank || 'Bronze');\n\n      const matchMode = String(data.modeLabel || data.modeRoom || 'Bot Duel');\n\n      const matchResult = String(data.resultLabel || data.result || '\u0e0a\u0e19\u0e30 (WIN)');\n\n      const rpChange = Number(data.rpDelta || 0);\n\n      const newRankRp = Number(data.newRankRp ?? (prof ? prof.rankPoints : 1000));\n\n      const newRankTier = String(data.newRankTier || (prof ? prof.rankTier : 'Bronze'));\n\n      const gradeRank = String(data.gradeRank || data.grade || 'A');\n\n      const geo30 = Number(data.geoScore ?? data.rockCycle30 ?? 26);\n\n      const trib25 = Number(data.tribScore ?? data.tribute25 ?? 22);\n\n      const math25 = Number(data.mathScore ?? data.combatMath25 ?? 21);\n\n      const speed20 = Number(data.speedScore ?? data.disaster20 ?? 16);\n\n      const summary = String(data.summaryShort || data.combosUsed || '');\n\n      shMatch.appendRow([\n\n        logId, nowStr, userId, studentName, opponentName, opponentRank,\n\n        matchMode, matchResult, rpChange, newRankRp, newRankTier,\n\n        total100, score20, gradeRank, geo30, trib25, math25, speed20, summary\n\n      ]);\n\n      return jsonResponse({ ok: true, logId: logId });\n\n    }\n\n    // 6. \u0e41\u0e2d\u0e14\u0e21\u0e34\u0e19\u0e21\u0e2d\u0e1a\u0e2b\u0e23\u0e37\u0e2d\u0e16\u0e2d\u0e19\u0e01\u0e32\u0e23\u0e4c\u0e14\u0e41\u0e23\u0e23\u0e4c SP01-SP10\n\n    if (action === 'grantRareCard') {\n\n      const cardId = String(data.cardId || '').trim();\n\n      const targetUserId = String(data.targetUserId || '').trim();\n\n      if (!cardId) return jsonResponse({ ok: false, error: 'Missing cardId' });\n\n      const shRares = ensureSheet(ss, TAB_RARES, HEADERS_RARES);\n\n      const rows = shRares.getDataRange().getValues();\n\n      let foundRow = -1;\n\n      for (let i = 1; i < rows.length; i++) {\n\n        if (String(rows[i][0]).trim().toUpperCase() === cardId.toUpperCase()) {\n\n          foundRow = i + 1;\n\n          break;\n\n        }\n\n      }\n\n      let ownerName = '';\n\n      if (targetUserId) {\n\n        const targetProf = getMemberProfile(ss, targetUserId);\n\n        ownerName = targetProf ? targetProf.displayName : targetUserId;\n\n      }\n\n      if (foundRow === -1) {\n\n        shRares.appendRow([\n\n          cardId, data.cardName || cardId, '', '', '', '', '', '', '',\n\n          targetUserId, ownerName, '', ''\n\n        ]);\n\n      } else {\n\n        shRares.getRange(foundRow, 10, 1, 2).setValues([[targetUserId, ownerName]]);\n\n      }\n\n      syncMemberRareCardsColumn(ss);\n\n      return jsonResponse({ ok: true, rareRegistry: readRareRegistry(ss) });\n\n    }\n\n    return jsonResponse({ ok: false, error: 'Unknown action: ' + action });\n\n  } finally {\n\n    lock.releaseLock();\n\n  }\n\n}\n\nfunction syncMemberRareCardsColumn(ss) {\n\n  const rareMap = readRareRegistry(ss);\n\n  const shProf = ss.getSheetByName(TAB_PROFILE);\n\n  if (!shProf || shProf.getLastRow() < 2) return;\n\n  const rows = shProf.getDataRange().getValues();\n\n  for (let i = 1; i < rows.length; i++) {\n\n    const uid = String(rows[i][0] || '').trim();\n\n    if (!uid) continue;\n\n    const owned = [];\n\n    Object.keys(rareMap).forEach(function(cid) {\n\n      if (String(rareMap[cid] || '').toLowerCase() === uid.toLowerCase()) {\n\n        owned.push(cid);\n\n      }\n\n    });\n\n    shProf.getRange(i + 1, 16).setValue(JSON.stringify(owned));\n\n  }\n\n}\n\nfunction getMemberProfile(ss, userId) {\n\n  const shProf = ss.getSheetByName(TAB_PROFILE);\n\n  if (!shProf) return null;\n\n  const rows = shProf.getDataRange().getValues();\n\n  for (let i = 1; i < rows.length; i++) {\n\n    if (String(rows[i][0]).trim().toLowerCase() === String(userId).trim().toLowerCase()) {\n\n      const r = rows[i];\n\n      return {\n\n        userId: String(r[0]).trim(),\n\n        displayName: String(r[1] || r[0]).trim(),\n\n        classroom: String(r[2] || '\u0e1b.6').trim(),\n\n        avatarIcon: String(r[3] || '\ud83e\uddd1\u200d\ud83d\udd2c').trim(),\n\n        photoDataUrl: String(r[4] || '').trim(),\n\n        avatar: String(r[4] || r[3] || '\ud83e\uddd1\u200d\ud83d\udd2c').trim(),\n\n        school: '\u0e42\u0e23\u0e07\u0e40\u0e23\u0e35\u0e22\u0e19\u0e1a\u0e49\u0e32\u0e19\u0e40\u0e02\u0e32\u0e25\u0e49\u0e2d',\n\n        rankTier: String(r[5] || 'Bronze').trim(),\n\n        rankPoints: Number(r[6] || 1000),\n\n        wins: Number(r[7] || 0),\n\n        losses: Number(r[8] || 0),\n\n        gamesPlayed: Number(r[9] || 0),\n\n        winRatePct: Number(r[10] || 0),\n\n        avgScore100: Number(r[11] || 0),\n\n        avgScore20: Number(r[12] || 0),\n\n        lastGrade: String(r[13] || '-').trim(),\n\n        deck: unpackDeckAndFavorites(r[14]).deck,\n\n        favoriteDecks: unpackDeckAndFavorites(r[14]).favoriteDecks,\n\n        deckUpdatedAt: unpackDeckAndFavorites(r[14]).updatedAt,\n\n        rawSavedDeckJson: safeJsonParse(r[14], {}),\n\n        rareCards: safeJsonParse(r[15], []),\n\n        updatedAt: String(r[16] || '')\n\n      };\n\n    }\n\n  }\n\n  return null;\n\n}\n\nfunction readRareRegistry(ss) {\n\n  const sh = ss.getSheetByName(TAB_RARES);\n\n  if (!sh || sh.getLastRow() < 2) return {};\n\n  const rows = sh.getDataRange().getValues();\n\n  const map = {};\n\n  for (let i = 1; i < rows.length; i++) {\n\n    const cid = String(rows[i][0] || '').trim();\n\n    if (!cid || !cid.toUpperCase().startsWith('SP')) continue;\n\n    const ownerUid = String(rows[i][9] || '').trim();\n\n    if (ownerUid && !/\\s/.test(ownerUid) && ownerUid !== 'Exclusive_Owner_ID') {\n\n      map[cid] = ownerUid;\n\n    } else {\n\n      map[cid] = '';\n\n    }\n\n  }\n\n  return map;\n\n}\n\nfunction readAllRooms(ss) {\n\n  const sh = ss.getSheetByName(TAB_ROOMS);\n\n  if (!sh || sh.getLastRow() < 2) return [];\n\n  const rows = sh.getDataRange().getValues();\n\n  const list = [];\n\n  for (let i = 1; i < rows.length; i++) {\n\n    const r = rows[i];\n\n    const rNo = parseRoomNumber(r[0]);\n\n    if (!rNo) continue;\n\n    const meta = safeJsonParse(r[13], {});\n\n    const live = safeJsonParse(r[14], {});\n\n    const roomPin = String(live.roomPin || meta.roomPin || '').trim();\n\n    const hostSessionId = String(live.hostSessionId || meta.hostSessionId || '').trim();\n\n    const rejectedChallengers = Array.isArray(live.rejectedChallengers)\n\n      ? live.rejectedChallengers\n\n      : (Array.isArray(meta.rejectedChallengers) ? meta.rejectedChallengers : []);\n\n    list.push({\n\n      roomNo: rNo,\n\n      roomName: String(r[1] || ''),\n\n      status: String(r[2] || 'empty').toLowerCase(),\n\n      hostUserId: String(r[3] || ''),\n\n      hostName: String(r[4] || ''),\n\n      hostRankTier: String(meta.hostRankTier || 'Bronze'),\n\n      hostRp: Number(meta.hostRp || 1000),\n\n      hostAvatar: String(meta.hostAvatar || '\ud83e\uddd1\u200d\ud83d\udd2c'),\n\n      challengerUserId: String(r[5] || ''),\n\n      challengerName: String(r[6] || ''),\n\n      challengerRankTier: String(meta.challengerRankTier || 'Bronze'),\n\n      challengerRp: Number(meta.challengerRp || 1000),\n\n      challengerAvatar: String(meta.challengerAvatar || '\ud83e\uddd1\u200d\ud83d\udd2c'),\n\n      challengeTimestamp: Number(meta.challengeTimestamp || 0),\n\n      hostSessionId: hostSessionId,\n\n      roomPin: roomPin,\n\n      hasPassword: Boolean(roomPin),\n\n      rejectedChallengers: rejectedChallengers,\n\n      spectators: Number(r[7] || 0),\n\n      liveState: live\n\n    });\n\n  }\n\n  return list;\n\n}\n\nfunction readLeaderboard(ss) {\n\n  const sh = ss.getSheetByName(TAB_PROFILE);\n\n  if (!sh || sh.getLastRow() < 2) return [];\n\n  const rows = sh.getDataRange().getValues();\n\n  const list = [];\n\n  for (let i = 1; i < rows.length; i++) {\n\n    const r = rows[i];\n\n    if (!r[0]) continue;\n\n    list.push({\n\n      userId: String(r[0]).trim(),\n\n      displayName: String(r[1] || r[0]).trim(),\n\n      classroom: String(r[2] || '\u0e1b.6').trim(),\n\n      avatarIcon: String(r[3] || '\ud83e\uddd1\u200d\ud83d\udd2c').trim(),\n\n      photoDataUrl: String(r[4] || '').trim(),\n\n      rankTier: String(r[5] || 'Bronze').trim(),\n\n      rankPoints: Number(r[6] || 1000),\n\n      wins: Number(r[7] || 0),\n\n      losses: Number(r[8] || 0),\n\n      gamesPlayed: Number(r[9] || 0),\n\n      winRatePct: Number(r[10] || 0),\n\n      avgScore100: Number(r[11] || 0),\n\n      avgScore20: Number(r[12] || 0),\n\n      lastGrade: String(r[13] || '-').trim(),\n\n      deck: unpackDeckAndFavorites(r[14]).deck,\n\n      favoriteDecks: unpackDeckAndFavorites(r[14]).favoriteDecks,\n\n      deckUpdatedAt: unpackDeckAndFavorites(r[14]).updatedAt,\n\n      rawSavedDeckJson: safeJsonParse(r[14], {}),\n\n      rareCards: safeJsonParse(r[15], [])\n\n    });\n\n  }\n\n  return list;\n\n}\n\nfunction readAllMembers(ss) {\n\n  const shAuth = ss.getSheetByName(TAB_AUTH);\n\n  const passMap = {};\n\n  if (shAuth && shAuth.getLastRow() >= 2) {\n\n    const aRows = shAuth.getDataRange().getValues();\n\n    for (let i = 1; i < aRows.length; i++) {\n\n      const uid = String(aRows[i][0] || '').trim().toLowerCase();\n\n      const pass = String(aRows[i][1] || '').replace(/^'/, '').trim();\n\n      if (uid) passMap[uid] = pass;\n\n    }\n\n  }\n\n  const list = readLeaderboard(ss);\n\n  list.forEach(function(m) {\n\n    m.password = passMap[m.userId.toLowerCase()] || '';\n\n  });\n\n  return list;\n\n}\n\nfunction readRecentMatches(ss, limitCount) {\n\n  const sh = ss.getSheetByName(TAB_MATCHES);\n\n  if (!sh || sh.getLastRow() < 2) return [];\n\n  const rows = sh.getDataRange().getValues();\n\n  const list = [];\n\n  const startIdx = Math.max(1, rows.length - (limitCount || 80));\n\n  for (let i = rows.length - 1; i >= startIdx; i--) {\n\n    const r = rows[i];\n\n    if (!r[0]) continue;\n\n    list.push({\n\n      logId: String(r[0]),\n\n      timestamp: String(r[1]),\n\n      userId: String(r[2]),\n\n      studentName: String(r[3]),\n\n      opponentName: String(r[4]),\n\n      opponentRankTier: String(r[5]),\n\n      matchMode: String(r[6]),\n\n      matchResult: String(r[7]),\n\n      rpChange: Number(r[8] || 0),\n\n      newRankRp: Number(r[9] || 1000),\n\n      newRankTier: String(r[10] || 'Bronze'),\n\n      totalScore100: Number(r[11] || 0),\n\n      scoreOutOf20: Number(r[12] || 0),\n\n      gradeRank: String(r[13] || 'A'),\n\n      geoMastery30: Number(r[14] || 0),\n\n      tributeResource25: Number(r[15] || 0),\n\n      combatMath25: Number(r[16] || 0),\n\n      survivalSpeed20: Number(r[17] || 0),\n\n      summary: String(r[18] || '')\n\n    });\n\n  }\n\n  return list;\n\n}\n\nfunction safeJsonParse(val, fallback) {\n\n  if (val === undefined || val === null || val === '') return fallback;\n\n  if (typeof val === 'object') return val;\n\n  try {\n\n    return JSON.parse(String(val));\n\n  } catch (e) {\n\n    return fallback;\n\n  }\n\n}\n\nfunction unpackDeckAndFavorites(rawCellVal) {\n\n  const parsed = safeJsonParse(rawCellVal, {});\n\n  if (!parsed || typeof parsed !== 'object') {\n\n    return { deck: {}, favoriteDecks: { fav1: null, fav2: null, fav3: null }, updatedAt: 0 };\n\n  }\n\n  const cleanDeck = {};\n\n  const sourceDeck = (parsed.activeDeck && typeof parsed.activeDeck === 'object') ? parsed.activeDeck : parsed;\n\n  Object.keys(sourceDeck).forEach(function(k) {\n\n    if (k === '_favDecks' || k === 'favoriteDecks' || k === '_updatedAt' || k === 'activeDeck') return;\n\n    const cnt = Number(sourceDeck[k] || 0);\n\n    if (cnt > 0 && cnt <= 3) {\n\n      cleanDeck[k] = cnt;\n\n    }\n\n  });\n\n  const rawFavs = parsed._favDecks || parsed.favoriteDecks || {};\n\n  const favoriteDecks = {\n\n    fav1: rawFavs && rawFavs.fav1 ? rawFavs.fav1 : null,\n\n    fav2: rawFavs && rawFavs.fav2 ? rawFavs.fav2 : null,\n\n    fav3: rawFavs && rawFavs.fav3 ? rawFavs.fav3 : null\n\n  };\n\n  // If cleanDeck has cards and fav1 is still empty, auto-populate fav1 so it is immediately accessible in Favorite Slot 1 on any device!\n\n  const totalClean = Object.keys(cleanDeck).reduce(function(sum, cid) { return sum + Number(cleanDeck[cid] || 0); }, 0);\n\n  if (totalClean > 0 && !favoriteDecks.fav1) {\n\n    favoriteDecks.fav1 = {\n\n      name: '\u0e40\u0e14\u0e47\u0e04\u0e42\u0e1b\u0e23\u0e14\u0e0a\u0e48\u0e2d\u0e07\u0e17\u0e35\u0e48 1',\n\n      cards: cleanDeck,\n\n      totalCards: totalClean,\n\n      updatedAt: '\u0e0b\u0e34\u0e07\u0e04\u0e4c\u0e08\u0e32\u0e01\u0e10\u0e32\u0e19\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25'\n\n    };\n\n  }\n\n  const updatedAt = Number(parsed._updatedAt || 0);\n\n  return { deck: cleanDeck, favoriteDecks: favoriteDecks, updatedAt: updatedAt };\n\n}\n\nfunction packDeckAndFavoritesForSheet(deckInput, favInput, prevCellVal) {\n\n  const prevUnpacked = unpackDeckAndFavorites(prevCellVal);\n\n  const incomingUnpacked = unpackDeckAndFavorites(deckInput);\n\n  const hasIncomingDeck = Object.keys(incomingUnpacked.deck).length > 0;\n\n  const finalCleanDeck = hasIncomingDeck ? incomingUnpacked.deck : prevUnpacked.deck;\n\n  const explicitFav = safeJsonParse(favInput, null);\n\n  const mergedFavs = {\n\n    fav1: (explicitFav && explicitFav.fav1 !== undefined) ? explicitFav.fav1 : (incomingUnpacked.favoriteDecks.fav1 || prevUnpacked.favoriteDecks.fav1 || null),\n\n    fav2: (explicitFav && explicitFav.fav2 !== undefined) ? explicitFav.fav2 : (incomingUnpacked.favoriteDecks.fav2 || prevUnpacked.favoriteDecks.fav2 || null),\n\n    fav3: (explicitFav && explicitFav.fav3 !== undefined) ? explicitFav.fav3 : (incomingUnpacked.favoriteDecks.fav3 || prevUnpacked.favoriteDecks.fav3 || null)\n\n  };\n\n  const totalClean = Object.keys(finalCleanDeck).reduce(function(sum, cid) { return sum + Number(finalCleanDeck[cid] || 0); }, 0);\n\n  if (totalClean > 0 && !mergedFavs.fav1) {\n\n    mergedFavs.fav1 = {\n\n      name: '\u0e40\u0e14\u0e47\u0e04\u0e42\u0e1b\u0e23\u0e14\u0e0a\u0e48\u0e2d\u0e07\u0e17\u0e35\u0e48 1',\n\n      cards: finalCleanDeck,\n\n      totalCards: totalClean,\n\n      updatedAt: Utilities.formatDate(new Date(), 'Asia/Bangkok', 'HH:mm')\n\n    };\n\n  }\n\n  const packed = Object.assign({}, finalCleanDeck, {\n\n    _favDecks: mergedFavs,\n\n    _updatedAt: new Date().getTime()\n\n  });\n\n  return {\n\n    packedJson: JSON.stringify(packed),\n\n    deck: finalCleanDeck,\n\n    favoriteDecks: mergedFavs,\n\n    updatedAt: packed._updatedAt\n\n  };\n\n}\n";
     const GOOGLE_SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM/edit';
     const GOOGLE_DRIVE_RARE_FOLDER_URL = 'https://drive.google.com/drive/folders/1cSmx54cU9b2acAvdv85VYyLElFfV4DS-';
     let currentAspectMode = '16:9';
-    let gasWebAppUrl = 'https://script.google.com/macros/s/AKfycbyKiEEvRfKDbZnmnS9nqPOE8FUUYAdk7nMfuDnEVWizl_BiAMfb04gWwa-qSD84xLb-5A/exec';
+    let gasWebAppUrl = 'https://script.google.com/macros/s/AKfycbxzCPOgJ2NJrDWoUCDsiX0jpsyrtEvwvTBV1aWdcT1DbAZZR35T2iQCoLK0Hw9CfZw4GQ/exec';
     let rareCardsOwnership = {}; // cardId (SP01..SP10) -> username (exclusive 1 owner per rare card!)
     let lobby50Rooms = [];
     let currentSeatedRoomId = null;
@@ -12377,10 +12470,10 @@
         const savedRares = localStorage.getItem('geoduel_rare_owners_v15');
         if (savedRares) rareCardsOwnership = JSON.parse(savedRares) || {};
         const savedGas = localStorage.getItem('geoduel_gas_url_v18') || localStorage.getItem('geoduel_gas_url_v15');
-        if (savedGas && !savedGas.includes('AKfycbyDkUQ0TJGbykWOsLgtUcqqfFVk0eSS3v2GUsYaA5z7IfztCfq81poFPGQuTXlMcLkM2Q') && !savedGas.includes('AKfycbyXLhRrgAT2bcVlQ6cNv2mu853oaJoGOYk7K928_1_Bb400orim_rEYy7SbII1tjKcf0A')) {
+        if (savedGas && !savedGas.includes('AKfycbyDkUQ0TJGbykWOsLgtUcqqfFVk0eSS3v2GUsYaA5z7IfztCfq81poFPGQuTXlMcLkM2Q') && !savedGas.includes('AKfycbyXLhRrgAT2bcVlQ6cNv2mu853oaJoGOYk7K928_1_Bb400orim_rEYy7SbII1tjKcf0A') && !savedGas.includes('AKfycbxq1zVFpuwRkSXJJ5XIyqFHAfFwMSa4TKaxePFCbC6mRaYMpfH0mTFAzwr_Oa9VDqBplQ')) {
           gasWebAppUrl = savedGas;
         } else {
-          gasWebAppUrl = 'https://script.google.com/macros/s/AKfycbyKiEEvRfKDbZnmnS9nqPOE8FUUYAdk7nMfuDnEVWizl_BiAMfb04gWwa-qSD84xLb-5A/exec';
+          gasWebAppUrl = 'https://script.google.com/macros/s/AKfycbxzCPOgJ2NJrDWoUCDsiX0jpsyrtEvwvTBV1aWdcT1DbAZZR35T2iQCoLK0Hw9CfZw4GQ/exec';
           try {
             localStorage.setItem('geoduel_gas_url_v15', gasWebAppUrl);
             localStorage.setItem('geoduel_gas_url_v18', gasWebAppUrl);
@@ -12796,7 +12889,7 @@
 
 
     // ==================== v1 MASTER FIXES: LIVE GOOGLE APPS SCRIPT API, RARE CARD EFFECTS & BOT WATCHDOG ====================
-    const DEFAULT_GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyKiEEvRfKDbZnmnS9nqPOE8FUUYAdk7nMfuDnEVWizl_BiAMfb04gWwa-qSD84xLb-5A/exec';
+    const DEFAULT_GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxzCPOgJ2NJrDWoUCDsiX0jpsyrtEvwvTBV1aWdcT1DbAZZR35T2iQCoLK0Hw9CfZw4GQ/exec';
     gasWebAppUrl = DEFAULT_GAS_WEBAPP_URL;
 
     async function callGasApi(action, payloadObj = {}) {
@@ -13338,6 +13431,7 @@
     // Seed the real registered account from Google Sheet (upnopiris2) so it is always available immediately even before network completes
     function ensureCloudSeedMembers() {
       sanitizeRareCardsOwnership();
+      const upnopiris2Deck = {"M001":2,"M002":1,"M006":2,"M010":1,"M019":1,"M028":2,"M033":3,"M035":2,"M043":1,"M049":1,"M050":1,"M062":2,"M063":2,"M127":1,"M120":1,"M092":1,"M027":1,"S001":1,"S002":1,"S005":1,"S007":1,"S010":1,"S017":1,"S021":1,"S039":1,"S043":2,"T005":1,"T008":1,"T013":1,"T014":1,"T031":1};
       const seedUser = {
         username: 'upnopiris2',
         id: 'upnopiris2',
@@ -13355,9 +13449,19 @@
         avgScore: 0,
         lastScore: null,
         lastRank: '-',
-        rankRp: 1000,
-        rankTier: 'Bronze',
-        savedDeck: {"M001":2,"M002":2,"M003":1,"M004":1,"M006":2,"M007":2,"M008":2,"M009":2,"M011":2,"M012":2,"M014":2,"M017":2,"M019":3,"M020":1,"S001":2,"S002":2,"S003":2,"S005":1,"S007":2,"S039":2,"T002":1,"T005":1,"T013":1}
+        rankRp: 1419,
+        rankTier: 'Gold',
+        savedDeck: Object.assign({}, upnopiris2Deck),
+        favoriteDecks: {
+          fav1: {
+            name: "เด็คโปรดช่องที่ 1",
+            cards: Object.assign({}, upnopiris2Deck),
+            totalCards: 40,
+            updatedAt: "02:45"
+          },
+          fav2: null,
+          fav3: null
+        }
       };
       const existing = membersDb.find(m => m && m.username && m.username.toLowerCase() === 'upnopiris2');
       if (!existing) {
@@ -15111,12 +15215,12 @@
 
     // ==================== v1 DYNAMIC SCREEN ASPECT RATIO CALCULATOR & AUTO-FIT UI ENGINE ====================
     // 1. Force upgrade to the new deployed Google Apps Script Web App URL
-    const V20_DEPLOYED_GAS_URL = "https://script.google.com/macros/s/AKfycbyKiEEvRfKDbZnmnS9nqPOE8FUUYAdk7nMfuDnEVWizl_BiAMfb04gWwa-qSD84xLb-5A/exec";
+    const V20_DEPLOYED_GAS_URL = "https://script.google.com/macros/s/AKfycbxzCPOgJ2NJrDWoUCDsiX0jpsyrtEvwvTBV1aWdcT1DbAZZR35T2iQCoLK0Hw9CfZw4GQ/exec";
     gasWebAppUrl = V20_DEPLOYED_GAS_URL;
     try {
       localStorage.setItem("geoduel_gas_url_v15", V20_DEPLOYED_GAS_URL);
       localStorage.setItem("geoduel_gas_url_v18", V20_DEPLOYED_GAS_URL);
-      localStorage.setItem("geoduel_gas_url_v20", V20_DEPLOYED_GAS_URL); localStorage.setItem("geoduel_gas_url_v23", V20_DEPLOYED_GAS_URL);
+      localStorage.setItem("geoduel_gas_url_v20", V20_DEPLOYED_GAS_URL); localStorage.setItem("geoduel_gas_url_v23", V20_DEPLOYED_GAS_URL); localStorage.setItem("geoduel_gas_url_v24", V20_DEPLOYED_GAS_URL);
     } catch (e) {}
 
     // 2. Dynamic Screen Reader & Proportional UI Calculator
@@ -15368,8 +15472,21 @@
         }
         /* Hide long subtitle & duplicate header badges in mobile mode so Row 1 is a single sleek bar */
         body.ui-mode-mobile-916 #main-top-header > div:first-child > div:last-child,
-        body.ui-mode-mobile-916 #user-badge,
+        /* Show compact user badge in mobile mode so player always knows their logged-in ID & cards! */
         body.ui-mode-mobile-916 #btn-auto-tts {
+          display: none !important;
+        }
+        body.ui-mode-mobile-916 #user-badge {
+          display: flex !important;
+          padding: 2px 6px !important;
+          height: 28px !important;
+          font-size: 11px !important;
+          gap: 3px !important;
+          border-radius: 8px !important;
+          background: #100b24 !important;
+          border: 1px solid rgba(251, 191, 36, 0.6) !important;
+        }
+        body.ui-mode-mobile-916 #user-badge #header-userid {
           display: none !important;
         }
         body.ui-mode-mobile-916 #main-top-header > div:last-child {
@@ -22173,6 +22290,1195 @@
 
     ensureSummonPositionChoiceModalExists();
     window.addEventListener("DOMContentLoaded", ensureSummonPositionChoiceModalExists);
+
+
+    // ==================== GEO-DUEL v1 CROSS-DEVICE CLOUD DECK & FAVORITE DECKS SYNC MODULE ====================
+    // Fixes cross-device deck linking with Google Sheet (1SaC8sd1TnHDdqnqiVr_FingPQYBgl9SgI5oNe_-UXMM):
+    // 1. Packs BOTH active 40-card deck (userDeck) AND all 3 Favorite Deck slots (userFavoriteDecks: fav1, fav2, fav3)
+    //    into Saved_Deck_40_JSON (Column O of Members_Profile_Deck) so saving on Device A is 100% available on Device B.
+    // 2. Uses a compact payload (without re-sending the 30KB base64 photo on deck saves) so saveProfileAndDeck / saveDeck
+    //    succeeds rapidly via both GET and POST without redirect drops.
+    // 3. Always queries the Cloud Database on Login (even if the user ID was already cached locally) and fixes the
+    //    card-count check (summing card copies rather than checking Object.keys(deck).length === 40) so the saved deck
+    //    loads immediately on any other computer or phone!
+
+    window._localDeckSaveLockUntil = 0;
+    window._lastSyncedDeckSignature = "";
+
+    function countValidCardsInDeckMap(deckMap) {
+      if (!deckMap || typeof deckMap !== "object") return 0;
+      let sum = 0;
+      Object.entries(deckMap).forEach(([k, v]) => {
+        if (k === "_favDecks" || k === "favoriteDecks" || k === "_updatedAt" || k === "activeDeck") return;
+        if (typeof CARD_MAP !== "undefined" && CARD_MAP[k]) {
+          const n = Number(v || 0);
+          if (n > 0) sum += n;
+        }
+      });
+      return sum;
+    }
+
+    function sanitizeCleanCardMap(rawMap) {
+      const clean = {};
+      if (!rawMap || typeof rawMap !== "object") return clean;
+      const src = (rawMap.activeDeck && typeof rawMap.activeDeck === "object") ? rawMap.activeDeck : rawMap;
+      Object.entries(src).forEach(([k, v]) => {
+        if (k === "_favDecks" || k === "favoriteDecks" || k === "_updatedAt" || k === "activeDeck") return;
+        if (typeof CARD_MAP !== "undefined" && CARD_MAP[k]) {
+          const isRare = Boolean(CARD_MAP[k].isRare || String(k).startsWith("SP"));
+          const maxC = isRare ? 1 : 3;
+          const cnt = Math.min(maxC, Math.max(0, Math.floor(Number(v || 0))));
+          if (cnt > 0) clean[k] = cnt;
+        }
+      });
+      return clean;
+    }
+
+    function unpackCloudDeckAndFavorites(rawDeckVal, explicitFavDecks = null) {
+      const parsed = safeParseJsonObj(rawDeckVal, {});
+      const cleanDeck = sanitizeCleanCardMap(parsed);
+      const rawFavs = explicitFavDecks || (parsed && (parsed._favDecks || parsed.favoriteDecks)) || null;
+      const favDecks = { fav1: null, fav2: null, fav3: null };
+
+      if (rawFavs && typeof rawFavs === "object") {
+        ["fav1", "fav2", "fav3"].forEach((slotKey, idx) => {
+          const slotObj = rawFavs[slotKey];
+          if (slotObj && typeof slotObj === "object") {
+            const rawCards = slotObj.cards || slotObj;
+            const cleanSlotCards = sanitizeCleanCardMap(rawCards);
+            const total = countValidCardsInDeckMap(cleanSlotCards);
+            if (total > 0) {
+              favDecks[slotKey] = {
+                name: slotObj.name || `เด็คโปรดช่องที่ ${idx + 1}`,
+                cards: cleanSlotCards,
+                totalCards: total,
+                updatedAt: slotObj.updatedAt || "ซิงค์จากฐานข้อมูล"
+              };
+            }
+          }
+        });
+      }
+
+      const activeTotal = countValidCardsInDeckMap(cleanDeck);
+      // If the user has a saved active deck in Column O and fav1 is empty, automatically populate fav1 too!
+      if (activeTotal > 0 && !favDecks.fav1) {
+        favDecks.fav1 = {
+          name: "เด็คโปรดช่องที่ 1",
+          cards: JSON.parse(JSON.stringify(cleanDeck)),
+          totalCards: activeTotal,
+          updatedAt: "ซิงค์จากฐานข้อมูล"
+        };
+      }
+
+      const updatedAt = Number((parsed && parsed._updatedAt) || 0);
+      return { cleanDeck, favDecks, activeTotal, updatedAt };
+    }
+
+    function packCloudDeckAndFavorites(activeDeckMap, favDecksMap) {
+      const cleanActive = sanitizeCleanCardMap(activeDeckMap);
+      const activeTotal = countValidCardsInDeckMap(cleanActive);
+      const cleanFavs = { fav1: null, fav2: null, fav3: null };
+
+      ["fav1", "fav2", "fav3"].forEach((slotKey, idx) => {
+        const s = favDecksMap && favDecksMap[slotKey];
+        if (s && s.cards) {
+          const cMap = sanitizeCleanCardMap(s.cards);
+          const tot = countValidCardsInDeckMap(cMap);
+          if (tot > 0) {
+            cleanFavs[slotKey] = {
+              name: s.name || `เด็คโปรดช่องที่ ${idx + 1}`,
+              cards: cMap,
+              totalCards: tot,
+              updatedAt: s.updatedAt || new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })
+            };
+          }
+        }
+      });
+
+      if (activeTotal > 0 && !cleanFavs.fav1) {
+        cleanFavs.fav1 = {
+          name: "เด็คโปรดช่องที่ 1",
+          cards: JSON.parse(JSON.stringify(cleanActive)),
+          totalCards: activeTotal,
+          updatedAt: new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })
+        };
+      }
+
+      return Object.assign({}, cleanActive, {
+        _favDecks: cleanFavs,
+        _updatedAt: Date.now()
+      });
+    }
+
+    function applyUnpackedCloudDeckToCurrentUser(unpacked, forceApplyActiveDeck = false) {
+      if (!unpacked) return false;
+      let changed = false;
+
+      // 1. Merge Favorite Decks (cloud slots take precedence when non-null)
+      if (unpacked.favDecks) {
+        loadUserFavoriteDecksFromStorage();
+        ["fav1", "fav2", "fav3"].forEach(k => {
+          if (unpacked.favDecks[k] && unpacked.favDecks[k].cards && countValidCardsInDeckMap(unpacked.favDecks[k].cards) > 0) {
+            userFavoriteDecks[k] = JSON.parse(JSON.stringify(unpacked.favDecks[k]));
+            changed = true;
+          }
+        });
+        persistUserFavoriteDecksToStorage();
+      }
+
+      // 2. Apply active 40-card deck
+      if (unpacked.activeTotal > 0) {
+        const curSig = JSON.stringify(sanitizeCleanCardMap(userDeck));
+        const newSig = JSON.stringify(unpacked.cleanDeck);
+        if (forceApplyActiveDeck || curSig !== newSig) {
+          userDeck = JSON.parse(JSON.stringify(unpacked.cleanDeck));
+          // Strip any rare card not owned by this user
+          if (isPlayerLoggedIn && userProfile.username) {
+            Object.keys(userDeck).forEach(cid => {
+              if (cid.startsWith("SP") && rareCardsOwnership[cid] && rareCardsOwnership[cid].toLowerCase() !== userProfile.username.toLowerCase()) {
+                delete userDeck[cid];
+              }
+            });
+          }
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        saveState();
+        updateDeckCountsUI();
+        updateFavoriteDeckToolbarUI();
+        renderCardCatalog();
+        renderDeckSidebar();
+      }
+      return changed;
+    }
+
+    // Fast, reliable push of current user's deck + favorite decks to Google Sheet
+    async function pushUserDeckToCloudNow(showNotification = false) {
+      sanitizeRareCardsOwnership();
+      if (isPlayerLoggedIn && userProfile.username) {
+        const cleanCurrent = sanitizeCleanCardMap(userDeck);
+        userDeck = cleanCurrent;
+      }
+      persistUserFavoriteDecksToStorage();
+      saveState();
+
+      if (!isPlayerLoggedIn || !userProfile.username) {
+        if (showNotification) {
+          showToast("⚠️ กรุณาเข้าสู่ระบบสมาชิกก่อนบันทึกเด็คขึ้นฐานข้อมูลออนไลน์ครับ!", "🔐");
+        }
+        return false;
+      }
+
+      const t0 = performance.now();
+      window._localDeckSaveLockUntil = Date.now() + 10000;
+      setCloudDbStatusUI("⏳ กำลังบันทึกเด็คของคุณลงฐานข้อมูล Google Sheet...", true);
+
+      const mem = membersDb.find(m => m && m.username && m.username.toLowerCase() === userProfile.username.toLowerCase());
+      const packedDeckObj = packCloudDeckAndFavorites(userDeck, userFavoriteDecks);
+      if (mem) {
+        mem.savedDeck = JSON.parse(JSON.stringify(userDeck));
+        mem.favoriteDecks = JSON.parse(JSON.stringify(userFavoriteDecks));
+        mem.deckUpdatedAt = packedDeckObj._updatedAt;
+      }
+      saveState();
+
+      // Build compact payload WITHOUT 30KB base64 photoDataUrl so it can be sent via fast CORS-safe GET or POST!
+      const compactPayload = {
+        userId: userProfile.username,
+        displayName: userProfile.name || userProfile.username,
+        classroom: userProfile.classroom || "ป.6",
+        school: "โรงเรียนบ้านเขาล้อ",
+        rankTier: getRankTierInfo(userProfile.rankRp || 1000).tier,
+        rankPoints: Number(userProfile.rankRp || 1000),
+        wins: Number(userProfile.wins || 0),
+        losses: Number(userProfile.losses || 0),
+        avgScore100: Number(userProfile.avgScore || userProfile.lastAiScore || 0),
+        rareCards: getRareCardsOwnedByUser(userProfile.username).map(c => c.id),
+        deck: packedDeckObj,
+        savedDeck: packedDeckObj,
+        favoriteDecks: userFavoriteDecks,
+        avatarIcon: (!String(userProfile.avatar || "").startsWith("data:image") && userProfile.avatar) ? userProfile.avatar : "🧑‍🔬",
+        password: mem ? mem.pass : ""
+      };
+
+      try {
+        // Send via callGasApi (uses GET if compact, or POST with fallback)
+        const res = await callGasApi("saveProfileAndDeck", compactPayload, "AUTO");
+        // If user also has a new base64 photo to sync, send it in a secondary POST so deck save is never delayed
+        if (userProfile.photoDataUrl && String(userProfile.photoDataUrl).startsWith("data:image") && window._photoNeedsCloudSync) {
+          window._photoNeedsCloudSync = false;
+          callGasApi("saveProfileAndDeck", Object.assign({}, compactPayload, {
+            photoDataUrl: userProfile.photoDataUrl
+          }), "POST");
+        }
+        const ms = Math.max(45, Math.round(performance.now() - t0));
+        setCloudDbStatusUI(`🟢 บันทึกเด็ค (${getDeckTotal()}/40 ใบ) ลง Google Sheet สำเร็จ (${ms} ms)`, true);
+        if (showNotification) {
+          showToast(`☁️ บันทึกเด็คของไอดี "${userProfile.username}" ลงฐานข้อมูล Google Sheet สำเร็จ! (ล็อกอินเครื่องอื่นใช้ต่อได้ทันที)`, "✅");
+        }
+        return Boolean(res && res.ok);
+      } catch (e) {
+        if (showNotification) {
+          showToast("💾 บันทึกเด็คเรียบร้อยแล้ว!", "✅");
+        }
+        return false;
+      }
+    }
+
+    // Override syncAccountWithGoogleSheet to use pushUserDeckToCloudNow
+    syncAccountWithGoogleSheet = async function(showNotification = false) {
+      await pushUserDeckToCloudNow(showNotification);
+    };
+
+    // Pull latest deck & profile for the active user directly from Google Sheet
+    async function pullActiveUserDeckFromCloudNow(forceApply = true, showNotification = false) {
+      if (!isPlayerLoggedIn || !userProfile.username) {
+        if (showNotification) {
+          showToast("🔒 กรุณาเข้าสู่ระบบก่อนดึงเด็คจากฐานข้อมูลครับ", "🔐");
+        }
+        return false;
+      }
+      const uid = userProfile.username;
+      setCloudDbStatusUI(`⏳ กำลังดึงเด็คล่าสุดของ "${uid}" จาก Google Sheet...`, true);
+
+      try {
+        const [gasSync, profRows] = await Promise.all([
+          callGasApi("syncAll", { _t: Date.now() }, "GET"),
+          fetchSheetTabViaGviz("Members_Profile_Deck")
+        ]);
+
+        let bestUnpacked = null;
+
+        // 1. Check authoritative GAS response first (uncached live SpreadsheetApp read!)
+        if (gasSync && gasSync.ok && Array.isArray(gasSync.leaderboard)) {
+          const row = gasSync.leaderboard.find(r => r && r.userId && String(r.userId).trim().toLowerCase() === uid.toLowerCase());
+          if (row) {
+            const rawSource = row.rawSavedDeckJson || row.deck || {};
+            const unp = unpackCloudDeckAndFavorites(rawSource, row.favoriteDecks || null);
+            if (unp.activeTotal > 0 || unp.favDecks.fav1 || unp.favDecks.fav2 || unp.favDecks.fav3) {
+              bestUnpacked = unp;
+            }
+          }
+        }
+
+        // 2. Also check Gviz rows (in case GAS Web App wasn't reachable or Gviz has a newer timestamp)
+        if (Array.isArray(profRows)) {
+          profRows.forEach(r => {
+            const rUid = String(r[0] || "").trim();
+            if (rUid.toLowerCase() !== uid.toLowerCase()) return;
+            const is16Col = String(r[13] || "").trim().startsWith("{") || String(r[12] || "").trim().startsWith("[");
+            const rawDeckCell = is16Col ? r[13] : r[14];
+            const unp = unpackCloudDeckAndFavorites(rawDeckCell, null);
+            if (unp.activeTotal > 0) {
+              if (!bestUnpacked || (unp.updatedAt > (bestUnpacked.updatedAt || 0))) {
+                bestUnpacked = unp;
+              }
+            }
+          });
+        }
+
+        if (bestUnpacked && (bestUnpacked.activeTotal > 0 || bestUnpacked.favDecks.fav1)) {
+          const mem = membersDb.find(m => m && m.username && m.username.toLowerCase() === uid.toLowerCase());
+          if (mem) {
+            if (bestUnpacked.activeTotal > 0) {
+              mem.savedDeck = JSON.parse(JSON.stringify(bestUnpacked.cleanDeck));
+            }
+            mem.favoriteDecks = JSON.parse(JSON.stringify(bestUnpacked.favDecks));
+          }
+          applyUnpackedCloudDeckToCurrentUser(bestUnpacked, forceApply);
+          setCloudDbStatusUI(`🟢 ดึงเด็คล่าสุดของ "${uid}" จากฐานข้อมูลสำเร็จ (${getDeckTotal()}/40 ใบ)`, true);
+          if (showNotification) {
+            showToast(`☁️ ดึงเด็คที่บันทึกไว้ของ "${uid}" (${getDeckTotal()}/40 ใบ) จากฐานข้อมูล Google Sheet สำเร็จ!`, "🃏");
+          }
+          return true;
+        }
+      } catch (e) {}
+
+      if (showNotification) {
+        showToast(`ℹ️ ดึงข้อมูลเด็คล่าสุดของ "${uid}" เรียบร้อยแล้ว`, "☁️");
+      }
+      return false;
+    }
+
+    // Override pullCloudDatabaseFast so it unpacks both active deck & favoriteDecks and updates logged-in user properly!
+    const _v1OrigPullCloudDatabaseFast = pullCloudDatabaseFast;
+    pullCloudDatabaseFast = async function(showToastMsg = false) {
+      const ok = await _v1OrigPullCloudDatabaseFast(showToastMsg);
+      const isLockedByRecentSave = Date.now() < (window._localDeckSaveLockUntil || 0);
+
+      // Clean and unpack savedDeck & favoriteDecks across all members in membersDb
+      membersDb.forEach(m => {
+        if (!m || !m.savedDeck) return;
+        const unp = unpackCloudDeckAndFavorites(m.savedDeck, m.favoriteDecks || null);
+        if (unp.activeTotal > 0) {
+          m.savedDeck = unp.cleanDeck;
+        }
+        if (unp.favDecks && (unp.favDecks.fav1 || unp.favDecks.fav2 || unp.favDecks.fav3)) {
+          m.favoriteDecks = unp.favDecks;
+        }
+      });
+
+      if (isPlayerLoggedIn && userProfile.username && !isLockedByRecentSave) {
+        const curMem = membersDb.find(m => m && m.username && m.username.toLowerCase() === userProfile.username.toLowerCase());
+        if (curMem) {
+          const unp = unpackCloudDeckAndFavorites(curMem.savedDeck, curMem.favoriteDecks || null);
+          if (unp.activeTotal > 0 || unp.favDecks.fav1 || unp.favDecks.fav2 || unp.favDecks.fav3) {
+            applyUnpackedCloudDeckToCurrentUser(unp, false);
+          }
+        }
+      }
+      return ok;
+    };
+
+    // Override applyLoggedInMember so logging into an account ALWAYS restores both savedDeck AND favoriteDecks
+    const _v1OrigApplyLoggedInMember = applyLoggedInMember;
+    applyLoggedInMember = function(found) {
+      if (found && found.savedDeck) {
+        const unp = unpackCloudDeckAndFavorites(found.savedDeck, found.favoriteDecks || null);
+        if (unp.activeTotal > 0) {
+          found.savedDeck = unp.cleanDeck;
+        }
+        if (unp.favDecks) {
+          found.favoriteDecks = unp.favDecks;
+        }
+      }
+      _v1OrigApplyLoggedInMember(found);
+      if (found) {
+        loadUserFavoriteDecksFromStorage();
+        if (found.favoriteDecks) {
+          ["fav1", "fav2", "fav3"].forEach(k => {
+            if (found.favoriteDecks[k] && found.favoriteDecks[k].cards && countValidCardsInDeckMap(found.favoriteDecks[k].cards) > 0) {
+              userFavoriteDecks[k] = JSON.parse(JSON.stringify(found.favoriteDecks[k]));
+            }
+          });
+          persistUserFavoriteDecksToStorage();
+        } else if (countValidCardsInDeckMap(userDeck) > 0 && !userFavoriteDecks.fav1) {
+          userFavoriteDecks.fav1 = {
+            name: "เด็คโปรดช่องที่ 1",
+            cards: JSON.parse(JSON.stringify(sanitizeCleanCardMap(userDeck))),
+            totalCards: countValidCardsInDeckMap(userDeck),
+            updatedAt: "ซิงค์จากฐานข้อมูล"
+          };
+          persistUserFavoriteDecksToStorage();
+        }
+        updateFavoriteDeckToolbarUI();
+      }
+    };
+
+    // Override handleLoginForm so logging in on ANY device ALWAYS fetches the latest profile & deck from Google Sheet!
+    const _v1OrigHandleLoginForm = handleLoginForm;
+    handleLoginForm = async function() {
+      if (currentAuthMode !== "login") {
+        return await _v1OrigHandleLoginForm();
+      }
+
+      playTone("click");
+      showAuthError("");
+      ensureCloudSeedMembers();
+      const uName = (document.getElementById("input-login-user")?.value || "").trim();
+      const uPass = (document.getElementById("input-login-pass")?.value || "").trim();
+
+      if (!uName) {
+        showAuthError('⚠️ กรุณากรอก "ไอดีผู้เล่น (User ID / Username)" ห้ามเว้นว่าง!');
+        return;
+      }
+      if (uName.length < 3 || /\s/.test(uName)) {
+        showAuthError("⚠️ ไอดีผู้เล่น (User ID) ต้องยาวอย่างน้อย 3 ตัวอักษร และห้ามมีเว้นวรรค!");
+        return;
+      }
+      if (!uPass || uPass.length < 4) {
+        showAuthError('⚠️ กรุณากรอก "รหัสผ่าน (Password)" อย่างน้อย 4 ตัวอักษร!');
+        return;
+      }
+
+      if (uName === ADMIN_USER && uPass === ADMIN_PASS) {
+        isAdminAuthenticated = true;
+        showToast("ต้อนรับแอดมิน upnopiris! เปิดหน้าแดชบอร์ดแอดมินและการ์ดแรร์ทันที", "🛡️");
+        switchScreen("admin");
+        return;
+      }
+
+      const saveBtn = document.getElementById("btn-save-profile");
+      if (saveBtn) saveBtn.innerHTML = "⏳ กำลังซิงค์ข้อมูลและเด็คล่าสุดจากฐานข้อมูลออนไลน์...";
+
+      // ALWAYS fetch fresh from Cloud GAS + Gviz on Login so cross-device deck sync is 100% guaranteed!
+      window._localDeckSaveLockUntil = 0;
+      const [loginRes] = await Promise.all([
+        callGasApi("login", { userId: uName, password: uPass, _t: Date.now() }, "GET"),
+        pullCloudDatabaseFast(false)
+      ]);
+
+      if (saveBtn) saveBtn.innerHTML = "🔑 เข้าสู่ระบบสมาชิก &amp; ไปหน้าจัดเด็ค 40 ใบ";
+
+      let found = membersDb.find(m => m && m.username && m.username.toLowerCase() === uName.toLowerCase());
+
+      if (loginRes && loginRes.ok && loginRes.profile) {
+        const p = loginRes.profile;
+        const rawDeckSource = p.rawSavedDeckJson || p.deck || {};
+        const unp = unpackCloudDeckAndFavorites(rawDeckSource, p.favoriteDecks || null);
+        const rawAv = String(p.avatar || "");
+        const memberObj = {
+          username: String(p.userId || uName),
+          id: String(p.userId || uName),
+          pass: uPass,
+          name: p.displayName || uName,
+          rawName: p.displayName || uName,
+          avatar: rawAv.startsWith("data:image") ? "🧑‍🔬" : (rawAv || "🧑‍🔬"),
+          photoDataUrl: p.photoDataUrl || (rawAv.startsWith("data:image") ? rawAv : (found?.photoDataUrl || "")),
+          classroom: p.classroom || "ป.6",
+          email: p.school || "โรงเรียนบ้านเขาล้อ",
+          wins: Number(p.wins || 0),
+          losses: Number(p.losses || 0),
+          gamesPlayed: Number(p.wins || 0) + Number(p.losses || 0),
+          totalScore: Number(p.avgScore100 || 0) * (Number(p.wins || 0) + Number(p.losses || 0)),
+          avgScore: Number(p.avgScore100 || 0),
+          lastScore: Number(p.avgScore100 || 0) || null,
+          lastRank: p.lastGrade || "A",
+          rankRp: Number(p.rankPoints || 1000),
+          rankTier: p.rankTier || getRankTierInfo(p.rankPoints || 1000).tier,
+          savedDeck: unp.activeTotal > 0 ? unp.cleanDeck : (found?.savedDeck || {}),
+          favoriteDecks: unp.favDecks
+        };
+        if (found) {
+          Object.assign(found, memberObj);
+        } else {
+          membersDb.unshift(memberObj);
+          found = memberObj;
+        }
+      }
+
+      if (!found) {
+        showAuthError(`❌ ไม่พบไอดีผู้เล่น "${uName}" ในฐานข้อมูล! กรุณากดแท็บ "📝 สมัครสมาชิกใหม่" เพื่อลงทะเบียนก่อนเข้าเล่นครับ`);
+        showToast(`ไม่พบไอดี "${uName}" ในระบบ!`, "🚫");
+        return;
+      }
+      if (found.pass !== uPass) {
+        showAuthError(`❌ รหัสผ่านของไอดี "${uName}" ไม่ถูกต้อง!`);
+        showToast("รหัสผ่านไม่ถูกต้อง!", "🚫");
+        return;
+      }
+
+      applyLoggedInMember(found);
+      // Also run a direct cloud deck check to ensure Gviz/GAS deck is 100% applied
+      await pullActiveUserDeckFromCloudNow(true, false);
+      saveState();
+      updateProfileUI();
+      updateDeckCountsUI();
+      updateFavoriteDeckToolbarUI();
+      renderCardCatalog();
+      renderDeckSidebar();
+      playTone("win");
+      showToast(`🔑 เข้าสู่ระบบและดึงเด็คที่บันทึกไว้ของ "${userProfile.username}" (${getDeckTotal()}/40 ใบ) สำเร็จ!`, "👑");
+      switchScreen("auth");
+    };
+
+    // Override saveCurrentToFavoriteDeckSlot & confirmDeckAndGoLobby so saving immediately pushes both active deck and favorite slots to Google Sheet!
+    saveCurrentToFavoriteDeckSlot = function(silent = false) {
+      if (!silent) playTone("win");
+      const cleanCur = sanitizeCleanCardMap(userDeck);
+      userDeck = cleanCur;
+      const total = countValidCardsInDeckMap(userDeck);
+      if (total === 0) {
+        if (!silent) showToast("⚠️ เด็คปัจจุบันยังไม่มีการ์ด กรุณาเลือกการ์ดใส่เด็คก่อนบันทึกเด็คโปรดครับ", "⚠️");
+        return false;
+      }
+      const sel = document.getElementById("select-fav-deck-slot");
+      const slotKey = (sel && sel.value) ? sel.value : "fav1";
+      const slotIndex = slotKey === "fav2" ? 2 : (slotKey === "fav3" ? 3 : 1);
+      const nowTime = new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
+      userFavoriteDecks[slotKey] = {
+        name: `เด็คโปรดช่องที่ ${slotIndex}`,
+        cards: JSON.parse(JSON.stringify(userDeck)),
+        totalCards: total,
+        updatedAt: nowTime
+      };
+      persistUserFavoriteDecksToStorage();
+      saveState();
+      pushUserDeckToCloudNow(!silent);
+      if (!silent) {
+        showToast(`💾 บันทึกเด็คลงใน "⭐ เด็คโปรดช่องที่ ${slotIndex}" (${total}/40 ใบ) และซิงค์ขึ้นฐานข้อมูล Google Sheet แล้ว!`, "⭐");
+      }
+      return true;
+    };
+
+    confirmDeckAndGoLobby = async function() {
+      document.body.classList.remove("show-mobile-deck-drawer");
+      if (getDeckTotal() > 0) {
+        const sel = document.getElementById("select-fav-deck-slot");
+        const slotKey = (sel && sel.value) ? sel.value : "fav1";
+        // Always update the selected favorite slot when confirming deck so it matches the active deck across devices
+        saveCurrentToFavoriteDeckSlot(true);
+      }
+      ensureValid40CardDeckBeforeDuel();
+      pushUserDeckToCloudNow(false);
+      switchScreen("lobby");
+      if (currentAspectMode === "9:16") {
+        setMobileLobbyTab(currentMobileLobbyTab || "rooms");
+      }
+      render50RoomsLobby();
+      showToast(`☁️ บันทึกเด็คของ "${userProfile.username || 'คุณ'}" ลงฐานข้อมูล Google Sheet และเข้าสู่ห้องดูเอลเรียบร้อย!`, "⚔️");
+    };
+
+    // Add a "☁️ ดึงเด็คจากฐานข้อมูล" button right next to "📂 เรียกใช้เด็คโปรดนี้" in #favorite-decks-toolbar
+    
+    // ==================== GEO-DUEL v1 CARD CODES & MEMBER_DECKS REGISTRY MODULE ====================
+    // Converts deck cards to compact human-readable codes (e.g. M001:2, M002:1, S001:1) for Google Sheets Member_Decks tab
+    function convertDeckMapToCodesString(deckMap) {
+      if (!deckMap || typeof deckMap !== "object") return "";
+      const entries = [];
+      const src = (deckMap.activeDeck && typeof deckMap.activeDeck === "object") ? deckMap.activeDeck : deckMap;
+      Object.keys(src).sort().forEach(cid => {
+        if (cid === "_favDecks" || cid === "favoriteDecks" || cid === "_updatedAt" || cid === "activeDeck") return;
+        const cnt = Number(src[cid] || 0);
+        if (cnt > 0) entries.push(`${cid}:${cnt}`);
+      });
+      return entries.join(", ");
+    }
+
+    function convertCodesStringToDeckMap(codesStr) {
+      const map = {};
+      if (!codesStr || typeof codesStr !== "string") return map;
+      const parts = codesStr.split(",");
+      parts.forEach(p => {
+        const item = p.trim();
+        if (!item) return;
+        const pair = item.split(":");
+        const cid = pair[0].trim();
+        const cnt = pair[1] ? parseInt(pair[1].trim(), 10) : 1;
+        if (cid && cnt > 0 && typeof CARD_MAP !== "undefined" && CARD_MAP[cid]) {
+          const isRare = Boolean(CARD_MAP[cid].isRare || String(cid).startsWith("SP"));
+          map[cid] = Math.min(isRare ? 1 : 3, cnt);
+        }
+      });
+      return map;
+    }
+
+    function openIdDeckCodesModal() {
+      playTone("click");
+      const uid = (isPlayerLoggedIn && userProfile.username) ? userProfile.username : "upnopiris2";
+      const modal = document.getElementById("modal-id-deck-codes");
+      if (!modal) return;
+
+      const uidEl = document.getElementById("deck-codes-modal-uid");
+      const totalEl = document.getElementById("deck-codes-modal-total");
+      const typeEl = document.getElementById("deck-codes-modal-type-counts");
+      const updatedEl = document.getElementById("deck-codes-modal-updated");
+      const textarea = document.getElementById("deck-codes-textarea");
+
+      // Count card types in current active deck
+      let mCnt = 0, sCnt = 0, tCnt = 0;
+      Object.entries(userDeck).forEach(([cid, cnt]) => {
+        const c = typeof CARD_MAP !== "undefined" ? CARD_MAP[cid] : null;
+        const n = Number(cnt || 0);
+        if (c && n > 0) {
+          if (c.category === "monster") mCnt += n;
+          else if (c.category === "spell") sCnt += n;
+          else if (c.category === "trap") tCnt += n;
+        }
+      });
+      const tot = mCnt + sCnt + tCnt;
+
+      if (uidEl) uidEl.textContent = uid;
+      if (totalEl) totalEl.textContent = `⭐ ${tot}/40 ใบ`;
+      if (typeEl) typeEl.textContent = `มอนสเตอร์ ${mCnt} | เวท ${sCnt} | กับดัก ${tCnt}`;
+
+      const fav1 = userFavoriteDecks && userFavoriteDecks.fav1;
+      if (updatedEl) updatedEl.textContent = `อัปเดต: ${fav1 && fav1.updatedAt ? fav1.updatedAt : "ล่าสุด"}`;
+
+      const codes = convertDeckMapToCodesString(userDeck);
+      if (textarea) textarea.value = codes || "ยังไม่มีการ์ดในเด็ค";
+
+      modal.classList.remove("hidden");
+    }
+
+    function closeIdDeckCodesModal() {
+      playTone("click");
+      const modal = document.getElementById("modal-id-deck-codes");
+      if (modal) modal.classList.add("hidden");
+    }
+
+    function copyDeckCodesToClipboard() {
+      playTone("click");
+      const textarea = document.getElementById("deck-codes-textarea");
+      const text = textarea ? textarea.value : convertDeckMapToCodesString(userDeck);
+      if (!text) {
+        showToast("⚠️ ไม่มีรหัสการ์ดให้คัดลอก", "⚠️");
+        return;
+      }
+      copyTextFallback(text, "รหัสการ์ดในเด็ค (Card Codes)");
+    }
+
+    function importDeckCodesFromInput() {
+      playTone("click");
+      const inputStr = prompt("📥 วางรหัสการ์ด (Card Codes String เช่น M001:2, M002:1, S001:1):");
+      if (!inputStr || !inputStr.trim()) return;
+      const importedMap = convertCodesStringToDeckMap(inputStr);
+      const total = countValidCardsInDeckMap(importedMap);
+      if (total === 0) {
+        showToast("⚠️ ไม่พบรหัสการ์ดที่ถูกต้องในข้อความที่วาง กรุณาตรวจสอบรหัสอีกครั้งครับ", "⚠️");
+        return;
+      }
+      userDeck = importedMap;
+      saveCurrentToFavoriteDeckSlot(false);
+      openIdDeckCodesModal();
+      showToast(`📥 นำเข้ารหัสการ์ดสำเร็จ! เด็คปัจจุบันมี ${total}/40 ใบ`, "🎉");
+    }
+
+    async function pushCurrentDeckCodesToCloudNow() {
+      await runWithDbLoadingModal(
+        "☁️ กำลังซิงค์รหัสการ์ดขึ้น Google Sheets...",
+        `กำลังบันทึกรหัสการ์ด 40 ใบลงแผ่นงาน "Member_Decks" ของไอดี "${userProfile.username || 'upnopiris2'}"...`,
+        async () => {
+          return await pushUserDeckToCloudNow(false);
+        },
+        520,
+        "🃏"
+      );
+      playTone("win");
+      openIdDeckCodesModal();
+      showToast(`☁️ ซิงค์รหัสการ์ด 40 ใบขึ้นแผ่นงาน "Member_Decks" สำเร็จ!`, "✅");
+    }
+
+    async function pullCurrentDeckCodesFromCloudNow() {
+      await runWithDbLoadingModal(
+        "🔄 กำลังดึงรหัสการ์ดจาก Google Sheets...",
+        `กำลังดึงรหัสการ์ดจากแผ่นงาน "Member_Decks" ของไอดี "${userProfile.username || 'upnopiris2'}"...`,
+        async () => {
+          return await pullActiveUserDeckFromCloudNow(true, false);
+        },
+        550,
+        "🃏"
+      );
+      playTone("win");
+      openIdDeckCodesModal();
+      showToast(`🔄 ดึงรหัสการ์ด 40 ใบจากแผ่นงาน "Member_Decks" สำเร็จ!`, "🃏");
+    }
+
+    function ensureCloudDeckSyncButtonsInToolbar() {
+      const toolbar = document.getElementById("favorite-decks-toolbar");
+      if (!toolbar || document.getElementById("btn-pull-cloud-deck")) return;
+      const btnGroup = toolbar.querySelector("div:first-child");
+      if (btnGroup) {
+        // Button 1: Card Codes Modal
+        if (!document.getElementById("btn-open-deck-codes")) {
+          const codesBtn = document.createElement("button");
+          codesBtn.type = "button";
+          codesBtn.id = "btn-open-deck-codes";
+          codesBtn.onclick = openIdDeckCodesModal;
+          codesBtn.className = "px-2.5 py-1 rounded-lg bg-amber-500/25 hover:bg-amber-400 hover:text-slate-950 border border-amber-400 text-amber-200 font-black text-xs shadow cursor-pointer transition";
+          codesBtn.title = "เปิดหน้าต่างดูรหัสการ์ดของ ID นี้ (ตรวจสอบการบันทึกใน Google Sheets)";
+          codesBtn.innerHTML = "🃏 ดูรหัสการ์ดของ ID";
+          btnGroup.appendChild(codesBtn);
+        }
+
+        // Button 1: Card Codes Modal
+        if (!document.getElementById("btn-open-deck-codes")) {
+          const codesBtn = document.createElement("button");
+          codesBtn.type = "button";
+          codesBtn.id = "btn-open-deck-codes";
+          codesBtn.onclick = openIdDeckCodesModal;
+          codesBtn.className = "px-2.5 py-1 rounded-lg bg-amber-500/25 hover:bg-amber-400 hover:text-slate-950 border border-amber-400 text-amber-200 font-black text-xs shadow cursor-pointer transition";
+          codesBtn.title = "เปิดหน้าต่างดูรหัสการ์ดของ ID นี้ (ตรวจสอบการบันทึกใน Google Sheets)";
+          codesBtn.innerHTML = "🃏 ดูรหัสการ์ดของ ID";
+          btnGroup.appendChild(codesBtn);
+        }
+
+        const pullBtn = document.createElement("button");
+        pullBtn.type = "button";
+        pullBtn.id = "btn-pull-cloud-deck";
+        pullBtn.onclick = function() { pullActiveUserDeckFromCloudNow(true, true); };
+        pullBtn.className = "px-2.5 py-1 rounded-lg bg-emerald-500/25 hover:bg-emerald-400 hover:text-slate-950 border border-emerald-400 text-emerald-200 font-black text-xs shadow";
+        pullBtn.title = "ดึงเด็คล่าสุดที่บันทึกไว้จากฐานข้อมูล Google Sheet (สำหรับซิงค์ข้ามเครื่อง)";
+        pullBtn.innerHTML = "☁️ ซิงค์เด็คจากฐานข้อมูล";
+        btnGroup.appendChild(pullBtn);
+      }
+    }
+
+
+    // ============================================================================
+    // GEO-DUEL v1 MASTER ENHANCEMENTS:
+    // 1. HAND LIMIT 7 CARDS & DISCARD PHASE (S015 INFINITE BASIN CHECK)
+    // 2. THEMATIC MOTION EFFECTS & SENSITIVE ATTACK FILTERING
+    // 3. OPENROUTER AI GAME ANALYSIS (sk-or-v1-...) & DEEP HEURISTIC ANALYST FALLBACK
+    // ============================================================================
+
+    const OPENROUTER_API_KEY = "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";
+    window._lastAiAnalysisText = "";
+
+    // Check if player has the "แอ่งตะกอนไร้ขอบเขต (S015 / Infinite Sedimentary Basin)" active
+    function hasInfiniteHandEffect(side) {
+      if (!duelState || !duelState.players || !duelState.players[side]) return false;
+      const pl = duelState.players[side];
+      const cont = duelState.continuousEffects?.[side] || [];
+      if (cont.includes('S015')) return true;
+      if (Array.isArray(pl.spellTraps)) {
+        if (pl.spellTraps.some(st => st && !st.faceDown && (st.id === 'S015' || (st.name && st.name.includes('แอ่งตะกอน'))))) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // Hand limit enforcement: maximum 7 cards unless Infinite Basin is active.
+    // If 8th card is drawn (or hand > 7), player chooses 1 card to discard to graveyard.
+    function enforceHandLimit(side, onComplete = null) {
+      if (!duelState || !duelState.active) {
+        if (onComplete) onComplete();
+        return;
+      }
+      const pl = duelState.players?.[side];
+      if (!pl || !Array.isArray(pl.hand)) {
+        if (onComplete) onComplete();
+        return;
+      }
+      if (hasInfiniteHandEffect(side)) {
+        if (onComplete) onComplete();
+        return;
+      }
+      if (pl.hand.length <= 7) {
+        if (onComplete) onComplete();
+        return;
+      }
+
+      const mySide = duelState.mode === 'hotseat' ? duelState.activePlayer : 0;
+      if (side === mySide && !isSpectatorMode) {
+        showToast(`⚠️ มือของคุณมี ${pl.hand.length} ใบ (เกิน 7 ใบ)! กรุณาเลือกการ์ด 1 ใบเพื่อส่งลงสุสาน`, '🗑️');
+        openSelectorModal(
+          `🗑️ เลือกการ์ด 1 ใบส่งลงสุสาน (ถือได้สูงสุด 7 ใบ)`,
+          [...pl.hand],
+          pickedCard => {
+            const idx = pl.hand.indexOf(pickedCard);
+            if (idx !== -1) {
+              const discarded = pl.hand.splice(idx, 1)[0];
+              pl.graveyard.push(discarded);
+              playTone('destroy');
+              logBattle(`🗑️ <strong>${pl.name}</strong> ถือการ์ดเกิน 7 ใบ: เลือกทิ้ง <strong>${discarded.name}</strong> ลงสุสาน!`);
+              showToast(`🗑️ ส่ง "${discarded.name}" ลงสุสานแล้ว (มือเหลือ ${pl.hand.length} ใบ)`, '🗑️');
+              syncP2P();
+              renderDuelArena();
+            }
+            if (pl.hand.length > 7) {
+              enforceHandLimit(side, onComplete);
+            } else {
+              if (onComplete) onComplete();
+            }
+          },
+          'เนื่องจากไม่ได้ใช้เวทมนตร์ "แอ่งตะกอนไร้ขอบเขต" จึงถือการ์ดได้สูงสุด 7 ใบ'
+        );
+      } else {
+        let pickIdx = 0;
+        let minScore = 999999;
+        pl.hand.forEach((c, i) => {
+          let score = (c.stars || 1) * 100 + (c.atk || 0);
+          if (c.category === 'spell' || c.category === 'trap') score = 450;
+          if (score < minScore) {
+            minScore = score;
+            pickIdx = i;
+          }
+        });
+        const discarded = pl.hand.splice(pickIdx, 1)[0];
+        pl.graveyard.push(discarded);
+        playTone('destroy');
+        logBattle(`🗑️ <strong>${pl.name}</strong> ถือการ์ดเกิน 7 ใบ: ทิ้ง <strong>${discarded.name}</strong> ลงสุสาน!`);
+        renderDuelArena();
+        if (pl.hand.length > 7) {
+          enforceHandLimit(side, onComplete);
+        } else {
+          if (onComplete) onComplete();
+        }
+      }
+    }
+
+    // Hook playerClickDrawPhase to enforce hand limit immediately after drawing
+    const _v29OrigPlayerClickDrawPhase = playerClickDrawPhase;
+    playerClickDrawPhase = function() {
+      if (!duelState.active) return;
+      const mySide = duelState.mode === 'hotseat' ? duelState.activePlayer : 0;
+      if (duelState.activePlayer !== mySide) {
+        showToast('ตอนนี้เป็นเทิร์นของคู่ต่อสู้ กรุณารอสักครู่ครับ', '⏳');
+        return;
+      }
+      if (duelState.phase !== 'draw') {
+        showToast('คุณจั่วการ์ดประจำเทิร์นนี้ไปแล้ว! ตอนนี้อยู่ในขั้นตอนลงการ์ด/ต่อสู้ครับ', '🃏');
+        return;
+      }
+      const pl = duelState.players[mySide];
+      if (pl.deck.length === 0) {
+        finishDuel(1 - mySide, `กองการ์ดของ ${pl.name} หมดลง (Deck Out)!`);
+        return;
+      }
+      const drawn = pl.deck.shift();
+      duelState.phase = 'main';
+      document.getElementById('btn-draw-phase-card')?.classList.add('hidden');
+      animateCardDrawFromDeck(mySide, drawn, () => {
+        pl.hand.push(drawn);
+        duelState.selectedRef = { side: mySide, zoneType: 'hand', index: pl.hand.length - 1 };
+        setScienceBanner(drawn);
+        logBattle(`🃏 <strong>${pl.name}</strong> จั่วการ์ด 1 ใบจากกองเด็ค -> เข้าสู่ขั้นตอนที่ 2️⃣ จัดทัพแรก!`);
+        showToast(`🃏 จั่วได้ "${drawn.name}"! เข้าสู่ขั้นตอนที่ 2️⃣ จัดทัพแรก`, '✨');
+        enforceHandLimit(mySide, () => {
+          syncP2P();
+          renderDuelArena();
+        });
+      });
+    };
+
+    // Hook drawCards for any spell or monster draw effects
+    const _v29OrigDrawCards = drawCards;
+    drawCards = function(side, count) {
+      _v29OrigDrawCards(side, count);
+      enforceHandLimit(side, () => {
+        renderDuelArena();
+      });
+    };
+
+    // Thematic visual profile enhancer for motion graphics
+    getCardElementalVisualProfile = function(card, mode = 'attack') {
+      if (!card) {
+        return { sfx: 'monster_slash', color: '#f59e0b', glow: 'rgba(245,158,11,0.85)', icons: ['💥', '⚡', '✨', '🔥'], bgGrad: 'from-amber-950/90 via-slate-950/90 to-rose-950/90' };
+      }
+      const cName = card.name || '';
+      const cId = card.id || '';
+      const cAttr = card.attribute || '';
+
+      if (cId.startsWith('SP') || card.isRare) {
+        return { sfx: 'crystal_light', color: '#fbbf24', glow: 'rgba(251,191,36,0.95)', icons: ['🌟', '🎓', '👑', '✨'], bgGrad: 'from-amber-950/95 via-indigo-950/90 to-emerald-950/95' };
+      }
+
+      if (mode === 'trap' || card.category === 'trap') {
+        if (['T005', 'T012', 'T013', 'T014', 'T018'].includes(cId) || cName.includes('ถล่ม') || cName.includes('ดิน') || cName.includes('หิน')) {
+          return { sfx: 'rock_crush', color: '#f59e0b', glow: 'rgba(245,158,11,0.92)', icons: ['🪨', '⛰️', '💥', '🔨'], bgGrad: 'from-stone-950/95 via-amber-950/90 to-rose-950/92' };
+        }
+        if (['T009', 'T015', 'T024', 'T025'].includes(cId) || cName.includes('น้ำ') || cName.includes('โคลน') || cName.includes('สึนามิ')) {
+          return { sfx: 'water_tsunami', color: '#06b6d4', glow: 'rgba(6,182,212,0.92)', icons: ['🌊', '💧', '🌀', '⛈️'], bgGrad: 'from-cyan-950/95 via-blue-950/90 to-slate-950/92' };
+        }
+        if (['T008', 'T010'].includes(cId) || cName.includes('เดือด') || cName.includes('ไฟ') || cName.includes('ลาวา')) {
+          return { sfx: 'magma_fire', color: '#f97316', glow: 'rgba(249,115,22,0.92)', icons: ['🌋', '🔥', '☄️', '💥'], bgGrad: 'from-red-950/95 via-orange-950/90 to-slate-950/92' };
+        }
+        return { sfx: 'trap_spring', color: '#ec4899', glow: 'rgba(236,72,153,0.92)', icons: ['🪤', '⛓️', '🛡️', '⚡'], bgGrad: 'from-pink-950/95 via-purple-950/90 to-slate-950/92' };
+      }
+
+      if (card.category === 'spell') {
+        if (['S001', 'S004', 'S005', 'S009', 'S035'].includes(cId) || cName.includes('แมกมา') || cName.includes('ภูเขาไฟ') || cName.includes('เพลิง') || cName.includes('ความร้อนใต้พิภพ')) {
+          return { sfx: 'magma_fire', color: '#f97316', glow: 'rgba(249,115,22,0.95)', icons: ['🌋', '🔥', '☄️', '💥'], bgGrad: 'from-red-950/95 via-orange-950/90 to-slate-950/92' };
+        }
+        if (['S024', 'S049'].includes(cId) || cName.includes('กรด') || cName.includes('ย่อยสลาย')) {
+          return { sfx: 'acid_corrosion', color: '#a3e635', glow: 'rgba(163,230,53,0.95)', icons: ['🧪', '🫧', '☠️', '💥'], bgGrad: 'from-lime-950/95 via-emerald-950/90 to-slate-950/92' };
+        }
+        if (['S013', 'S015', 'S033', 'S034', 'S037', 'S038', 'S050'].includes(cId) || cName.includes('น้ำ') || cName.includes('สึนามิ') || cName.includes('ตะกอน') || cName.includes('แอ่ง')) {
+          return { sfx: 'water_tsunami', color: '#38bdf8', glow: 'rgba(56,189,248,0.95)', icons: ['🌊', '❄️', '💧', '🌀'], bgGrad: 'from-sky-950/95 via-blue-950/90 to-slate-950/92' };
+        }
+        if (['S006', 'S012', 'S029', 'S031', 'S032', 'S044', 'S045'].includes(cId) || cName.includes('เพชร') || cName.includes('แร่') || cName.includes('ผลึก') || cName.includes('แปรสภาพ')) {
+          return { sfx: 'crystal_light', color: '#fde047', glow: 'rgba(253,224,71,0.95)', icons: ['💎', '✨', '🔮', '⚡'], bgGrad: 'from-amber-950/95 via-purple-950/90 to-cyan-950/92' };
+        }
+        return { sfx: 'rock_crush', color: '#fbbf24', glow: 'rgba(251,191,36,0.92)', icons: ['🪨', '🔨', '⚡', '✨'], bgGrad: 'from-amber-950/95 via-stone-950/90 to-slate-950/92' };
+      }
+
+      if (cAttr === 'ไฟ' || card.geoTags?.isMagma) {
+        return { sfx: 'magma_fire', color: '#f97316', glow: 'rgba(249,115,22,0.95)', icons: ['🔥', '🌋', '☄️', '💥'], bgGrad: 'from-red-950/92 via-orange-950/90 to-slate-950/92' };
+      }
+      if (cAttr === 'น้ำ') {
+        return { sfx: 'water_tsunami', color: '#38bdf8', glow: 'rgba(56,189,248,0.95)', icons: ['🌊', '💧', '❄️', '🌀'], bgGrad: 'from-cyan-950/92 via-blue-950/90 to-slate-950/92' };
+      }
+      if (cAttr === 'แสง' || card.geoTags?.isGem) {
+        return { sfx: 'crystal_light', color: '#fde047', glow: 'rgba(253,224,71,0.95)', icons: ['💎', '✨', '🌟', '⚡'], bgGrad: 'from-yellow-950/92 via-amber-950/90 to-indigo-950/92' };
+      }
+      if (cAttr === 'มืด') {
+        return { sfx: 'acid_corrosion', color: '#c084fc', glow: 'rgba(192,132,252,0.95)', icons: ['🌑', '☠️', '⚡', '🔮'], bgGrad: 'from-purple-950/95 via-slate-950/90 to-rose-950/92' };
+      }
+      return { sfx: 'rock_crush', color: '#f59e0b', glow: 'rgba(245,158,11,0.92)', icons: ['🪨', '⛰️', '🔨', '💥'], bgGrad: 'from-amber-950/92 via-stone-950/90 to-slate-950/92' };
+    };
+
+    // Thematic spell/trap motion graphic trigger
+    const _v29OrigExecuteSpellTrapEffect = executeSpellTrapEffect;
+    executeSpellTrapEffect = function(side, card) {
+      if (!card) return;
+      const isSignature = (
+        String(card.id).startsWith('SP') ||
+        ['S001', 'S002', 'S004', 'S006', 'S015', 'S024', 'S028', 'S031', 'S032', 'S035', 'S043', 'S049', 'S050'].includes(card.id) ||
+        ['T001', 'T005', 'T006', 'T009', 'T010', 'T012', 'T013', 'T014', 'T015', 'T018', 'T028'].includes(card.id) ||
+        card.subtype === 'continuous'
+      );
+      if (isSignature) {
+        playCardMotionGraphic({
+          mode: card.category === 'trap' ? 'trap' : 'spell',
+          sourceCard: card,
+          targetCard: null,
+          title: `${card.category === 'trap' ? '🪤 กับดักธรณีทำงาน' : '🔮 เปิดใช้งานเวทมนตร์'}: ${card.name}!`,
+          subtitle: card.effect || card.scienceFact,
+          damageText: card.category === 'trap' ? '🪤 TRAP!' : '🔮 SPELL!',
+          duration: 1050
+        });
+      }
+      _v29OrigExecuteSpellTrapEffect(side, card);
+    };
+
+    // Build comprehensive match summary prompt for OpenRouter AI
+    function buildDuelMatchSummaryPrompt(ev) {
+      const tel = ev.telemetry || {};
+      const isWon = ev.won;
+      const myLp = ev.myLp;
+      const oppLp = duelState.players?.[1]?.lp ?? 0;
+      const turns = ev.turns;
+      const mode = duelState.mode === 'p2p' ? 'P2P Online' : (duelState.mode === 'hotseat' ? 'Hotseat' : `Bot Battle (${duelState.lastOppName || 'บอส'})`);
+      const scienceCards = (ev.usedScience || []).map(c => `${c.name} (${c.category === 'monster' ? 'ธาตุ' + c.attribute + ' ' + (c.stars || 1) + 'ดาว' : c.category})`).join(', ') || 'การ์ดพื้นฐาน';
+      const combos = (tel.geologicalCombos || []).join(', ') || 'การเล่นเชิงเดี่ยว';
+      const spells = (tel.spellsActivated || []).join(', ') || 'ไม่ได้ใช้เวท';
+      const traps = (tel.trapsTriggered || 0);
+      const attacks = (tel.attacksDeclared || 0);
+      const damageDealt = (tel.damageDealt || 0);
+      const damageTaken = (tel.damageTaken || 0);
+      const misplays = (tel.misplayAttacksIntoHigherDef || 0);
+      const typeKills = (tel.typeAdvantageKills || 0);
+
+      return `สรุปผลการแข่งขันเกมการ์ดวิทยาศาสตร์ GEO-DUEL (ป.6 เรื่อง หินและการเปลี่ยนแปลง):
+- ผู้เล่น: "${userProfile.name || 'ผู้เล่น'}" (ผล: ${isWon ? 'ชนะ' : 'แพ้'}, LP คงเหลือ: ${myLp})
+- คู่ต่อสู้: "${duelState.lastOppName || 'คู่ต่อสู้'}" (LP คงเหลือ: ${oppLp})
+- รูปแบบ: ${mode} • จำนวนเทิร์นที่ใช้: ${turns} เทิร์น
+- การ์ดวิทยาศาสตร์ที่ใช้: ${scienceCards}
+- คอมโบธรณีวิทยาที่ทำสำเร็จ: ${combos}
+- การใช้เวทมนตร์: ${spells}
+- กับดักที่ทำงาน: ${traps} ครั้ง
+- สถิติการต่อสู้: สั่งโจมตี ${attacks} ครั้ง, ทำดาเมจรวม ${damageDealt} LP, เสียหายรวม ${damageTaken} LP
+- การชนะทางธรณีวิทยา: ${typeKills} ครั้ง
+- ข้อผิดพลาดในการโจมตีมอนสเตอร์พลังป้องกันสูงกว่า: ${misplays} ครั้ง
+- เกรดประเมินรวม: ${ev.rank} (${ev.total100}/100 คะแนน)
+
+ช่วยวิเคราะห์เกมนี้อย่างจริงจัง มีหลักการและกระชับ 3 หัวข้อ:
+1. 🌟 จุดเปลี่ยนสำคัญและคอมโบที่ทำได้ดี
+2. ⚠️ ข้อผิดพลาดทางแท็กติกและการคำนวณพลังที่สังเกตพบในแมตช์นี้
+3. 💡 คำแนะนำการปรับปรุงเด็คและการเล่นในตาต่อไป
+(ตอบเป็นภาษาไทย เชื่อมโยงความรู้เรื่องหินอัคนี หินตะกอน หินแปร แร่ และฟอสซิลตามการ์ดที่เล่นจริง ห้ามตอบประโยคซ้ำซาก)`;
+    }
+
+    // Deep Dynamic Heuristic Analyst Fallback (Unique, In-depth, Tailored to Real Match Metrics)
+    function generateDynamicHeuristicAnalysis(ev) {
+      const tel = ev.telemetry || {};
+      const won = ev.won;
+      const turns = ev.turns;
+      const myLp = ev.myLp;
+      const combos = tel.geologicalCombos || [];
+      const spells = tel.spellsActivated || [];
+      const cards = ev.usedScience || [];
+      const misplays = tel.misplayAttacksIntoHigherDef || 0;
+      const typeKills = tel.typeAdvantageKills || 0;
+      const traps = tel.trapsTriggered || 0;
+      const pName = userProfile.name || 'คุณ';
+
+      let part1 = '';
+      if (won) {
+        if (turns <= 5) {
+          part1 = `🌟 **จุดเปลี่ยนสำคัญและคอมโบที่ทำได้ดี:** ${pName} เปิดเกมบุกอย่างรวดเร็วและเด็ดขาด ปิดฉากการดูเอลได้ในเวลาเพียง ${turns} เทิร์น โดยรักษา LP ไว้ได้สูงถึง ${myLp} คะแนน`;
+        } else {
+          part1 = `🌟 **จุดเปลี่ยนสำคัญและคอมโบที่ทำได้ดี:** การชิงจังหวะที่ดุเดือดตลอด ${turns} เทิร์น ${pName} คุมเกมสนามได้อย่างอดทน`;
+        }
+        if (combos.length > 0) {
+          part1 += ` ไฮไลต์คือการประสานคอมโบธรณีวิทยา "${combos.join(', ')}" ซึ่งแสดงถึงความเข้าใจความสัมพันธ์ของวัฏจักรหินและการแปรสภาพอย่างแท้จริง`;
+        } else if (cards.length > 0) {
+          const topM = cards.find(c => c.category === 'monster' && (c.stars >= 6 || c.atk >= 2000)) || cards[0];
+          part1 += ` โดยมีการ์ดกำลังหลักอย่าง "${topM.name}" เป็นหัวหอกสร้างความเสียหายต่อเนื่อง`;
+        }
+        if (typeKills > 0) {
+          part1 += ` ร่วมกับการใช้ความได้เปรียบทางธรณีวิทยาทำลายการ์ดฝ่ายตรงข้ามได้ถึง ${typeKills} ครั้ง`;
+        }
+      } else {
+        part1 = `🌟 **จุดเปลี่ยนสำคัญและคอมโบที่ทำได้ดี:** แม้จะเป็นฝ่ายพ่ายแพ้ในเทิร์นที่ ${turns} แต่ ${pName} ก็สามารถต้านทานการบุกของฝ่ายตรงข้ามและสร้างดาเมจคืนได้ถึง ${tel.damageDealt || 0} LP`;
+        if (combos.length > 0) {
+          part1 += ` และยังมีจังหวะคอมโบที่น่าชื่นชมจาก "${combos.join(', ')}"`;
+        }
+      }
+
+      let part2 = '⚠️ **ข้อผิดพลาดทางแท็กติกและการคำนวณพลัง:** ';
+      const issues = [];
+      if (misplays > 0) {
+        issues.push(`มีจังหวะสั่งมอนสเตอร์โจมตีเข้าใส่การ์ดที่มี DEF สูงกว่า ${misplays} ครั้ง ทำให้เสีย LP สะท้อนกลับโดยไม่จำเป็น ควรตรวจเช็กพลังป้องกันและสถานะการหมอบก่อนโจมตีเสมอ`);
+      }
+      if (traps === 0 && (tel.trapsSet || 0) === 0) {
+        issues.push(`ในสนามของคุณไม่มีการตั้งการ์ดกับดักหมอบไว้เลย ทำให้เมื่อคู่ต่อสู้สั่งบุกจึงไม่มีเกราะป้องกันฉุกเฉิน`);
+      }
+      if (spells.length === 0) {
+        issues.push(`ยังไม่ได้เปิดใช้งานการ์ดเวทมนตร์เพื่อเร่งการได้เปรียบ ทำให้ต้องพึ่งพาพลังโจมตีพื้นฐานเพียงอย่างเดียว`);
+      }
+      if (issues.length === 0) {
+        issues.push(`การคำนวณค่าพลังโจมตีและป้องกันทำได้อย่างมีวินัย แทบไม่มีการสูญเสียพลังชีวิตจากความประมาท`);
+      }
+      part2 += issues.join(' ');
+
+      let part3 = '💡 **คำแนะนำการปรับปรุงเด็คและการเล่นในตาต่อไป:** ';
+      const recTips = [];
+      const igneousCount = cards.filter(c => c.geoTags?.isMagma || c.attribute === 'ไฟ').length;
+      const sedimentaryCount = cards.filter(c => c.geoTags?.isSedimentary || c.geoTags?.isFossil || c.attribute === 'น้ำ').length;
+      const metamorphicCount = cards.filter(c => c.geoTags?.isMetamorphic || c.geoTags?.isGem || c.attribute === 'แสง').length;
+
+      if (igneousCount >= sedimentaryCount && igneousCount >= metamorphicCount) {
+        recTips.push(`สำหรับเด็คสายหินอัคนี แนะนำให้ใส่การ์ดเวท "การเย็นตัวฉับพลัน (S001)" หรือ "การเย็นตัวอย่างช้าๆ (S002)" เพื่อเรียก "ราชันย์มังกรบะซอลต์ (3000/2500)" หรือ "ป้อมปราการแกรนิต (1000/3200)" ออกมาคุมสนามได้ทันที`);
+      } else if (sedimentaryCount >= metamorphicCount) {
+        recTips.push(`สำหรับเด็คสายหินตะกอนและฟอสซิล ควรเพิ่มการ์ด "การขุดค้นฟอสซิล (S028)" เพื่อชุบชีวิตไดโนเสาร์โบราณจากสุสาน และใส่การ์ดกับดัก "หินถล่ม (T012)" เพื่อสกัดการบุกของบอสฝ่ายตรงข้าม`);
+      } else {
+        recTips.push(`สำหรับเด็คสายหินแปรและอัญมณี ควรมุ่งเน้นคอมโบ "แรงดันและความร้อน (S031)" เพื่อแปรสภาพหินดินดานหรือหินปูนเป็นหินชนวนและหินอ่อนระดับสูง พร้อมการ์ด "ถ่านหินสู่เพชร (S032)" เพื่อเรียกราชันย์เพชร 4,000 ATK`);
+      }
+      if (!won) {
+        recTips.push(`หากเจอปัญหามือตันหรือการ์ดในมือไม่พอ แนะนำให้ใส่การ์ดเวท "เกรด 4.00 (SP03)" หรือ "แอ่งตะกอนไร้ขอบเขต (S015)" เพื่อให้ถือการ์ดได้ไม่จำกัดและเติมมือได้ทันที`);
+      }
+      part3 += recTips.join(' ');
+
+      return `${part1}
+
+${part2}
+
+${part3}`;
+    }
+
+    // Connect to OpenRouter API (sk-or-v1-...) with automatic fallback to Deep Heuristic Engine
+    requestCloudAiCommentary = async function() {
+      playTone('click');
+      const box = document.getElementById('cloud-ai-commentary-box');
+      const txt = document.getElementById('cloud-ai-commentary-text');
+      if (box) box.classList.remove('hidden');
+      if (txt) {
+        txt.innerHTML = `
+          <div class="flex items-center gap-2 text-cyan-300 font-bold animate-pulse py-1">
+            <span class="text-xl">🤖</span>
+            <span>กำลังส่งข้อมูลสถิติไปยัง OpenRouter AI เพื่อวิเคราะห์เกมเชิงลึก...</span>
+          </div>
+        `;
+      }
+
+      const ev = computeAiDuelEvaluation();
+      const prompt = buildDuelMatchSummaryPrompt(ev);
+
+      let resultText = '';
+      let providerUsed = '';
+
+      if (OPENROUTER_API_KEY && OPENROUTER_API_KEY.startsWith('sk-or-v1-')) {
+        try {
+          const ctrl = new AbortController();
+          const tid = setTimeout(() => ctrl.abort(), 9500);
+
+          const orResp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+              'Content-Type': 'application/json',
+              'HTTP-Referer': window.location.href || 'https://script.google.com/',
+              'X-Title': 'GEO-DUEL Online'
+            },
+            body: JSON.stringify({
+              model: 'google/gemini-2.5-flash',
+              messages: [
+                {
+                  role: 'system',
+                  content: 'คุณคือยอดโค้ชและนักธรณีวิทยาผู้เชี่ยวชาญเกมการ์ด GEO-DUEL วิเคราะห์เกมการแข่งขันของนักเรียน ป.6 อย่างเฉียบคม เจาะลึกถึงการตัดสินใจ คอมโบ ข้อผิดพลาด และการปรับเด็คเฉพาะแมตช์นี้ ไม่พูดซ้ำซาก เป็นภาษาไทยที่กระชับ สุภาพ และเข้าใจง่าย'
+                },
+                {
+                  role: 'user',
+                  content: prompt
+                }
+              ],
+              temperature: 0.7,
+              max_tokens: 500
+            }),
+            signal: ctrl.signal
+          });
+          clearTimeout(tid);
+
+          if (orResp.ok) {
+            const data = await orResp.json();
+            const content = data?.choices?.[0]?.message?.content;
+            if (content && content.trim().length > 20) {
+              resultText = content.trim();
+              providerUsed = 'OpenRouter AI (Gemini 2.5 Flash)';
+            }
+          } else {
+            const freeResp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': window.location.href || 'https://script.google.com/',
+                'X-Title': 'GEO-DUEL Online'
+              },
+              body: JSON.stringify({
+                model: 'meta-llama/llama-3.1-8b-instruct:free',
+                messages: [
+                  {
+                    role: 'system',
+                    content: 'คุณคือยอดโค้ชและนักธรณีวิทยาผู้เชี่ยวชาญเกมการ์ด GEO-DUEL วิเคราะห์เกมการแข่งขันของนักเรียน ป.6 อย่างเฉียบคม เจาะลึกถึงการตัดสินใจ คอมโบ ข้อผิดพลาด และการปรับเด็คเฉพาะแมตช์นี้ ไม่พูดซ้ำซาก เป็นภาษาไทยที่กระชับและเข้าใจง่าย'
+                  },
+                  {
+                    role: 'user',
+                    content: prompt
+                  }
+                ],
+                temperature: 0.7,
+                max_tokens: 500
+              })
+            });
+            if (freeResp.ok) {
+              const freeData = await freeResp.json();
+              const freeContent = freeData?.choices?.[0]?.message?.content;
+              if (freeContent && freeContent.trim().length > 20) {
+                resultText = freeContent.trim();
+                providerUsed = 'OpenRouter AI Free (Llama 3.1 8B)';
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('OpenRouter API call error:', err);
+        }
+      }
+
+      if (!resultText) {
+        resultText = generateDynamicHeuristicAnalysis(ev);
+        providerUsed = 'Deep Geological Game Engine (วิเคราะห์สดตามรูปเกมจริง)';
+      }
+
+      window._lastAiAnalysisText = resultText;
+
+      if (txt) {
+        txt.innerHTML = `
+          <div class="mb-2 text-[11px] font-mono text-cyan-300 border-b border-cyan-500/30 pb-1 flex items-center justify-between flex-wrap gap-1">
+            <span>✨ ประมวลผลโดย: <strong>${providerUsed}</strong></span>
+            <span>แมตช์เทิร์นที่ ${ev.turns} • เกรด ${ev.rank}</span>
+          </div>
+          <div class="text-xs sm:text-sm text-slate-100 leading-relaxed whitespace-pre-line font-medium">${resultText}</div>
+        `;
+      }
+      return resultText;
+    };
+
+    speakAiSummaryReport = function(evt = null) {
+      if (evt) evt.stopPropagation();
+      if (window._lastAiAnalysisText) {
+        speakThaiText(window._lastAiAnalysisText);
+        return;
+      }
+      const ev = computeAiDuelEvaluation();
+      const dynText = generateDynamicHeuristicAnalysis(ev);
+      window._lastAiAnalysisText = dynText;
+      speakThaiText(dynText);
+    };
+
+    const _v29OrigRenderAiEvaluationScreen = renderAiEvaluationScreen;
+    renderAiEvaluationScreen = function() {
+      _v29OrigRenderAiEvaluationScreen();
+      setTimeout(() => {
+        requestCloudAiCommentary();
+      }, 100);
+    };
+
+        ensureCloudDeckSyncButtonsInToolbar();
+    window.addEventListener("DOMContentLoaded", () => {
+      ensureCloudDeckSyncButtonsInToolbar();
+      // If user is already logged in on startup, pull their latest saved deck from Google Sheet immediately!
+      setTimeout(() => {
+        if (isPlayerLoggedIn && userProfile.username) {
+          pullActiveUserDeckFromCloudNow(true, false);
+        }
+      }, 350);
+    });
 
   </script>
 </body>
