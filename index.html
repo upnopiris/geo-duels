@@ -1935,7 +1935,7 @@
           </button>
 
           <!-- SLOT PLACEMENT QUICK CHOICE OVERLAY (#7 — WHEN USER CLICKS AN EMPTY MONSTER SLOT DIRECTLY) -->
-          <div id="slot-choice-popup" class="hidden absolute inset-0 z-45 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div id="slot-choice-popup" class="hidden fixed inset-0 z-[2147483644] bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
             <div class="royal-frame rounded-3xl max-w-md w-full p-5 text-center space-y-3 border-2 border-amber-300 shadow-[0_0_60px_rgba(250,204,21,0.85)]">
               <div class="text-xs font-black text-cyan-300 uppercase tracking-wider">📍 เลือกรูปแบบการวางลงช่องที่เลือก</div>
               <h4 id="slot-choice-title" class="text-xl font-black text-amber-300">วางการ์ดลงช่องที่ 1</h4>
@@ -1945,10 +1945,10 @@
             </div>
           </div>
 
-          <!-- FIX #3: GIANT FULL-BOARD DRAW PHASE POPUP OVERLAY COVERING THE BOARD! -->
-          <div id="btn-draw-phase-card" onclick="playerClickDrawPhase()" class="hidden absolute inset-0 z-50 bg-slate-950/88 backdrop-blur-md flex flex-col items-center justify-center p-6 cursor-pointer select-none">
-            <div class="royal-frame rounded-3xl max-w-lg w-full p-6 sm:p-8 text-center space-y-4 border-4 border-amber-300 shadow-[0_0_90px_rgba(250,204,21,0.95)] pulse-ring">
-              <div class="inline-block px-4 py-1 rounded-full bg-amber-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider">
+          <!-- FIX #3: GIANT FULL-SCREEN DRAW PHASE POPUP OVERLAY ON TOP-MOST LAYER! -->
+          <div id="btn-draw-phase-card" onclick="playerClickDrawPhase()" class="hidden fixed inset-0 z-[2147483646] bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4 sm:p-6 cursor-pointer select-none">
+            <div class="royal-frame rounded-3xl max-w-md w-full p-5 sm:p-7 text-center space-y-3 border-4 border-amber-300 shadow-[0_0_90px_rgba(250,204,21,0.95)] pulse-ring relative z-[2147483647]">
+              <div class="inline-block px-3.5 py-1 rounded-full bg-amber-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider">
                 ⚡ ขั้นตอนที่ 1️⃣ : ช่วงจั่วการ์ด (DRAW PHASE) ⚡
               </div>
               <h3 class="text-2xl sm:text-4xl font-black text-white gold-glow-text">ถึงเทิร์นของคุณแล้ว!</h3>
@@ -6737,7 +6737,7 @@
           ? `<span class="absolute bottom-0.5 left-0.5 z-20 px-1 rounded bg-slate-950/90 border border-amber-400/70 text-amber-300 font-mono font-black text-[7px] sm:text-[8px] leading-none pointer-events-none">⭐${card.stars}</span>`
           : '';
         const dragHintPill = '';
-        const dragAttr = canDragAttack ? `onpointerdown="startMonsterCardDrag(event, ${side}, ${idx})"` : '';
+        const dragAttr = canDragAttack ? `onpointerdown="startMonsterCardDrag(event, ${side}, ${idx})" ontouchstart="startMonsterCardDrag(event, ${side}, ${idx})"` : '';
 
         return `
           <div id="slot-${side}-${zType}-${idx}" data-side="${side}" data-ztype="${zType}" data-idx="${idx}" ${dragAttr} onclick="handleZoneClick(${side}, '${zType}', ${idx})" class="board-slot absolute rounded-lg p-1 ${theme} ${auraCls} holo-foil text-white flex flex-col justify-between cursor-pointer shadow-2xl overflow-hidden ${posClass} ${highlight}" style="${posStyle}">
@@ -9451,8 +9451,7 @@
               if (duelState.active && mySide === 0 && pl.monsters[slotIdx] && pl.monsters[slotIdx].attacksLeft > 0) {
                 duelState.selectedRef = { side: 0, zoneType: 'm', index: slotIdx };
                 duelState.pendingAttackFromMonsterIdx = slotIdx;
-                spawnFloatingBattleText(0, 'm', slotIdx, `⚡ โจมตีได้อีก ${pl.monsters[slotIdx].attacksLeft} ครั้ง!`, 'text-cyan-300');
-                showToast(`⚡ "${attacker.name}" โจมตีครั้งที่ 1 สำเร็จ! กดปุ่ม ⚔️ สั่งโจมตี เพื่อโจมตีครั้งที่ 2 ได้เลย!`, '⚔️');
+                setAiThinkingStatus(`⚡ "${attacker.name}" โจมตีได้อีก ${pl.monsters[slotIdx].attacksLeft} ครั้ง! ลากการ์ดโจมตีต่อได้เลย`, false);
               }
               syncP2P();
               renderDuelArena();
@@ -9691,8 +9690,7 @@
           if (duelState.active && attSide === 0 && attPl.monsters[attIdx] && attPl.monsters[attIdx].attacksLeft > 0) {
             duelState.selectedRef = { side: 0, zoneType: 'm', index: attIdx };
             duelState.pendingAttackFromMonsterIdx = attIdx;
-            spawnFloatingBattleText(0, 'm', attIdx, `⚡ โจมตีครั้งที่ 2 พร้อม!`, 'text-cyan-300');
-            showToast(`⚡ "${attacker.name}" ยังเหลือการโจมตีครั้งที่ 2! คลิกศัตรูหรือกด ⚔️ สั่งโจมตี อีกครั้งได้เลย!`, '⚔️');
+            setAiThinkingStatus(`⚡ "${attacker.name}" ยังโจมตีครั้งที่ 2 ได้! ลากการ์ดไปชนศัตรูได้เลย`, false);
           }
           syncP2P();
           renderDuelArena();
@@ -20391,15 +20389,9 @@
     ensureDuelExitConfirmModalExists();
     window.addEventListener("DOMContentLoaded", ensureDuelExitConfirmModalExists);
 
-    // ==================== GEO-DUEL v1 MOBILE 3-POINT FIX MODULE ====================
-    // Fix 1: Card Draw overlay (#btn-draw-phase-card) & flying draw animation (#combat-fx-layer)
-    //        moved outside the playmat board clipping container to the top-most layer (z-index: 2147483600+)
-    //        so the full Draw Card popup and drawn card are 100% visible in mobile mode.
-    // Fix 2: Voice Reading bar (#tts-reading-bar) positioned at the TOP of the screen so it NEVER covers
-    //        the player's hand cards at the bottom, and automatically closes immediately when reading finishes
-    //        (also auto-closing #mobile-card-info-tab-popup when reading completes).
-    // Fix 3: Pre-attack recommendation/guidance toasts & overlays removed so nothing covers the target cards
-    //        when selecting or tapping a card to attack.
+    // ==================== GEO-DUEL v1 MOBILE 3-POINT FIX MODULE (TOUCH DRAG-ATTACK + UNOBSTRUCTED BOARD + FRONT DRAW CARD) ====================
+    window._suppressNextZoneClickUntil = 0;
+    window._activeCardDragCleanup = null;
 
     function injectV1MobileThreeFixesStyles() {
       if (document.getElementById("v1-mobile-three-fixes-styles")) return;
@@ -20407,7 +20399,7 @@
       st.id = "v1-mobile-three-fixes-styles";
       st.textContent = `
         /* ============================================================================
-           FIX 1: CARD DRAW OVERLAY & FLYING CARD ON TOP-MOST LAYER (OUTSIDE BOARD FRAME)
+           FIX 1: DRAW CARD POPUP ("คลิกจั่วการ์ดจากเด็ค!") ALWAYS AT THE VERY FRONT
            ============================================================================ */
         #btn-draw-phase-card {
           position: fixed !important;
@@ -20416,18 +20408,26 @@
           height: 100dvh !important;
           max-width: 100vw !important;
           max-height: 100dvh !important;
-          z-index: 2147483600 !important;
+          z-index: 2147483646 !important;
           margin: 0 !important;
           padding: 12px !important;
           box-sizing: border-box !important;
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: center !important;
+          justify-content: center !important;
+          pointer-events: auto !important;
         }
-        #btn-draw-phase-card.hidden {
+        #btn-draw-phase-card.hidden,
+        body.ui-mode-mobile-916 #btn-draw-phase-card.hidden {
           display: none !important;
         }
-        body.ui-mode-mobile-916 #btn-draw-phase-card > div.royal-frame {
-          width: min(92vw, 356px) !important;
-          max-width: 356px !important;
-          max-height: 88dvh !important;
+        #btn-draw-phase-card > div.royal-frame {
+          position: relative !important;
+          z-index: 2147483647 !important;
+          width: min(92vw, 350px) !important;
+          max-width: 350px !important;
+          max-height: 86dvh !important;
           padding: 16px 14px !important;
           margin: auto !important;
           border-radius: 22px !important;
@@ -20437,27 +20437,33 @@
           justify-content: center !important;
           gap: 10px !important;
           box-sizing: border-box !important;
+          overflow: visible !important;
         }
-        body.ui-mode-mobile-916 #btn-draw-phase-card > div.royal-frame > * {
+        #btn-draw-phase-card > div.royal-frame > * {
           margin-top: 0 !important;
           margin-bottom: 0 !important;
         }
         body.ui-mode-mobile-916 #btn-draw-phase-card h3 {
-          font-size: 22px !important;
+          font-size: 21px !important;
           line-height: 1.2 !important;
         }
         body.ui-mode-mobile-916 #btn-draw-phase-card .deck-stack-3d {
-          width: 108px !important;
-          height: 150px !important;
+          width: 102px !important;
+          height: 142px !important;
+          flex-shrink: 0 !important;
         }
         body.ui-mode-mobile-916 #btn-draw-phase-card p {
-          font-size: 12.5px !important;
-          line-height: 1.35 !important;
+          font-size: 12px !important;
+          line-height: 1.3 !important;
         }
         body.ui-mode-mobile-916 #btn-draw-phase-card button {
-          padding: 11px 14px !important;
+          position: relative !important;
+          z-index: 2147483647 !important;
+          width: 100% !important;
+          padding: 12px 14px !important;
           font-size: 16px !important;
           border-radius: 14px !important;
+          flex-shrink: 0 !important;
         }
 
         /* Also elevate #slot-choice-popup & #combat-fx-layer (flying drawn card) to top-most layer */
@@ -20466,7 +20472,7 @@
           inset: 0 !important;
           width: 100vw !important;
           height: 100dvh !important;
-          z-index: 2147483590 !important;
+          z-index: 2147483644 !important;
         }
         #slot-choice-popup.hidden {
           display: none !important;
@@ -20476,7 +20482,7 @@
           inset: 0 !important;
           width: 100vw !important;
           height: 100dvh !important;
-          z-index: 2147483610 !important;
+          z-index: 2147483642 !important;
           pointer-events: none !important;
           overflow: visible !important;
         }
@@ -20492,7 +20498,7 @@
           left: 50% !important;
           right: auto !important;
           transform: translateX(-50%) !important;
-          z-index: 2147483620 !important;
+          z-index: 2147483645 !important;
         }
         #tts-reading-bar.hidden,
         body.ui-mode-mobile-916 #tts-reading-bar.hidden {
@@ -20536,7 +20542,6 @@
           font-size: 10px !important;
           border-radius: 7px !important;
         }
-        /* Hide the redundant locked engine button on mobile to keep the top voice bar ultra-compact */
         body.ui-mode-mobile-916 #btn-tts-engine {
           display: none !important;
         }
@@ -20552,9 +20557,66 @@
         }
 
         /* ============================================================================
-           FIX 3: NEVER LET TOASTS OR HINTS BLOCK TAPS ON BOARD CARDS
+           FIX 3: KEEP PLAYMAT BOARD 100% FREE OF COVERING TEXT & ENABLE TOUCH DRAG
            ============================================================================ */
         #toast-box {
+          pointer-events: none !important;
+        }
+        /* Position #toast-box in mobile mode BELOW the board so it NEVER covers #playmat-board! */
+        body.ui-mode-mobile-916 #toast-box {
+          top: auto !important;
+          bottom: calc(var(--dyn-hand-card-h, 105px) + 18px) !important;
+          left: 50% !important;
+          right: auto !important;
+          transform: translateX(-50%) !important;
+          width: min(92vw, 360px) !important;
+          max-width: 360px !important;
+          padding: 5px 10px !important;
+          border-radius: 10px !important;
+          font-size: 11px !important;
+          pointer-events: none !important;
+          z-index: 95 !important;
+        }
+        body.ui-mode-mobile-916 #toast-box #toast-icon {
+          font-size: 15px !important;
+        }
+        body.ui-mode-mobile-916 #toast-box #toast-msg {
+          font-size: 11px !important;
+          line-height: 1.25 !important;
+        }
+
+        /* Hide speech bubbles on mobile board so they never cover monster/spell cards */
+        body.ui-mode-mobile-916 #opp-speech-bubble,
+        body.ui-mode-mobile-916 #plr-speech-bubble {
+          display: none !important;
+        }
+
+        /* Compact Direct Attack button on mobile so it does not cover monster slots */
+        body.ui-mode-mobile-916 #btn-direct-attack {
+          padding: 5px 12px !important;
+          font-size: 11.5px !important;
+          border-radius: 9999px !important;
+          white-space: nowrap !important;
+          top: 48% !important;
+          z-index: 42 !important;
+        }
+
+        /* CRITICAL FOR MOBILE DRAG-TO-ATTACK: Prevent browser scroll/pan gesture from canceling touch drag on the board! */
+        #playmat-board,
+        #playmat-board .board-slot,
+        #player-m-zones,
+        #player-m-zones > div,
+        #opp-m-zones,
+        #opp-m-zones > div {
+          touch-action: none !important;
+          user-select: none !important;
+          -webkit-user-select: none !important;
+          -webkit-touch-callout: none !important;
+        }
+        #opp-stat-strips,
+        #opp-stat-strips *,
+        #player-stat-strips,
+        #player-stat-strips * {
           pointer-events: none !important;
         }
       `;
@@ -20582,6 +20644,7 @@
     }
 
     function syncDrawOverlayTopLayerVisibility() {
+      elevateDrawOverlayAndPopupsToBody();
       const drawOverlay = document.getElementById("btn-draw-phase-card");
       if (!drawOverlay) return;
       const duelArena = document.getElementById("duel-arena");
@@ -20596,13 +20659,18 @@
         duelState.phase === "draw"
       );
       drawOverlay.classList.toggle("hidden", !shouldShow);
+      if (shouldShow) {
+        drawOverlay.style.setProperty("display", "flex", "important");
+        drawOverlay.style.setProperty("z-index", "2147483646", "important");
+      } else {
+        drawOverlay.style.removeProperty("display");
+      }
       if (!isArenaVisible || !duelState || !duelState.active) {
         document.getElementById("slot-choice-popup")?.classList.add("hidden");
       }
     }
 
     // Ensure flying drawn card in animateCardDrawFromDeck is always on the top-most layer and never clipped at screen edges
-    const _v1OrigAnimateCardDrawFromDeck = animateCardDrawFromDeck;
     animateCardDrawFromDeck = function(side, drawnCard, onComplete) {
       elevateDrawOverlayAndPopupsToBody();
       if (side === 0 && currentAspectMode === "9:16") {
@@ -20635,7 +20703,7 @@
       flyCard.style.top = `${y1}px`;
       flyCard.style.transform = "translate(-50%, -50%) scale(0.75) rotate(-8deg)";
       flyCard.style.transition = "left 0.58s cubic-bezier(0.22, 1, 0.36, 1), top 0.58s cubic-bezier(0.22, 1, 0.36, 1), transform 0.58s cubic-bezier(0.22, 1, 0.36, 1)";
-      flyCard.style.zIndex = "2147483615";
+      flyCard.style.zIndex = "2147483643";
       flyCard.style.pointerEvents = "none";
 
       if (side === 0) {
@@ -20734,7 +20802,6 @@
         }
         restoreBgmAfterSpeech();
         if (bar) bar.classList.add("hidden");
-        // Also close the mobile card info tab when reading finishes in mobile mode
         if (currentAspectMode === "9:16") {
           closeMobileCardInfoTab();
         }
@@ -20881,7 +20948,7 @@
     };
 
     // ============================================================================
-    // FIX 3: REMOVE PRE-ATTACK RECOMMENDATION / GUIDANCE SO TARGET CARDS ARE NEVER COVERED
+    // FIX 3: KEEP BOARD 100% UNOBSTRUCTED & ENABLE TOUCH DRAG-TO-ATTACK ON MOBILE
     // ============================================================================
     function hideToastBoxImmediately() {
       if (typeof toastTimer !== "undefined" && toastTimer) {
@@ -20892,7 +20959,7 @@
       if (box) box.classList.add("hidden");
     }
 
-    // Filter out pre-attack recommendation toasts in showToast so they never pop up over enemy cards
+    // Never let any toast pop up over the board during a duel in Mobile Mode; show status in the middle status bar instead!
     const _v1OrigShowToast = showToast;
     showToast = function(msg, icon = "⚡") {
       const s = String(msg || "");
@@ -20901,13 +20968,329 @@
         s.includes("คลิกที่การ์ดคู่ต่อสู้") ||
         s.includes("คลิกมอนสเตอร์ของคุณเพื่อสั่งโจมตี") ||
         s.includes("ยังเหลือการโจมตีครั้งที่ 2") ||
-        s.includes("โจมตีครั้งที่ 1 สำเร็จ! กดปุ่ม")
+        s.includes("โจมตีครั้งที่ 1 สำเร็จ! กดปุ่ม") ||
+        s.includes("เข้าสู่ขั้นตอนที่ 2") ||
+        s.includes("ขั้นตอนจัดทัพแรก:") ||
+        s.includes("ขั้นตอนเสริมทัพหลังสู้:") ||
+        s.includes("คลิกปุ่ม \"1️⃣ จั่วการ์ด\"")
       ) {
         hideToastBoxImmediately();
+        if (duelState && duelState.active && typeof setAiThinkingStatus === "function") {
+          setAiThinkingStatus(`${icon} ${s.replace(/<[^>]+>/g, "")}`, false);
+        }
+        return;
+      }
+      // During an active duel on mobile, route informational toasts to the middle bar so #playmat-board is NEVER covered!
+      const duelArena = document.getElementById("duel-arena");
+      const inMobileDuel = Boolean(
+        currentAspectMode === "9:16" &&
+        duelState &&
+        duelState.active &&
+        duelArena &&
+        !duelArena.classList.contains("hidden")
+      );
+      if (inMobileDuel) {
+        hideToastBoxImmediately();
+        if (typeof setAiThinkingStatus === "function") {
+          setAiThinkingStatus(`${icon} ${s.replace(/<[^>]+>/g, "")}`, false);
+        }
         return;
       }
       _v1OrigShowToast(msg, icon);
     };
+
+    // Make floating damage/effect badges on the board compact & non-blocking, and suppress "โจมตีครั้งที่ 2 พร้อม!"
+    const _v1OrigSpawnFloatingBattleText = spawnFloatingBattleText;
+    spawnFloatingBattleText = function(side, zType, idx, text, colorClass = "text-amber-300") {
+      const tStr = String(text || "");
+      if (tStr.includes("โจมตีครั้งที่ 2") || tStr.includes("โจมตีได้อีก")) {
+        return;
+      }
+      if (currentAspectMode === "9:16") {
+        const layer = document.getElementById("combat-fx-layer");
+        const el = document.getElementById(`slot-${side}-${zType}-${idx}`) || document.getElementById("playmat-board");
+        if (!layer || !el) return;
+        const r = el.getBoundingClientRect();
+        const badge = document.createElement("div");
+        badge.className = `anim-float-dmg fixed z-[2147483640] px-2 py-0.5 rounded-full bg-slate-950/90 border border-amber-300 font-black text-[10px] ${colorClass} shadow pointer-events-none whitespace-nowrap`;
+        badge.style.left = `${r.left + r.width / 2}px`;
+        badge.style.top = `${r.top + r.height / 2}px`;
+        badge.innerHTML = text;
+        layer.appendChild(badge);
+        setTimeout(() => badge.remove(), 650);
+        return;
+      }
+      _v1OrigSpawnFloatingBattleText(side, zType, idx, text, colorClass);
+    };
+
+    // Helper: Find best enemy monster slot at or near pointer/finger coordinates (x, y)
+    function findEnemyMonsterSlotAtPoint(x, y, mySide) {
+      const enemySide = 1 - mySide;
+      const opp = duelState.players?.[enemySide];
+      if (!opp) return -1;
+
+      // 1. Direct DOM hit check
+      const hitEl = document.elementFromPoint(x, y);
+      if (hitEl) {
+        const directSlot = hitEl.closest(`[data-side="${enemySide}"][data-ztype="m"]`);
+        if (directSlot) {
+          const dIdx = Number(directSlot.getAttribute("data-idx"));
+          if (opp.monsters[dIdx]) return dIdx;
+        }
+      }
+
+      // 2. Magnetic bounding-box & proximity check across all occupied enemy monster slots
+      const boardEl = document.getElementById("playmat-board");
+      if (!boardEl) return -1;
+      const br = boardEl.getBoundingClientRect();
+      // Must be within horizontal bounds of board (with 30px tolerance) and in upper 62% of board (enemy half)
+      if (x < br.left - 30 || x > br.right + 30 || y < br.top - 40 || y > br.top + br.height * 0.62) {
+        return -1;
+      }
+
+      let bestIdx = -1;
+      let bestDist = Infinity;
+      const maxSnapDist = currentAspectMode === "9:16" ? 72 : 90;
+
+      for (let i = 0; i < 5; i++) {
+        if (!opp.monsters[i]) continue;
+        const slotEl = document.getElementById(`slot-${enemySide}-m-${i}`);
+        if (!slotEl) continue;
+        const sr = slotEl.getBoundingClientRect();
+        // Check expanded padded box first (includes stat strip right below slot)
+        const padX = currentAspectMode === "9:16" ? 14 : 18;
+        const padY = currentAspectMode === "9:16" ? 24 : 28;
+        if (x >= sr.left - padX && x <= sr.right + padX && y >= sr.top - padY && y <= sr.bottom + padY) {
+          const cx = sr.left + sr.width / 2;
+          const cy = sr.top + sr.height / 2;
+          const d = Math.hypot(x - cx, y - cy);
+          if (d < bestDist) {
+            bestDist = d;
+            bestIdx = i;
+          }
+        } else {
+          const cx = sr.left + sr.width / 2;
+          const cy = sr.top + sr.height / 2;
+          const d = Math.hypot(x - cx, y - cy);
+          if (d <= maxSnapDist && d < bestDist) {
+            bestDist = d;
+            bestIdx = i;
+          }
+        }
+      }
+      return bestIdx;
+    }
+
+    // Unified Touch + Pointer Drag-Card-To-Attack Engine (works identically on Mobile Touchscreen & PC Mouse!)
+    startMonsterCardDrag = function(ev, side, slotIdx) {
+      if (isSpectatorMode || !duelState || !duelState.active) return;
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      if (side !== mySide || duelState.activePlayer !== mySide) return;
+      if (duelState.phase === "draw") return;
+
+      const pl = duelState.players[mySide];
+      const opp = duelState.players[1 - mySide];
+      const attacker = pl?.monsters?.[slotIdx];
+      if (!attacker || attacker.faceDown || attacker.position !== "atk" || attacker.attacksLeft <= 0) return;
+      if (!canMonsterDeclareAttackV15(mySide, attacker, true)) return;
+
+      // Clean up any previous drag session
+      if (typeof window._activeCardDragCleanup === "function") {
+        window._activeCardDragCleanup();
+      }
+
+      const getPoint = (e) => {
+        if (e.touches && e.touches.length > 0) {
+          return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+        if (e.changedTouches && e.changedTouches.length > 0) {
+          return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+        }
+        return { x: e.clientX ?? 0, y: e.clientY ?? 0 };
+      };
+
+      const startPt = getPoint(ev);
+      const startX = startPt.x;
+      const startY = startPt.y;
+      let lastX = startX;
+      let lastY = startY;
+      let isDragging = false;
+      let finished = false;
+      let ghostEl = null;
+      let lineSvg = null;
+
+      function cleanupDragDOM() {
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", onEnd);
+        window.removeEventListener("pointercancel", onEnd);
+        window.removeEventListener("touchmove", onMove);
+        window.removeEventListener("touchend", onEnd);
+        window.removeEventListener("touchcancel", onEnd);
+        document.querySelectorAll(".drag-hover-target").forEach(el => el.classList.remove("drag-hover-target"));
+        if (ghostEl) { ghostEl.remove(); ghostEl = null; }
+        if (lineSvg) { lineSvg.remove(); lineSvg = null; }
+        window._activeCardDragCleanup = null;
+      }
+
+      window._activeCardDragCleanup = cleanupDragDOM;
+
+      function onMove(moveEv) {
+        const pt = getPoint(moveEv);
+        lastX = pt.x;
+        lastY = pt.y;
+        const dx = lastX - startX;
+        const dy = lastY - startY;
+
+        if (!isDragging && Math.hypot(dx, dy) > 6) {
+          isDragging = true;
+          hideToastBoxImmediately();
+          closeMobileCardInfoTab();
+
+          if (duelState.phase !== "battle") {
+            duelState.phase = "battle";
+          }
+          duelState.pendingAttackFromMonsterIdx = slotIdx;
+          duelState.selectedRef = { side: mySide, zoneType: "m", index: slotIdx };
+
+          const hdUrl = getDriveFullCardUrl(attacker, "w400");
+          const theme = getCardThemeClass(attacker);
+          const isMob = currentAspectMode === "9:16";
+          const sizeCls = isMob ? "w-16 h-24" : "w-28 h-40";
+
+          ghostEl = document.createElement("div");
+          ghostEl.style.position = "fixed";
+          ghostEl.style.left = `${lastX}px`;
+          ghostEl.style.top = `${lastY}px`;
+          ghostEl.style.transform = isMob
+            ? "translate(-50%, -85%) rotate(-4deg) scale(1.04)"
+            : "translate(-50%, -50%) rotate(-6deg) scale(1.08)";
+          ghostEl.style.zIndex = "2147483641";
+          ghostEl.style.pointerEvents = "none";
+          ghostEl.innerHTML = `
+            <div class="${sizeCls} rounded-xl p-1 ${theme} border-2 border-red-400 shadow-[0_0_35px_rgba(239,68,68,0.95)] flex flex-col justify-between relative overflow-hidden opacity-90">
+              ${hdUrl ? `<img src="${hdUrl}" class="absolute inset-0 w-full h-full object-fill z-10 pointer-events-none" onerror="this.style.display=\x27none\x27" />` : ""}
+              <div class="relative z-20 bg-red-600/95 text-white font-black text-[9px] px-1 py-0.5 rounded text-center border border-yellow-200 shadow">⚔️ โจมตี!</div>
+              <div class="relative z-20 bg-slate-950/95 text-amber-300 font-mono font-black text-[9px] px-1 py-0.5 rounded text-center border border-amber-400">ATK ${attacker.currentAtk}</div>
+            </div>
+          `;
+          document.body.appendChild(ghostEl);
+
+          lineSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          lineSvg.setAttribute("class", "fixed inset-0 w-full h-full pointer-events-none");
+          lineSvg.style.zIndex = "2147483640";
+          lineSvg.innerHTML = `
+            <line id="drag-atk-line" x1="${startX}" y1="${startY}" x2="${lastX}" y2="${lastY}" stroke="#ef4444" stroke-width="4" stroke-dasharray="8,5" />
+            <circle id="drag-atk-tip" cx="${lastX}" cy="${lastY}" r="10" fill="rgba(239,68,68,0.35)" stroke="#fde047" stroke-width="2.5" />
+          `;
+          document.body.appendChild(lineSvg);
+        }
+
+        if (isDragging) {
+          if (moveEv.cancelable) moveEv.preventDefault();
+          if (ghostEl) {
+            ghostEl.style.left = `${lastX}px`;
+            ghostEl.style.top = `${lastY}px`;
+          }
+          const ln = document.getElementById("drag-atk-line");
+          if (ln) {
+            ln.setAttribute("x2", lastX);
+            ln.setAttribute("y2", lastY);
+          }
+          const tip = document.getElementById("drag-atk-tip");
+          if (tip) {
+            tip.setAttribute("cx", lastX);
+            tip.setAttribute("cy", lastY);
+          }
+
+          document.querySelectorAll(".drag-hover-target").forEach(el => el.classList.remove("drag-hover-target"));
+          const targetIdx = findEnemyMonsterSlotAtPoint(lastX, lastY, mySide);
+          if (targetIdx !== -1) {
+            const slotBox = document.getElementById(`slot-${1 - mySide}-m-${targetIdx}`);
+            if (slotBox) slotBox.classList.add("drag-hover-target");
+          }
+        }
+      }
+
+      function onEnd(upEv) {
+        if (finished) return;
+        finished = true;
+        const pt = getPoint(upEv);
+        const endX = pt.x || lastX;
+        const endY = pt.y || lastY;
+        const wasDragging = isDragging;
+        cleanupDragDOM();
+
+        if (!wasDragging) return;
+
+        // Suppress synthetic click event after dragging on touchscreen
+        window._suppressNextZoneClickUntil = Date.now() + 420;
+
+        // 1. Check if dropped on or near an enemy monster slot
+        const defIdx = findEnemyMonsterSlotAtPoint(endX, endY, mySide);
+        if (defIdx !== -1 && opp.monsters[defIdx]) {
+          tryAttackEnemySlot(mySide, slotIdx, 1 - mySide, defIdx);
+          return;
+        }
+
+        // 2. Check if dropped in Opponent half of the board (or on Direct Attack button) when Direct Attack is allowed
+        const oppHasM = opp.monsters.some(m => m !== null);
+        const canDirect = !oppHasM || attacker.id === "M006" || attacker.id === "M057" || attacker.id === "SP07";
+        const boardEl = document.getElementById("playmat-board");
+        if (canDirect && boardEl) {
+          const br = boardEl.getBoundingClientRect();
+          if (endX >= br.left - 30 && endX <= br.right + 30 && endY >= br.top - 50 && endY <= br.top + br.height * 0.62) {
+            duelState.pendingAttackFromMonsterIdx = slotIdx;
+            performDirectAttack();
+            return;
+          }
+        }
+
+        // 3. Fallback: if opponent only has 1 monster on the field and player dragged to the opponent half of the board, attack that monster!
+        if (oppHasM && boardEl) {
+          const br = boardEl.getBoundingClientRect();
+          if (endX >= br.left - 30 && endX <= br.right + 30 && endY >= br.top - 50 && endY <= br.top + br.height * 0.62) {
+            const occupiedIndices = opp.monsters.map((m, i) => m ? i : -1).filter(i => i !== -1);
+            if (occupiedIndices.length === 1) {
+              tryAttackEnemySlot(mySide, slotIdx, 1 - mySide, occupiedIndices[0]);
+              return;
+            }
+          }
+        }
+
+        renderDuelArena();
+      }
+
+      window.addEventListener("pointermove", onMove, { passive: false });
+      window.addEventListener("pointerup", onEnd, { passive: false });
+      window.addEventListener("pointercancel", onEnd, { passive: false });
+      window.addEventListener("touchmove", onMove, { passive: false });
+      window.addEventListener("touchend", onEnd, { passive: false });
+      window.addEventListener("touchcancel", onEnd, { passive: false });
+    };
+
+    // Also attach delegated touchstart/pointerdown on #playmat-board so touching ANY player monster in ATK position can drag-attack immediately!
+    function bindBoardTouchDragDelegation() {
+      const boardEl = document.getElementById("playmat-board");
+      if (!boardEl || boardEl._hasV1TouchDragDelegation) return;
+      boardEl._hasV1TouchDragDelegation = true;
+
+      const onStartDelegated = (ev) => {
+        if (isSpectatorMode || !duelState || !duelState.active) return;
+        if (ev.target && ev.target.closest("button")) return;
+        const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+        const slotEl = ev.target && ev.target.closest ? ev.target.closest(`[data-side="${mySide}"][data-ztype="m"]`) : null;
+        if (!slotEl) return;
+        const idx = Number(slotEl.getAttribute("data-idx"));
+        if (isNaN(idx)) return;
+        const m = duelState.players?.[mySide]?.monsters?.[idx];
+        if (m && !m.faceDown && m.position === "atk" && m.attacksLeft > 0) {
+          startMonsterCardDrag(ev, mySide, idx);
+        }
+      };
+
+      boardEl.addEventListener("touchstart", onStartDelegated, { passive: true });
+      boardEl.addEventListener("pointerdown", onStartDelegated, { passive: true });
+    }
 
     // Override enterBattlePhase so it enters Battle Phase cleanly without popping up a toast over the board
     enterBattlePhase = function() {
@@ -20922,17 +21305,18 @@
         const pl = duelState.players[mySide];
         const hasStalactite = pl && pl.monsters.some(m => m && !m.faceDown && m.position === "atk" && m.id === "M036");
         if (!hasStalactite) {
-          _v1OrigShowToast("กติกาข้อ 4.3: ผู้เล่นลำดับที่ 1 ห้ามทำการโจมตีในเทิร์นแรก!", "🚫");
+          setAiThinkingStatus("🚫 กติกาข้อ 4.3: ผู้เล่นลำดับที่ 1 ห้ามโจมตีในเทิร์นแรก!", false);
           return;
         }
       }
       if (duelState.iceAgeTurnsLeft > 0) {
-        _v1OrigShowToast(`อยู่ในช่วงยุคน้ำแข็งอีก ${duelState.iceAgeTurnsLeft} เทิร์น มอนสเตอร์ถูกแช่แข็งห้ามโจมตี!`, "❄️");
+        setAiThinkingStatus(`❄️ อยู่ในช่วงยุคน้ำแข็งอีก ${duelState.iceAgeTurnsLeft} เทิร์น ห้ามโจมตี!`, false);
         return;
       }
       hideToastBoxImmediately();
       closeMobileCardInfoTab();
       duelState.phase = "battle";
+      setAiThinkingStatus("⚔️ ช่วงบุกโจมตี: ลากการ์ดมอนสเตอร์ไปชนศัตรู (หรือจิ้มเป้าโจมตี) ได้เลย!", false);
       renderDuelArena();
     };
 
@@ -20959,27 +21343,50 @@
           return;
         }
       }
+      setAiThinkingStatus(`⚔️ เลือก "${attacker.name}" แล้ว — ลากไปชนศัตรูหรือแตะการ์ดศัตรูเพื่อโจมตี!`, false);
       renderDuelArena();
     };
 
-    // Also ensure renderDuelArena keeps #btn-draw-phase-card synced at top layer AND hides floating board badges while targeting an attack
-    const _v1OrigRenderDuelArena = renderDuelArena;
-    renderDuelArena = function() {
-      elevateDrawOverlayAndPopupsToBody();
-      _v1OrigRenderDuelArena();
-      syncDrawOverlayTopLayerVisibility();
+    // In Mobile Mode, do NOT pop up the full-screen #mobile-card-info-tab-popup when tapping a card on the BOARD
+    // (players tap/drag board cards to attack or change position; they can tap "📖 อ่านข้อมูล" in the action bar to view full card info!)
+    selectDuelCard = function(side, zoneType, index) {
+      _v23SelectDuelCard(side, zoneType, index);
+      if (currentAspectMode !== "9:16" || !duelState || !duelState.active) return;
 
-      // If player is currently choosing an attack target, remove any floating .mob-board-read-btn on the board so nothing covers the cards
-      if (duelState && duelState.pendingAttackFromMonsterIdx !== null) {
-        hideToastBoxImmediately();
-        document.querySelectorAll(".mob-board-read-btn").forEach(el => el.remove());
+      const pl = duelState.players?.[side];
+      if (!pl) return;
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      const card = zoneType === "hand" ? pl.hand[index] : (zoneType === "m" ? pl.monsters[index] : pl.spellTraps[index]);
+      if (!card) return;
+
+      // Only auto-open the card info tab when tapping a card in HAND; on the board, keep the board clear for dragging & attacking!
+      if (zoneType === "hand") {
+        openMobileCardInfoTab(card, { source: "duel", ref: { side, zoneType, index } });
+      } else if (side === mySide && zoneType === "m" && duelState.activePlayer === mySide && duelState.phase !== "draw") {
+        if (!card.faceDown && card.position === "atk" && card.attacksLeft > 0 && canMonsterDeclareAttackV15(mySide, card, false)) {
+          duelState.pendingAttackFromMonsterIdx = index;
+          setAiThinkingStatus(`⚔️ พร้อมโจมตีด้วย "${card.name}" — ลากไปชนศัตรูหรือจิ้มการ์ดศัตรูได้เลย!`, false);
+        }
       }
     };
 
-    // In Mobile Mode, if player is in Battle Phase and taps an opponent's monster directly (even before clicking "สั่งโจมตี"),
-    // if the player has a selected or single ready attacker, attack immediately instead of popping up the info tab!
+    // Ensure renderDuelArena keeps #btn-draw-phase-card synced at top layer AND removes floating board badges so nothing covers board cards
+    const _v1OrigRenderDuelArena = renderDuelArena;
+    renderDuelArena = function() {
+      elevateDrawOverlayAndPopupsToBody();
+      bindBoardTouchDragDelegation();
+      _v1OrigRenderDuelArena();
+      syncDrawOverlayTopLayerVisibility();
+      // Remove floating .mob-board-read-btn from board slots so board cards are 100% unobstructed for drag & tap
+      document.querySelectorAll(".mob-board-read-btn").forEach(el => el.remove());
+    };
+
+    // Upgrade handleZoneClick so post-drag synthetic clicks are ignored and tapping an enemy monster attacks immediately
     const _v1OrigHandleZoneClick = handleZoneClick;
     handleZoneClick = function(side, zType, idx) {
+      if (Date.now() < (window._suppressNextZoneClickUntil || 0)) {
+        return;
+      }
       if (!isSpectatorMode && duelState && duelState.active) {
         const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
         if (
@@ -20993,9 +21400,8 @@
             tryAttackEnemySlot(mySide, duelState.pendingAttackFromMonsterIdx, side, idx);
             return;
           }
-          // If in battle phase and user selected one of their own attacking monsters previously, let tapping enemy monster attack directly!
           if (
-            duelState.phase === "battle" &&
+            (duelState.phase === "battle" || duelState.phase === "main") &&
             duelState.selectedRef &&
             duelState.selectedRef.side === mySide &&
             duelState.selectedRef.zoneType === "m"
@@ -21004,6 +21410,7 @@
             const candM = duelState.players[mySide]?.monsters?.[candIdx];
             if (candM && canMonsterDeclareAttackV15(mySide, candM, false)) {
               hideToastBoxImmediately();
+              if (duelState.phase !== "battle") duelState.phase = "battle";
               duelState.pendingAttackFromMonsterIdx = candIdx;
               tryAttackEnemySlot(mySide, candIdx, side, idx);
               return;
@@ -21015,11 +21422,13 @@
     };
 
     elevateDrawOverlayAndPopupsToBody();
+    bindBoardTouchDragDelegation();
     window.addEventListener("DOMContentLoaded", () => {
       elevateDrawOverlayAndPopupsToBody();
+      bindBoardTouchDragDelegation();
       syncDrawOverlayTopLayerVisibility();
     });
-    setInterval(syncDrawOverlayTopLayerVisibility, 300);
+    setInterval(syncDrawOverlayTopLayerVisibility, 250);
 
   </script>
 </body>
