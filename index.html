@@ -23587,6 +23587,2756 @@ ${part3}`;
       }, 350);
     });
 
+
+    // ============================================================================
+    // GEO-DUEL v1 COMPREHENSIVE 13-POINT GAMEPLAY & MOBILE UX ENHANCEMENTS
+    // Strictly modifies only the user-requested items:
+    // 1. Trap card effects fixed (T031 Isostasy/Subsidence 2500+ ATK destroy on activate & continuous, T001-T031, SP07, SP10)
+    // 2. Equal ATK when both monsters are in Attack position = Mutual Destruction (ตายคู่)
+    // 3. Battle Recoil Damage when opponent attacks our higher-DEF monster always reduces opponent's LP
+    // 4. Smarter Bot Tribute AI (never sacrifices a stronger monster for a weaker/equal one)
+    // 5. Strict forward-only Turn Phase progression (1 -> 2 -> 3 -> 4 -> 5, no going backward)
+    // 6. Mobile Phase Buttons in 2 larger rows + Duel Exit button moved to Top-Left corner
+    // 7. Drawn 5+ star card in hand never hijacks field monster clicks for tribute unless placement is explicitly requested
+    // 8. Trap cards can be activated in player's own turn OR face-up directly from hand when conditions are met
+    // 9. Remove/hide cluttered "คลิกเลือกช่องว่างบนกระดาน..." / #opp-top-hand-bar / #placement-mode-hint
+    // 10. View card info for ANY card on the field at all times (friendly or face-up opponent monster/spell/trap/field)
+    // 11. Graveyard revival / recovery selection modals always complete before drawing or advancing to next turn
+    // 12. Inspect opponent's Graveyard cards anytime with full card details
+    // 13. Small "💥 บู๊ม!" explosion visual effect on card slot whenever a card is destroyed
+    // ============================================================================
+
+    function injectV1ThirteenPointFixesStyles() {
+      if (document.getElementById("v1-thirteen-point-fixes-styles")) return;
+      const st = document.createElement("style");
+      st.id = "v1-thirteen-point-fixes-styles";
+      st.textContent = `
+        /* ============================================================================
+           FIX 9: HIDE CLUTTERED STATUS BAR & "คลิกเลือกช่องบนกระดาน..." HINT
+           ============================================================================ */
+        #opp-top-hand-bar,
+        body.ui-mode-mobile-916 #opp-top-hand-bar,
+        #placement-mode-hint,
+        body.ui-mode-mobile-916 #placement-mode-hint {
+          display: none !important;
+        }
+
+        /* Make HUD Graveyard counters clearly tappable */
+        #hud-p1-gy, #hud-p2-gy {
+          text-decoration: underline;
+          cursor: pointer;
+        }
+
+        /* ============================================================================
+           FIX 6: TOP-LEFT FLOATING DUEL EXIT BUTTON & 2-ROW LARGER MOBILE PHASE BUTTONS
+           ============================================================================ */
+        #btn-floating-top-left-duel-exit {
+          position: fixed !important;
+          top: 6px !important;
+          left: 6px !important;
+          z-index: 2147483640 !important;
+          padding: 5px 11px !important;
+          border-radius: 9999px !important;
+          font-size: 11.5px !important;
+          font-weight: 900 !important;
+          line-height: 1.1 !important;
+          letter-spacing: 0.01em !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 4px !important;
+          color: #ffffff !important;
+          background: linear-gradient(135deg, #dc2626, #be123c) !important;
+          border: 2px solid #fecdd3 !important;
+          box-shadow: 0 4px 16px rgba(220, 38, 38, 0.75) !important;
+          cursor: pointer !important;
+          user-select: none !important;
+        }
+        #btn-floating-top-left-duel-exit.hidden {
+          display: none !important;
+        }
+        #btn-floating-top-left-duel-exit:active {
+          transform: scale(0.95) !important;
+        }
+
+        /* Hide old inline exit buttons inside phase strip / top hand bar so they never crowd phase buttons */
+        #btn-duel-exit-corner,
+        body.ui-mode-mobile-916 #btn-duel-exit-corner,
+        #btn-top-bar-duel-exit,
+        body.ui-mode-mobile-916 #btn-top-bar-duel-exit,
+        body.ui-mode-mobile-916 #duel-side-hub > div:nth-child(2) > div:last-child > div:last-child {
+          display: none !important;
+        }
+
+        /* 2-Row Larger Phase Buttons in Mobile Mode (9:16) */
+        body.ui-mode-mobile-916 #duel-side-hub > div:nth-child(2) > div:last-child {
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: stretch !important;
+          justify-content: center !important;
+          width: 100% !important;
+          padding: 3px 5px !important;
+          gap: 3px !important;
+          background: rgba(11, 7, 26, 0.96) !important;
+          border-bottom: 1px solid rgba(251, 191, 36, 0.4) !important;
+        }
+        body.ui-mode-mobile-916 #duel-side-hub > div:nth-child(2) > div:last-child > div:first-child {
+          display: none !important;
+        }
+        body.ui-mode-mobile-916 #duel-side-hub > div:nth-child(2) > div:last-child > div:nth-child(2) {
+          display: grid !important;
+          grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+          gap: 4px !important;
+          width: 100% !important;
+        }
+        body.ui-mode-mobile-916 #duel-side-hub .phase-step-btn {
+          min-height: 29px !important;
+          padding: 4px 5px !important;
+          font-size: 11.5px !important;
+          font-weight: 900 !important;
+          border-radius: 9px !important;
+          border-width: 1.5px !important;
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 3px !important;
+          line-height: 1.15 !important;
+          white-space: nowrap !important;
+        }
+        body.ui-mode-mobile-916 #duel-side-hub .phase-step-btn > span:first-child {
+          font-size: 12px !important;
+        }
+        /* Row 1: Buttons 1, 2, 3 each span 2 columns (3 buttons across top row) */
+        body.ui-mode-mobile-916 #phase-draw,
+        body.ui-mode-mobile-916 #phase-main,
+        body.ui-mode-mobile-916 #btn-to-battle {
+          grid-column: span 2 / span 2 !important;
+        }
+        /* Row 2: Buttons 4 and 5 each span 3 columns (2 wide buttons across second row) */
+        body.ui-mode-mobile-916 #phase-main2,
+        body.ui-mode-mobile-916 #btn-end-turn {
+          grid-column: span 3 / span 3 !important;
+          min-height: 30px !important;
+          font-size: 12px !important;
+        }
+        /* Locked / already-passed phase button visual state */
+        .phase-step-btn.phase-locked-past {
+          opacity: 0.38 !important;
+          filter: grayscale(0.75) !important;
+          cursor: not-allowed !important;
+        }
+        .phase-step-btn.phase-active-current {
+          box-shadow: 0 0 14px rgba(250, 204, 21, 0.9) !important;
+          border-color: #fef08a !important;
+          transform: scale(1.01);
+        }
+
+        /* ============================================================================
+           FIX 11 & 12: Z-INDEX HIERARCHY FOR SELECTION MODALS & GRAVEYARD CARD INFO
+           ============================================================================ */
+        #modal-selector:not(.hidden),
+        #modal-tribute:not(.hidden),
+        #modal-summon-position-choice:not(.hidden),
+        #modal-trap-prompt:not(.hidden) {
+          z-index: 2147483647 !important;
+        }
+        #modal-info:not(.hidden) {
+          z-index: 2147483644 !important;
+        }
+        #mobile-card-info-tab-popup:not(.hidden),
+        #modal-card:not(.hidden) {
+          z-index: 2147483647 !important;
+        }
+        #modal-confirm-duel-exit:not(.hidden) {
+          z-index: 2147483647 !important;
+        }
+
+        /* ============================================================================
+           FIX 13: COMPACT "💥 บู๊ม!" EXPLOSION EFFECT ON CARD DESTRUCTION
+           ============================================================================ */
+        @keyframes geoBoomCoreAnim {
+          0% { transform: translate(-50%, -50%) scale(0.25); opacity: 1; }
+          35% { transform: translate(-50%, -50%) scale(1.28); opacity: 1; }
+          75% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.92; }
+          100% { transform: translate(-50%, -50%) scale(1.45); opacity: 0; }
+        }
+        @keyframes geoBoomRingAnim {
+          0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0.95; border-width: 5px; }
+          100% { transform: translate(-50%, -50%) scale(2.15); opacity: 0; border-width: 1px; }
+        }
+        .geo-boom-fx-container {
+          position: fixed;
+          pointer-events: none !important;
+          z-index: 2147483643;
+          width: 0;
+          height: 0;
+        }
+        .geo-boom-ring {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 58px;
+          height: 58px;
+          border-radius: 9999px;
+          border: 4px solid #fbbf24;
+          box-shadow: 0 0 22px #ef4444, inset 0 0 14px #f97316;
+          animation: geoBoomRingAnim 0.58s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .geo-boom-core {
+          position: absolute;
+          left: 0;
+          top: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          animation: geoBoomCoreAnim 0.62s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.95));
+          white-space: nowrap;
+        }
+        .geo-boom-emoji {
+          font-size: 30px;
+          line-height: 1;
+        }
+        .geo-boom-label {
+          margin-top: -3px;
+          padding: 1px 6px;
+          border-radius: 9999px;
+          background: linear-gradient(135deg, #dc2626, #f97316);
+          border: 1.5px solid #fef08a;
+          color: #ffffff;
+          font-size: 10px;
+          font-weight: 900;
+          letter-spacing: 0.02em;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.85);
+        }
+      `;
+      document.head.appendChild(st);
+    }
+    injectV1ThirteenPointFixesStyles();
+
+    // ============================================================================
+    // FIX 13: SPAWN SMALL "💥 บู๊ม!" EXPLOSION ON DESTROYED CARD SLOT
+    // ============================================================================
+    function spawnCardDestroyExplosion(side, zType, idx, labelText = "💥 บู๊ม!") {
+      try {
+        const slotEl = document.getElementById(`slot-${side}-${zType}-${idx}`);
+        if (!slotEl) return;
+        const rect = slotEl.getBoundingClientRect();
+        if (!rect || (rect.width === 0 && rect.height === 0)) return;
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+
+        const container = document.createElement("div");
+        container.className = "geo-boom-fx-container";
+        container.style.left = `${cx}px`;
+        container.style.top = `${cy}px`;
+        container.innerHTML = `
+          <div class="geo-boom-ring"></div>
+          <div class="geo-boom-core">
+            <div class="geo-boom-emoji">💥🔥</div>
+            <div class="geo-boom-label">${labelText}</div>
+          </div>
+        `;
+        document.body.appendChild(container);
+        setTimeout(() => {
+          container.remove();
+        }, 680);
+      } catch (e) {}
+    }
+
+    // Wrap destroyMonster so EVERY destroyed monster shows the "💥 บู๊ม!" explosion on its board slot!
+    const _v30BaseDestroyMonster = destroyMonster;
+    destroyMonster = function(side, idx, killerMonster = null) {
+      const pl = duelState?.players?.[side];
+      const mBefore = pl?.monsters?.[idx];
+      if (!mBefore) return;
+      _v30BaseDestroyMonster(side, idx, killerMonster);
+      const mAfter = pl?.monsters?.[idx];
+      if (!mAfter || mAfter !== mBefore) {
+        spawnCardDestroyExplosion(side, "m", idx, "💥 บู๊ม!");
+      }
+    };
+
+    // ============================================================================
+    // FIX 6: TOP-LEFT FLOATING DUEL EXIT BUTTON & CLICKABLE GRAVEYARD HUD BADGES
+    // ============================================================================
+    function ensureFloatingTopLeftDuelExitButton() {
+      injectV1ThirteenPointFixesStyles();
+      let btn = document.getElementById("btn-floating-top-left-duel-exit");
+      if (!btn) {
+        btn = document.createElement("button");
+        btn.id = "btn-floating-top-left-duel-exit";
+        btn.type = "button";
+        btn.className = "hidden";
+        btn.innerHTML = `<span>🏳️</span><span>ออก</span>`;
+        btn.title = "ออกจากการดูเอล (มีแท็บยืนยันป้องกันการกดพลาด)";
+        btn.onclick = function(ev) {
+          if (ev) ev.stopPropagation();
+          exitDuelToHomeMenu();
+        };
+        document.body.appendChild(btn);
+      }
+
+      const duelArena = document.getElementById("duel-arena");
+      const isDuelVisible = Boolean(duelArena && !duelArena.classList.contains("hidden") && duelState && duelState.active);
+      btn.classList.toggle("hidden", !isDuelVisible);
+
+      // Make HUD graveyard numbers clickable to inspect player or opponent graveyard
+      const p1Gy = document.getElementById("hud-p1-gy");
+      if (p1Gy && p1Gy.parentElement && !p1Gy.parentElement._boundGyClick) {
+        p1Gy.parentElement._boundGyClick = true;
+        p1Gy.parentElement.style.cursor = "pointer";
+        p1Gy.parentElement.title = "คลิกเพื่อดูการ์ดในสุสานของคุณ";
+        p1Gy.parentElement.onclick = function(ev) {
+          ev.stopPropagation();
+          openGraveyardModal(0);
+        };
+      }
+      const p2Gy = document.getElementById("hud-p2-gy");
+      if (p2Gy && p2Gy.parentElement && !p2Gy.parentElement._boundGyClick) {
+        p2Gy.parentElement._boundGyClick = true;
+        p2Gy.parentElement.style.cursor = "pointer";
+        p2Gy.parentElement.title = "คลิกเพื่อดูการ์ดในสุสานของคู่ต่อสู้";
+        p2Gy.parentElement.onclick = function(ev) {
+          ev.stopPropagation();
+          openGraveyardModal(1);
+        };
+      }
+
+      // Make Field Spell badge clickable to inspect active Field Spell card
+      const fieldBadge = document.getElementById("field-env-badge");
+      if (fieldBadge && !fieldBadge._boundFieldInspect) {
+        fieldBadge._boundFieldInspect = true;
+        fieldBadge.style.cursor = "pointer";
+        fieldBadge.style.pointerEvents = "auto";
+        fieldBadge.title = "คลิกเพื่อดูข้อมูลการ์ดเวทมนตร์สนาม";
+        fieldBadge.onclick = function(ev) {
+          ev.stopPropagation();
+          if (duelState && duelState.fieldSpell) {
+            openMobileCardInfoTab(duelState.fieldSpell, { source: "field_spell" });
+          }
+        };
+      }
+    }
+
+    // ============================================================================
+    // FIX 9: SUPPRESS CLUTTERED PLACEMENT HINTS IN setAiThinkingStatus
+    // ============================================================================
+    const _v30OrigSetAiThinkingStatus = typeof setAiThinkingStatus === "function" ? setAiThinkingStatus : function() {};
+    setAiThinkingStatus = function(msg, isBusy = false) {
+      const s = String(msg || "");
+      if (s.includes("คลิกเลือกช่อง") || s.includes("เลือกช่องว่างบนกระดาน")) {
+        return;
+      }
+      _v30OrigSetAiThinkingStatus(msg, isBusy);
+    };
+
+    // ============================================================================
+    // FIX 11: SELECTION MODAL GUARD (WAIT FOR GRAVEYARD/CARD SELECTION BEFORE DRAW/NEXT TURN)
+    // ============================================================================
+    function isAnyDuelSelectionModalOpen() {
+      const selModal = document.getElementById("modal-selector");
+      const tribModal = document.getElementById("modal-tribute");
+      const posModal = document.getElementById("modal-summon-position-choice");
+      const trapModal = document.getElementById("modal-trap-prompt");
+      if (selModal && !selModal.classList.contains("hidden")) return true;
+      if (tribModal && !tribModal.classList.contains("hidden")) return true;
+      if (posModal && !posModal.classList.contains("hidden")) return true;
+      if (trapModal && !trapModal.classList.contains("hidden")) return true;
+      if (window._summonPosModalActive || (Array.isArray(window._summonPosModalQueue) && window._summonPosModalQueue.length > 0)) return true;
+      return false;
+    }
+
+    function elevateSelectionModalsToBody() {
+      ["modal-selector", "modal-tribute", "modal-summon-position-choice", "modal-trap-prompt", "modal-info", "mobile-card-info-tab-popup", "modal-card"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.parentElement !== document.body) {
+          document.body.appendChild(el);
+        }
+      });
+    }
+
+    // Override syncDrawOverlayTopLayerVisibility so #btn-draw-phase-card NEVER covers an open selection modal!
+    syncDrawOverlayTopLayerVisibility = function() {
+      elevateDrawOverlayAndPopupsToBody();
+      elevateSelectionModalsToBody();
+      ensureFloatingTopLeftDuelExitButton();
+
+      const drawOverlay = document.getElementById("btn-draw-phase-card");
+      if (!drawOverlay) return;
+      const duelArena = document.getElementById("duel-arena");
+      const isArenaVisible = Boolean(duelArena && !duelArena.classList.contains("hidden"));
+      const mySide = (duelState && duelState.mode === "hotseat") ? duelState.activePlayer : 0;
+
+      // CRITICAL FIX 11: Never show Draw Phase overlay while player is still choosing a card from Graveyard/Deck/Tribute/Position!
+      const modalBlocking = isAnyDuelSelectionModalOpen();
+
+      const shouldShow = Boolean(
+        !modalBlocking &&
+        isArenaVisible &&
+        duelState &&
+        duelState.active &&
+        !isSpectatorMode &&
+        duelState.activePlayer === mySide &&
+        duelState.phase === "draw"
+      );
+      drawOverlay.classList.toggle("hidden", !shouldShow);
+      if (shouldShow) {
+        drawOverlay.style.setProperty("display", "flex", "important");
+        drawOverlay.style.setProperty("z-index", "2147483645", "important");
+      } else {
+        drawOverlay.style.setProperty("display", "none", "important");
+      }
+      if (!isArenaVisible || !duelState || !duelState.active) {
+        document.getElementById("slot-choice-popup")?.classList.add("hidden");
+      }
+    };
+
+    // ============================================================================
+    // FIX 1 & 8: TRAP CARD ACTIVATION CONDITIONS (IN OUR TURN & DIRECTLY FROM HAND)
+    //            AND COMPLETE TRAP EFFECTS (INCLUDING T031 ISOSTASY / SUBSIDENCE)
+    // ============================================================================
+    const _v30OrigCanActivateCard = canActivateCard;
+    canActivateCard = function(side, card) {
+      if (!card || !duelState || !duelState.players) return { ok: false, reason: "ไม่พบข้อมูลการ์ด" };
+      const pl = duelState.players[side];
+      const opp = duelState.players[1 - side];
+      const myMonsters = pl.monsters.filter(m => m !== null);
+      const oppMonsters = opp.monsters.filter(m => m !== null);
+      const allMonsters = [...myMonsters, ...oppMonsters];
+      const oppSpellTraps = opp.spellTraps.filter(s => s !== null);
+
+      if (card.category === "trap") {
+        switch (card.id) {
+          case "T001": // ภูเขาไฟสงบ (Dormant Volcano)
+            return { ok: true, hint: "เปิดหงายนับถอยหลัง 3 เทิร์น (หรือระเบิดทำลายมอนสเตอร์ในสนาม)!" };
+          case "T008": // กับดักบ่อโคลนเดือด (Mud Pot Trap)
+            return { ok: true, hint: "เปิดหงายกับดักต่อเนื่อง: ทุกครั้งที่ศัตรูโจมตี ศัตรูเสีย 500 LP!" };
+          case "T028": // เขตหวงห้าม (Restricted Area)
+            return { ok: true, hint: "เปิดหงายกับดักต่อเนื่อง: ห้ามมอนสเตอร์ระดับ 5 ดาวขึ้นไปโจมตี!" };
+          case "T031": // สมดุลเปลือกโลก (Isostasy / ธรณียุบตัว)
+            return { ok: true, hint: "เปิดหงายสมดุลเปลือกโลก: ทำลายมอนสเตอร์พลังโจมตี 2500+ ในสนามทันที!" };
+
+          case "T002": // เถ้าถ่านอำพราง
+          case "T023": // ทางตันในถ้ำ
+            if (oppMonsters.length === 0) {
+              return { ok: false, reason: "ฝ่ายตรงข้ามยังไม่มีมอนสเตอร์ในสนามให้หยุดการโจมตี" };
+            }
+            return { ok: true, hint: "พร้อมบังคับหยุดการโจมตีของมอนสเตอร์คู่ต่อสู้ในเทิร์นนี้!" };
+
+          case "T003": // แก๊สระเบิด
+            if (oppSpellTraps.length === 0 && !duelState.fieldSpell) {
+              return { ok: false, reason: "ฝ่ายตรงข้ามยังไม่มีการ์ดเวทมนตร์/กับดักในสนาม (สามารถหมอบรอไว้ได้)" };
+            }
+            return { ok: true, hint: "พร้อมระเบิดทำลายเวทมนตร์/กับดักศัตรู และลด LP คู่แข่ง 500!" };
+
+          case "T004": // แผ่นดินไหว
+            if (allMonsters.length === 0) {
+              return { ok: false, reason: "ต้องมีมอนสเตอร์ในสนามอย่างน้อย 1 ตัว" };
+            }
+            return { ok: true, hint: "พร้อมสลับท่าตั้งโจมตี/ป้องกันของมอนสเตอร์ในสนาม!" };
+
+          case "T005": // หินถล่ม
+          case "T014": // ดินทรุด (Subsidence)
+          case "T012": // ดินถล่ม
+          case "T013": // เหมืองถล่ม
+          case "T017": // ลาวาปะทุ
+          case "T018": // หินร่วง
+          case "T020": // พายุทะเลทราย
+          case "T021": // แก๊สไข่เน่า
+          case "T022": // อุปกรณ์นิรภัยชำรุด
+          case "T007": // แข็งตัวกะทันหัน
+          case "T011": // ทรายดูด
+          case "T019": // ทรายดูดมรณะ
+          case "T026": // ธารลาวาแข็งตัว
+          case "T030": // กฎแห่งกาลเวลา
+          case "SP07": // ไม้เรียวคุณครู
+          case "SP10": // เด็กดื้ออาละวาด
+            if (oppMonsters.length === 0) {
+              return { ok: false, reason: "ฝ่ายตรงข้ามยังไม่มีมอนสเตอร์ในสนามให้เป็นเป้าหมาย (หมอบรอไว้ได้)" };
+            }
+            return { ok: true, hint: `พร้อมเปิดใช้งาน "${card.name}" ใส่ฝ่ายตรงข้ามทันที!` };
+
+          case "T006": // ธารไพโรคลาสติก
+            if (allMonsters.length === 0 && oppSpellTraps.length === 0) {
+              return { ok: false, reason: "ยังไม่มีการ์ดบนสนามให้กวาดล้าง" };
+            }
+            return { ok: true, hint: "พร้อมกวาดล้างการ์ดในสนาม!" };
+
+          case "T009": // การผุพังอยู่กับที่
+          case "T024": // น้ำท่วมฉับพลัน
+            if (oppSpellTraps.length === 0 && !duelState.fieldSpell) {
+              return { ok: false, reason: "ฝ่ายตรงข้ามยังไม่มีการ์ดเวทมนตร์หรือกับดักในสนามให้ทำลาย" };
+            }
+            return { ok: true, hint: "พร้อมทำลายการ์ดเวทมนตร์/กับดักของคู่ต่อสู้!" };
+
+          case "T010": // แหล่งแร่หมดอายุ
+          case "T025": // การกัดเซาะชายฝั่ง
+            if (opp.hand.length === 0) {
+              return { ok: false, reason: "ฝ่ายตรงข้ามไม่มีการ์ดในมือให้ทิ้งลงสุสาน" };
+            }
+            return { ok: true, hint: "พร้อมบังคับฝ่ายตรงข้ามสุ่มทิ้งการ์ดในมือ 1 ใบลงสุสาน!" };
+
+          case "T015": // สึนามิ
+            if (!allMonsters.some(m => m.attribute === "ไฟ" || m.attribute === "ดิน")) {
+              return { ok: false, reason: "ไม่มีมอนสเตอร์ธาตุไฟหรือธาตุดินอยู่ในสนาม" };
+            }
+            return { ok: true, hint: "พร้อมทำลายมอนสเตอร์ธาตุไฟและดินทั้งหมดในสนาม!" };
+
+          case "T016": // อาฟเตอร์ช็อก
+            if (oppMonsters.length === 0) {
+              return { ok: false, reason: "ฝ่ายตรงข้ามไม่มีมอนสเตอร์ในสนามให้ทำลายคืน" };
+            }
+            if (!pl.graveyard.some(c => c.category === "monster") && myMonsters.length === 0) {
+              return { ok: false, reason: "ต้องมีการ์ดมอนสเตอร์ของเราที่ถูกทำลายในสุสาน (หรือหมอบรอไว้เมื่อการ์ดเราถูกทำลาย)" };
+            }
+            return { ok: true, hint: "พร้อมสั่นสะเทือนอาฟเตอร์ช็อก ทำลายมอนสเตอร์คู่ต่อสู้ 1 ตัวทันที!" };
+
+          case "T027": // ฟอสซิลหลอก
+            if (oppMonsters.length === 0 && !opp.graveyard.some(c => c.category === "monster")) {
+              return { ok: false, reason: "ฝ่ายตรงข้ามไม่มีมอนสเตอร์ในสนามหรือในสุสาน" };
+            }
+            return { ok: true, hint: "พร้อมทำลายมอนสเตอร์ชุบชีวิต/นำมอนสเตอร์ในสุสานศัตรูออกจากเกม!" };
+
+          case "T029": // ระเบิดไดนาไมต์ด้าน
+            if (myMonsters.length === 0 && oppSpellTraps.length === 0) {
+              return { ok: false, reason: "ต้องมีมอนสเตอร์ของเราในสนามเพื่อคุ้มครอง หรือมีเวทศัตรูให้ทำลาย" };
+            }
+            return { ok: true, hint: "พร้อมกางเกราะป้องกันเวททำลายให้มอนสเตอร์ของเราทั้งหมด!" };
+
+          default:
+            return { ok: true, hint: "พร้อมเปิดใช้งานการ์ดกับดักทันที!" };
+        }
+      }
+
+      return _v30OrigCanActivateCard(side, card);
+    };
+
+    // Enforce T031 (สมดุลเปลือกโลก / Isostasy / ธรณียุบตัว):
+    // Any time T031 is face-up on side `s`, immediately destroy any opponent monster (or newly summoned monster) with ATK >= 2500!
+    function enforceIsostasyT031OnBoard() {
+      if (!duelState || !duelState.active || !Array.isArray(duelState.players)) return 0;
+      let totalDestroyed = 0;
+      [0, 1].forEach(trapOwnerSide => {
+        const ownerPl = duelState.players[trapOwnerSide];
+        const oppSide = 1 - trapOwnerSide;
+        const oppPl = duelState.players[oppSide];
+        if (!ownerPl || !oppPl || !Array.isArray(ownerPl.spellTraps)) return;
+
+        const hasFaceUpT031 = ownerPl.spellTraps.some(st => st && !st.faceDown && st.id === "T031");
+        if (!hasFaceUpT031) return;
+
+        const hasTurquoise = oppPl.monsters.some(m => m && !m.faceDown && m.id === "M109");
+        oppPl.monsters.forEach((m, mIdx) => {
+          if (!m || m.faceDown) return;
+          if (m.id === "M013" || m.id === "M042" || m.id === "M122" || m.id === "SP01" || m.trapImmune || hasTurquoise) return;
+          const effAtk = Math.max(Number(m.currentAtk ?? m.atk ?? 0), Number(m.atk ?? 0));
+          if (effAtk >= 2500) {
+            const victimName = m.name;
+            destroyMonster(oppSide, mIdx);
+            if (!oppPl.monsters[mIdx]) {
+              totalDestroyed++;
+              spawnFloatingBattleText(oppSide, "m", mIdx, `🌋 ธรณียุบตัว! ATK ${effAtk} >= 2500!`, "text-rose-400");
+              logBattle(`🌋 กับดัก <strong>สมดุลเปลือกโลก (T031)</strong> ทำงาน! เปลือกโลกยุบตัวทำลาย <strong>${victimName} (ATK ${effAtk})</strong> ที่พลังโจมตีตั้งแต่ 2500 ขึ้นไปทันที!`);
+            }
+          }
+        });
+      });
+      if (totalDestroyed > 0) {
+        checkWinCondition();
+      }
+      return totalDestroyed;
+    }
+
+    // Hook updateDynamicStats so whenever stats are recalculated while T031 is face-up, any 2500+ ATK monster is immediately destroyed!
+    const _v30PreIsoUpdateDynamicStats = updateDynamicStats;
+    let _inIsoCheck = false;
+    updateDynamicStats = function() {
+      _v30PreIsoUpdateDynamicStats();
+      if (!_inIsoCheck && duelState && duelState.active) {
+        _inIsoCheck = true;
+        try {
+          enforceIsostasyT031OnBoard();
+        } finally {
+          _inIsoCheck = false;
+        }
+      }
+    };
+
+    // Upgrade checkOpponentSummonTraps so T031 & T030 trigger reliably when opponent summons a monster!
+    checkOpponentSummonTraps = function(trapOwnerSide, summonerSide, monsterSlotIdx) {
+      if (!duelState || !duelState.active) return;
+      const defender = duelState.players?.[trapOwnerSide];
+      const summoner = duelState.players?.[summonerSide];
+      const monster = summoner?.monsters?.[monsterSlotIdx];
+      if (!defender || !summoner || !monster) return;
+
+      updateDynamicStats();
+      // If T031 was already face-up on the board, enforceIsostasyT031OnBoard() inside updateDynamicStats() already destroyed 2500+ ATK monsters!
+      if (!summoner.monsters[monsterSlotIdx]) return;
+
+      const hasTurquoise = summoner.monsters.some(m => m && !m.faceDown && m.id === "M109");
+      if (monster.id === "M013" || monster.id === "M042" || monster.id === "M122" || monster.id === "SP01" || monster.trapImmune || hasTurquoise) return;
+
+      const mAtk = Math.max(Number(monster.currentAtk ?? monster.atk ?? 0), Number(monster.atk ?? 0));
+
+      // Check for set T031 (when monster ATK >= 2500) or set T030 / T005 / T014 / T018
+      const eligibleIdxs = [];
+      defender.spellTraps.forEach((st, idx) => {
+        if (!st || st.category !== "trap" || !st.faceDown) return;
+        if (st.id === "T031" && mAtk >= 2500) eligibleIdxs.push(idx);
+        else if (st.id === "T030") eligibleIdxs.push(idx);
+        else if ((st.id === "T005" || st.id === "T014") && mAtk >= 2000) eligibleIdxs.push(idx);
+      });
+
+      if (eligibleIdxs.length === 0) return;
+
+      const triggerSummonTrap = (chosenIdx) => {
+        if (chosenIdx === null || chosenIdx === undefined) return;
+        const trap = defender.spellTraps[chosenIdx];
+        if (!trap || !summoner.monsters[monsterSlotIdx]) return;
+        playVoice("vo_oh_no");
+        if (trapOwnerSide === 0 && duelState.telemetry) duelState.telemetry.trapsTriggered++;
+        setScienceBanner(trap);
+
+        if (trap.id === "T031") {
+          // Keep T031 face-up on the board as a continuous trap AND destroy the 2500+ ATK monster!
+          trap.faceDown = false;
+          syncActiveContinuousEffectsWithField();
+          enforceIsostasyT031OnBoard();
+          playCardMotionGraphic({
+            mode: "trap",
+            sourceCard: trap,
+            targetCard: monster,
+            title: `🌋 กับดักทำงาน: ${trap.name}!`,
+            subtitle: `ทำลาย ${monster.name} (ATK ${mAtk}) ที่พลังตั้งแต่ 2500 ขึ้นไปทันที!`,
+            damageText: "💥 ธรณียุบตัว!",
+            duration: 1150,
+            onComplete: () => renderDuelArena()
+          });
+        } else if (trap.id === "T030") {
+          defender.spellTraps[chosenIdx] = null;
+          defender.graveyard.push(trap);
+          summoner.monsters[monsterSlotIdx] = null;
+          monster.faceDown = false;
+          summoner.hand.push(monster);
+          logBattle(`🪤 กับดัก <strong>${trap.name}</strong> ทำงาน! ดีด <strong>${monster.name}</strong> กลับขึ้นมือทันที!`);
+          renderDuelArena();
+        } else {
+          defender.spellTraps[chosenIdx] = null;
+          defender.graveyard.push(trap);
+          destroyMonster(summonerSide, monsterSlotIdx);
+          logBattle(`🪤 กับดัก <strong>${trap.name}</strong> ทำงาน! ถล่มทำลาย <strong>${monster.name}</strong> ทันทีที่ลงสนาม!`);
+          renderDuelArena();
+        }
+      };
+
+      if (trapOwnerSide === 0 && !isSpectatorMode) {
+        promptPlayerTrapResponse(
+          0,
+          `🐲 คู่ต่อสู้เพิ่งอัญเชิญ <strong>${monster.name} (ATK ${mAtk})</strong> ลงสนาม! คุณต้องการเปิดใช้กับดักต้อนรับทันทีหรือไม่?`,
+          eligibleIdxs,
+          triggerSummonTrap
+        );
+      } else {
+        triggerSummonTrap(eligibleIdxs[0]);
+      }
+    };
+
+    // Complete, accurate implementation of executeTrapCardEffect for ALL Trap Cards (T001-T031, SP07, SP10)
+    executeTrapCardEffect = function(side, trap) {
+      if (!duelState || !duelState.active || !trap) return;
+      const pl = duelState.players[side];
+      const opp = duelState.players[1 - side];
+      const oppSide = 1 - side;
+      if (side === 0 && duelState.telemetry) duelState.telemetry.trapsTriggered++;
+
+      switch (trap.id) {
+        case "T031": {
+          // สมดุลเปลือกโลก (Isostasy / ธรณียุบตัว): Destroy all monsters with ATK >= 2500!
+          updateDynamicStats();
+          let count = enforceIsostasyT031OnBoard();
+          // Also check if any opponent monster has base or current ATK >= 2500 even if T031 was played one-shot
+          opp.monsters.forEach((m, i) => {
+            if (!m) return;
+            const effAtk = Math.max(Number(m.currentAtk ?? m.atk ?? 0), Number(m.atk ?? 0));
+            if (effAtk >= 2500) {
+              destroyMonster(oppSide, i);
+              count++;
+            }
+          });
+          if (count > 0) {
+            showToast(`🌋 สมดุลเปลือกโลกทำงาน! ธรณียุบตัวทำลายมอนสเตอร์พลัง 2500+ จำนวน ${count} ตัว!`, "💥");
+          } else {
+            showToast(`🌋 เปิดหงาย "สมดุลเปลือกโลก" ค้างบนกระดาน! มอนสเตอร์พลัง 2500+ ที่ลงสนามจะถูกทำลายทันที!`, "🪤");
+          }
+          break;
+        }
+        case "T001": {
+          // ภูเขาไฟสงบ (Dormant Volcano)
+          let destroyedAny = 0;
+          [0, 1].forEach(s => {
+            duelState.players[s].monsters.forEach((m, i) => {
+              if (m) {
+                destroyMonster(s, i);
+                destroyedAny++;
+              }
+            });
+          });
+          if (destroyedAny > 0) {
+            logBattle(`🌋 กับดัก <strong>${trap.name}</strong> ปะทุระเบิดกวาดล้างมอนสเตอร์ในสนาม!`);
+          }
+          break;
+        }
+        case "T002":
+        case "T023": {
+          // เถ้าถ่านอำพราง / ทางตันในถ้ำ: Stop all opponent attacks this turn
+          opp.monsters.forEach(m => {
+            if (m) m.attacksLeft = 0;
+          });
+          logBattle(`🌫️ กับดัก <strong>${trap.name}</strong> ทำงาน! ปิดกั้นเส้นทางและหยุดการโจมตีของฝ่ายตรงข้ามในเทิร์นนี้!`);
+          showToast(`🌫️ "${trap.name}" ทำงาน! หยุดการโจมตีของศัตรูทั้งหมด!`, "🛡️");
+          break;
+        }
+        case "T003": {
+          // แก๊สระเบิด: Destroy 1 opponent spell/trap + deal 500 LP damage to opponent
+          const stIdx = opp.spellTraps.findIndex(Boolean);
+          if (stIdx !== -1) {
+            const targetSt = opp.spellTraps[stIdx];
+            opp.spellTraps[stIdx] = null;
+            opp.graveyard.push(targetSt);
+            spawnCardDestroyExplosion(oppSide, "st", stIdx, "💥 แก๊สระเบิด!");
+            logBattle(`💥 กับดัก <strong>แก๊สระเบิด (T003)</strong> ทำลาย <strong>${targetSt.name}</strong> และลด LP ศัตรู -500!`);
+          } else if (duelState.fieldSpell) {
+            const fName = duelState.fieldSpell.name;
+            opp.graveyard.push(duelState.fieldSpell);
+            duelState.fieldSpell = null;
+            logBattle(`💥 กับดัก <strong>แก๊สระเบิด (T003)</strong> ทำลายเวทสนาม <strong>${fName}</strong> และลด LP ศัตรู -500!`);
+          } else {
+            logBattle(`💥 กับดัก <strong>แก๊สระเบิด (T003)</strong> ระเบิดลด LP ศัตรู -500!`);
+          }
+          opp.lp = Math.max(0, opp.lp - 500);
+          playTone("lp_tick");
+          break;
+        }
+        case "T004": {
+          // แผ่นดินไหว: Toggle position of all monsters on the field (atk <-> def)
+          [0, 1].forEach(s => {
+            duelState.players[s].monsters.forEach(m => {
+              if (m) {
+                m.position = m.position === "atk" ? "def" : "atk";
+                m.faceDown = false;
+              }
+            });
+          });
+          logBattle(`🌍 กับดัก <strong>แผ่นดินไหว (T004)</strong> ทำงาน! สลับท่าตั้งโจมตีและตั้งรับของมอนสเตอร์ทุกตัวในสนาม!`);
+          showToast(`🌍 แผ่นดินไหว! สลับท่าตั้ง/นอนของมอนสเตอร์ทุกตัวในสนาม!`, "🌍");
+          break;
+        }
+        case "T005":
+        case "T014": {
+          // หินถล่ม (T005) / ดินทรุด (T014): Destroy opponent monster with highest ATK
+          let bestIdx = -1;
+          let bestAtk = -1;
+          opp.monsters.forEach((m, i) => {
+            if (m) {
+              const a = Number(m.currentAtk ?? m.atk ?? 0);
+              if (a > bestAtk) {
+                bestAtk = a;
+                bestIdx = i;
+              }
+            }
+          });
+          if (bestIdx !== -1) {
+            const vName = opp.monsters[bestIdx].name;
+            destroyMonster(oppSide, bestIdx);
+            logBattle(`🪨 กับดัก <strong>${trap.name}</strong> ทำงาน! ถล่มทำลาย <strong>${vName} (ATK ${bestAtk})</strong> ที่แข็งแกร่งที่สุดของศัตรูทันที!`);
+            showToast(`🪨 "${trap.name}" ทำลาย "${vName}" ลงสุสานทันที!`, "💥");
+          }
+          break;
+        }
+        case "T006": {
+          // ธารไพโรคลาสติก: Destroy/remove all cards on the field
+          [0, 1].forEach(s => {
+            duelState.players[s].monsters.forEach((m, i) => {
+              if (m) destroyMonster(s, i);
+            });
+            duelState.players[s].spellTraps.forEach((st, i) => {
+              if (st && st !== trap) {
+                duelState.players[s].graveyard.push(st);
+                duelState.players[s].spellTraps[i] = null;
+                spawnCardDestroyExplosion(s, "st", i, "🌋 กวาดล้าง!");
+              }
+            });
+          });
+          duelState.fieldSpell = null;
+          triggerScreenShake();
+          logBattle(`🌋 กับดัก <strong>ธารไพโรคลาสติก (T006)</strong> ทำงาน! กวาดล้างการ์ดทุกใบบนกระดาน!`);
+          showToast(`🌋 ธารไพโรคลาสติก! กวาดล้างการ์ดทั้งหมดบนกระดาน!`, "💥");
+          break;
+        }
+        case "T007":
+        case "T011":
+        case "T019":
+        case "T026": {
+          // Lock 1 opponent monster (pick strongest ATK monster)
+          let targetIdx = -1;
+          let maxA = -1;
+          opp.monsters.forEach((m, i) => {
+            if (m && Number(m.currentAtk ?? m.atk ?? 0) > maxA) {
+              maxA = Number(m.currentAtk ?? m.atk ?? 0);
+              targetIdx = i;
+            }
+          });
+          if (targetIdx !== -1) {
+            const oppM = opp.monsters[targetIdx];
+            oppM.lockedTurns = trap.id === "T019" ? 3 : 2;
+            oppM.attacksLeft = 0;
+            if (trap.id === "T019" || trap.id === "T007") {
+              oppM.bonusAtk = (oppM.bonusAtk || 0) - 500;
+            }
+            spawnFloatingBattleText(oppSide, "m", targetIdx, `⛓️ ถูกล็อกห้ามโจมตี!`, "text-pink-300");
+            logBattle(`🪤 กับดัก <strong>${trap.name}</strong> ทำงาน! ล็อก <strong>${oppM.name}</strong> ห้ามโจมตีและห้ามเปลี่ยนท่า!`);
+            showToast(`🪤 "${trap.name}" ล็อก "${oppM.name}" สำเร็จ!`, "⛓️");
+          }
+          break;
+        }
+        case "T008": {
+          // กับดักบ่อโคลนเดือด: Deal 500 LP damage to opponent and remain face-up as continuous trap
+          opp.lp = Math.max(0, opp.lp - 500);
+          playTone("lp_tick");
+          logBattle(`🌋 กับดักต่อเนื่อง <strong>กับดักบ่อโคลนเดือด (T008)</strong> ทำงาน! คู่ต่อสู้เสีย -500 LP และการ์ดหงายค้างลด LP ทุกครั้งที่ศัตรูโจมตี!`);
+          showToast(`🌋 บ่อโคลนเดือดทำงาน! ศัตรูเสีย -500 LP!`, "🔥");
+          break;
+        }
+        case "T009": {
+          // การผุพังอยู่กับที่: Destroy 1 opponent Spell/Trap
+          const stIdx = opp.spellTraps.findIndex(Boolean);
+          if (stIdx !== -1) {
+            const st = opp.spellTraps[stIdx];
+            opp.spellTraps[stIdx] = null;
+            opp.graveyard.push(st);
+            spawnCardDestroyExplosion(oppSide, "st", stIdx, "💥 ผุพัง!");
+            logBattle(`🪨 กับดัก <strong>การผุพังอยู่กับที่ (T009)</strong> ทำลาย <strong>${st.name}</strong> ของศัตรู!`);
+          } else if (duelState.fieldSpell) {
+            opp.graveyard.push(duelState.fieldSpell);
+            duelState.fieldSpell = null;
+            logBattle(`🪨 กับดัก <strong>การผุพังอยู่กับที่ (T009)</strong> ทำลายการ์ดเวทสนาม!`);
+          }
+          break;
+        }
+        case "T024": {
+          // น้ำท่วมฉับพลัน: Destroy ALL opponent Spell/Traps
+          opp.spellTraps.forEach((st, i) => {
+            if (st) {
+              opp.graveyard.push(st);
+              opp.spellTraps[i] = null;
+              spawnCardDestroyExplosion(oppSide, "st", i, "🌊 น้ำท่วม!");
+            }
+          });
+          logBattle(`🌊 กับดัก <strong>น้ำท่วมฉับพลัน (T024)</strong> ทำงาน! พัดทำลายเวทมนตร์และกับดักของศัตรูทั้งหมด!`);
+          break;
+        }
+        case "T010":
+        case "T025": {
+          // สุ่มทิ้งการ์ดในมือศัตรู 1 ใบ
+          if (opp.hand.length > 0) {
+            const rIdx = Math.floor(Math.random() * opp.hand.length);
+            const disc = opp.hand.splice(rIdx, 1)[0];
+            opp.graveyard.push(disc);
+            logBattle(`🌊 กับดัก <strong>${trap.name}</strong> ทำงาน! บังคับให้ฝ่ายตรงข้ามทิ้งการ์ด <strong>${disc.name}</strong> ในมือลงสุสาน!`);
+            showToast(`🗑️ บังคับคู่ต่อสู้ทิ้ง "${disc.name}" ลงสุสานสำเร็จ!`, "🗑️");
+          }
+          break;
+        }
+        case "T012": {
+          // ดินถล่ม: Destroy 2 opponent monsters with lowest ATK
+          const oppList = opp.monsters.map((m, i) => ({ m, i })).filter(x => x.m !== null);
+          oppList.sort((a, b) => (a.m.currentAtk || 0) - (b.m.currentAtk || 0));
+          oppList.slice(0, 2).forEach(x => destroyMonster(oppSide, x.i));
+          logBattle(`⛰️ กับดัก <strong>ดินถล่ม (T012)</strong> ทำงาน! ทำลายมอนสเตอร์พลังโจมตีต่ำสุดของศัตรู ${Math.min(2, oppList.length)} ตัว!`);
+          break;
+        }
+        case "T013": {
+          // เหมืองถล่ม: Destroy 1 opponent monster + end opponent attacks this turn
+          let bestIdx = -1, bestAtk = -1;
+          opp.monsters.forEach((m, i) => {
+            if (m && (m.currentAtk || 0) > bestAtk) {
+              bestAtk = m.currentAtk || 0;
+              bestIdx = i;
+            }
+          });
+          if (bestIdx !== -1) destroyMonster(oppSide, bestIdx);
+          opp.monsters.forEach(m => { if (m) m.attacksLeft = 0; });
+          logBattle(`⛏️ กับดัก <strong>เหมืองถล่ม (T013)</strong> ทำงาน! ถล่มทำลายมอนสเตอร์ศัตรูและยุติการโจมตีในเทิร์นนี้ทันที!`);
+          break;
+        }
+        case "T015": {
+          // สึนามิ: Destroy all Fire & Earth monsters on the field
+          [0, 1].forEach(s => {
+            duelState.players[s].monsters.forEach((m, i) => {
+              if (m && (m.attribute === "ไฟ" || m.attribute === "ดิน")) destroyMonster(s, i);
+            });
+          });
+          logBattle(`🌊 กับดัก <strong>สึนามิ (T015)</strong> ทำงาน! ทำลายมอนสเตอร์ธาตุไฟและดินทั้งหมดในสนาม!`);
+          break;
+        }
+        case "T016": {
+          // อาฟเตอร์ช็อก: Destroy 1 opponent monster
+          let bestIdx = -1, bestAtk = -1;
+          opp.monsters.forEach((m, i) => {
+            if (m && (m.currentAtk || 0) > bestAtk) {
+              bestAtk = m.currentAtk || 0;
+              bestIdx = i;
+            }
+          });
+          if (bestIdx !== -1) {
+            const vName = opp.monsters[bestIdx].name;
+            destroyMonster(oppSide, bestIdx);
+            logBattle(`💥 กับดัก <strong>อาฟเตอร์ช็อก (T016)</strong> ทำงาน! ทำลาย <strong>${vName}</strong> ของคู่ต่อสู้ทันที!`);
+          }
+          break;
+        }
+        case "T017": {
+          // ลาวาปะทุ: Reduce 1 opponent monster's ATK by 1000
+          let bestIdx = -1, bestAtk = -1;
+          opp.monsters.forEach((m, i) => {
+            if (m && (m.currentAtk || 0) > bestAtk) {
+              bestAtk = m.currentAtk || 0;
+              bestIdx = i;
+            }
+          });
+          if (bestIdx !== -1) {
+            const targetM = opp.monsters[bestIdx];
+            targetM.bonusAtk = (targetM.bonusAtk || 0) - 1000;
+            spawnFloatingBattleText(oppSide, "m", bestIdx, "🌋 -1000 ATK!", "text-orange-400");
+            logBattle(`🌋 กับดัก <strong>ลาวาปะทุ (T017)</strong> ลดพลังโจมตีของ <strong>${targetM.name}</strong> ลง 1,000 จุด!`);
+          }
+          break;
+        }
+        case "T018": {
+          // หินร่วง: Roll even die -> destroy 1 opponent monster
+          const roll = [2, 4, 6][Math.floor(Math.random() * 3)];
+          let bestIdx = -1, bestAtk = -1;
+          opp.monsters.forEach((m, i) => {
+            if (m && (m.currentAtk || 0) > bestAtk) {
+              bestAtk = m.currentAtk || 0;
+              bestIdx = i;
+            }
+          });
+          if (bestIdx !== -1) destroyMonster(oppSide, bestIdx);
+          logBattle(`🎲 กับดัก <strong>หินร่วง (T018)</strong>: ทอยลูกเต๋าได้แต้มคู่ (${roll})! หินร่วงทำลายมอนสเตอร์ศัตรู 1 ตัว!`);
+          showToast(`🎲 ทอยเต๋าได้ ${roll} (แต้มคู่)! หินร่วงทำลายมอนสเตอร์ศัตรู!`, "🪨");
+          break;
+        }
+        case "T020": {
+          // พายุทะเลทราย: Change all monsters to Defense position
+          opp.monsters.forEach(m => {
+            if (m) {
+              m.position = "def";
+              m.attacksLeft = 0;
+            }
+          });
+          logBattle(`🌪️ กับดัก <strong>พายุทะเลทราย (T020)</strong> ทำงาน! เปลี่ยนมอนสเตอร์ศัตรูทั้งหมดเป็นท่าป้องกัน!`);
+          break;
+        }
+        case "T021": {
+          // แก๊สไข่เน่า: Reduce ATK of all opponent monsters by 500
+          opp.monsters.forEach(m => {
+            if (m) m.bonusAtk = (m.bonusAtk || 0) - 500;
+          });
+          logBattle(`💨 กับดัก <strong>แก๊สไข่เน่า (T021)</strong> ทำงาน! ลดพลังโจมตีมอนสเตอร์ศัตรูทุกตัวลง 500!`);
+          break;
+        }
+        case "T022": {
+          // อุปกรณ์นิรภัยชำรุด: Force all defense monsters to stand up in Attack position
+          opp.monsters.forEach(m => {
+            if (m) {
+              m.position = "atk";
+              m.faceDown = false;
+            }
+          });
+          logBattle(`⚠️ กับดัก <strong>อุปกรณ์นิรภัยชำรุด (T022)</strong> ทำงาน! บังคับมอนสเตอร์ป้องกันของศัตรูให้ลุกขึ้นตั้งโจมตี!`);
+          break;
+        }
+        case "T027": {
+          // ฟอสซิลหลอก: Destroy 1 opponent monster or remove from opponent GY
+          const oppIdx = opp.monsters.findIndex(Boolean);
+          if (oppIdx !== -1) {
+            const vName = opp.monsters[oppIdx].name;
+            destroyMonster(oppSide, oppIdx);
+            logBattle(`🦴 กับดัก <strong>ฟอสซิลหลอก (T027)</strong> ทำงาน! สลายร่าง <strong>${vName}</strong> ลงสุสาน!`);
+          } else if (opp.graveyard.length > 0) {
+            const rem = opp.graveyard.pop();
+            logBattle(`🦴 กับดัก <strong>ฟอสซิลหลอก (T027)</strong> นำ <strong>${rem.name}</strong> ออกจากสุสานศัตรู!`);
+          }
+          break;
+        }
+        case "T029": {
+          // ระเบิดไดนาไมต์ด้าน: Protect friendly monsters from destruction spells
+          pl.monsters.forEach(m => {
+            if (m) m.spellImmune = true;
+          });
+          const stIdx = opp.spellTraps.findIndex(Boolean);
+          if (stIdx !== -1) {
+            const st = opp.spellTraps[stIdx];
+            opp.spellTraps[stIdx] = null;
+            opp.graveyard.push(st);
+          }
+          logBattle(`🧨 กับดัก <strong>ระเบิดไดนาไมต์ด้าน (T029)</strong> ทำงาน! มอนสเตอร์ของคุณทั้งหมดได้รับเกราะป้องกันเวทมนตร์ทำลาย!`);
+          break;
+        }
+        case "T030": {
+          // กฎแห่งกาลเวลา: Return opponent monster(s) summoned this turn (or 1 opponent monster) to hand
+          let bouncedCount = 0;
+          opp.monsters.forEach((m, i) => {
+            if (m && m.summonedTurn === duelState.turnCount) {
+              opp.monsters[i] = null;
+              m.faceDown = false;
+              opp.hand.push(m);
+              bouncedCount++;
+            }
+          });
+          if (bouncedCount === 0) {
+            const firstIdx = opp.monsters.findIndex(Boolean);
+            if (firstIdx !== -1) {
+              const m = opp.monsters[firstIdx];
+              opp.monsters[firstIdx] = null;
+              m.faceDown = false;
+              opp.hand.push(m);
+              bouncedCount++;
+            }
+          }
+          logBattle(`⏳ กับดัก <strong>กฎแห่งกาลเวลา (T030)</strong> ทำงาน! ส่งมอนสเตอร์ของคู่ต่อสู้กลับขึ้นมือ ${bouncedCount} ตัว!`);
+          break;
+        }
+        default: {
+          const oppM = opp.monsters.find(Boolean);
+          if (oppM) oppM.bonusAtk = (oppM.bonusAtk || 0) - 500;
+          break;
+        }
+      }
+      updateDynamicStats();
+      checkWinCondition();
+      renderDuelArena();
+    };
+
+    // Upgrade activateSpellFromHand & activateSetSpellTrap so:
+    // 1) Trap cards can be activated directly face-up from hand when their condition is met!
+    // 2) Set Trap cards can be activated in our own turn (even on the same turn!) when their condition is met!
+    // 3) T031 (สมดุลเปลือกโลก), T008 (กับดักบ่อโคลนเดือด), T028 (เขตหวงห้าม), T001 (ภูเขาไฟสงบ) stay face-up on the board AND execute their immediate effect!
+    activateSpellFromHand = function(handIdx, preferredSlotIdx = null) {
+      if (typeof blockIfSpectatorClicked === "function" && blockIfSpectatorClicked()) return;
+      if (duelState.phase === "draw") { playerClickDrawPhase(); return; }
+      if (duelState.phase === "battle") { duelState.phase = "main2"; duelState.pendingAttackFromMonsterIdx = null; }
+      const side = duelState.activePlayer;
+      const pl = duelState.players[side];
+      const card = pl?.hand?.[handIdx];
+      if (!card) return;
+
+      const check = canActivateCard(side, card);
+      if (!check.ok) {
+        playTone("click");
+        showToast(`ไม่สามารถเปิดใช้ "${card.name}" ตอนนี้ได้: ${check.reason}`, "🚫");
+        return;
+      }
+
+      if (side === 0 && ["S001", "S002", "S032", "S012", "S031"].includes(card.id)) {
+        promptUserTributeForSpell(side, card, () => {
+          const curIdx = pl.hand.indexOf(card);
+          if (curIdx !== -1) pl.hand.splice(curIdx, 1);
+          pl.graveyard.push(card);
+          duelState.selectedRef = null;
+          syncP2P();
+          renderDuelArena();
+        });
+        return;
+      }
+
+      pl.hand.splice(handIdx, 1);
+      const isContinuousCard = Boolean(
+        card.subtype === "continuous" ||
+        card.subtype === "equip" ||
+        card.subtype === "continuous_trap" ||
+        CONTINUOUS_TRAP_IDS.has(card.id)
+      );
+      const freeSt = (preferredSlotIdx !== null && pl.spellTraps[preferredSlotIdx] === null)
+        ? preferredSlotIdx
+        : pl.spellTraps.findIndex(s => s === null);
+
+      if (freeSt !== -1) {
+        card.faceDown = false;
+        card.summonedTurn = duelState.turnCount;
+        pl.spellTraps[freeSt] = card;
+      }
+      duelState.selectedRef = null;
+      syncActiveContinuousEffectsWithField();
+      renderDuelArena();
+
+      const revealTitle = card.category === "trap"
+        ? "🪤 เปิดใช้งานการ์ดกับดักจากมือทันที!"
+        : "🔮 เปิดใช้งานการ์ดเวทมนตร์บนกระดาน!";
+
+      showDramaticCardReveal(side, card, revealTitle, "", 1050, () => {
+        if (card.id === "T001") {
+          card.dormantCountdown = 3;
+          logBattle(`🌋 <strong>ภูเขาไฟสงบ (T001)</strong> เปิดหงายบนกระดาน! นับถอยหลัง 3 เทิร์นก่อนระเบิดครั้งใหญ่!`);
+          syncP2P();
+          renderDuelArena();
+          return;
+        }
+        if (freeSt !== -1 && !isContinuousCard && pl.spellTraps[freeSt] === card) {
+          pl.spellTraps[freeSt] = null;
+        }
+        executeSpellTrapEffect(side, card);
+        syncActiveContinuousEffectsWithField();
+        enforceIsostasyT031OnBoard();
+        syncP2P();
+        renderDuelArena();
+      });
+    };
+
+    activateSetSpellTrap = function(slotIdx) {
+      if (typeof blockIfSpectatorClicked === "function" && blockIfSpectatorClicked()) return;
+      if (duelState.phase === "draw") { playerClickDrawPhase(); return; }
+      const side = duelState.activePlayer;
+      const pl = duelState.players[side];
+      const card = pl?.spellTraps?.[slotIdx];
+      if (!card) return;
+
+      const check = canActivateCard(side, card);
+      if (!check.ok) {
+        playTone("click");
+        showToast(`ยังไม่เข้าเงื่อนไขของ "${card.name}": ${check.reason}`, "🚫");
+        return;
+      }
+
+      if (side === 0 && ["S001", "S002", "S032", "S012", "S031"].includes(card.id)) {
+        promptUserTributeForSpell(side, card, () => {
+          pl.spellTraps[slotIdx] = null;
+          pl.graveyard.push(card);
+          duelState.selectedRef = null;
+          syncP2P();
+          renderDuelArena();
+        });
+        return;
+      }
+
+      const isContinuousCard = Boolean(
+        card.subtype === "continuous" ||
+        card.subtype === "equip" ||
+        card.subtype === "continuous_trap" ||
+        CONTINUOUS_TRAP_IDS.has(card.id)
+      );
+
+      if (isContinuousCard) {
+        card.faceDown = false;
+        syncActiveContinuousEffectsWithField();
+        if (card.id === "T001") {
+          card.dormantCountdown = 3;
+          logBattle(`🌋 <strong>ภูเขาไฟสงบ (T001)</strong> เปิดหงายบนกระดาน! นับถอยหลัง 3 เทิร์นก่อนระเบิดครั้งใหญ่!`);
+          showToast('🌋 เปิดหงาย "ภูเขาไฟสงบ" — นับถอยหลัง 3 เทิร์น!', "⏳");
+          syncP2P();
+          renderDuelArena();
+          return;
+        }
+        if (card.id === "T031") {
+          logBattle(`🌋 เปิดใช้งานกับดักต่อเนื่อง <strong>${card.name}</strong> บนกระดาน! (${card.effect})`);
+          executeTrapCardEffect(side, card);
+          enforceIsostasyT031OnBoard();
+          duelState.selectedRef = null;
+          syncP2P();
+          renderDuelArena();
+          return;
+        }
+        if (card.id === "T008") {
+          logBattle(`🌋 เปิดใช้งานกับดักต่อเนื่อง <strong>${card.name}</strong> หงายค้างไว้บนกระดาน! (${card.effect})`);
+          executeTrapCardEffect(side, card);
+          duelState.selectedRef = null;
+          syncP2P();
+          renderDuelArena();
+          return;
+        }
+        if (card.id === "T028") {
+          logBattle(`🚧 เปิดใช้งานกับดักต่อเนื่อง <strong>${card.name}</strong> หงายค้างไว้บนกระดาน! ห้ามมอนสเตอร์ 5 ดาวขึ้นไปโจมตี!`);
+          showToast(`🚧 เปิดใช้งาน "${card.name}" บนกระดานแล้ว!`, "🚧");
+          duelState.selectedRef = null;
+          syncP2P();
+          renderDuelArena();
+          return;
+        }
+      } else {
+        pl.spellTraps[slotIdx] = null;
+      }
+
+      executeSpellTrapEffect(side, card);
+      if (!isContinuousCard && !pl.graveyard.includes(card) && duelState.fieldSpell !== card) {
+        pl.graveyard.push(card);
+      }
+      duelState.selectedRef = null;
+      syncActiveContinuousEffectsWithField();
+      enforceIsostasyT031OnBoard();
+      syncP2P();
+      renderDuelArena();
+    };
+
+    // Also upgrade fireBattleTrapAtSlot so T008 stays face-up as a continuous trap when triggered on opponent's attack,
+    // and if defender already has T008 face-up on the board, opponent loses 500 LP on every attack!
+    const _v30OrigCheckOpponentBattleTrapsAsync = checkOpponentBattleTrapsAsync;
+    checkOpponentBattleTrapsAsync = function(defenderSide, attackerSide, attackerSlotIdx, targetDesc, onComplete) {
+      const defender = duelState.players?.[defenderSide];
+      const attackerPl = duelState.players?.[attackerSide];
+      const attacker = attackerPl?.monsters?.[attackerSlotIdx];
+      if (!defender || !attackerPl || !attacker) {
+        onComplete(false);
+        return;
+      }
+
+      // If defender has face-up T008 (กับดักบ่อโคลนเดือด) on the board, burn 500 LP from attacker on every attack declaration!
+      const faceUpMudPot = defender.spellTraps.find(st => st && !st.faceDown && st.id === "T008");
+      if (faceUpMudPot) {
+        attackerPl.lp = Math.max(0, attackerPl.lp - 500);
+        playTone("lp_tick");
+        spawnFloatingBattleText(attackerSide, "m", attackerSlotIdx, "🌋 บ่อโคลนเดือด -500 LP!", "text-orange-400");
+        logBattle(`🌋 เอฟเฟกต์ต่อเนื่อง <strong>กับดักบ่อโคลนเดือด (T008)</strong>: ${attackerPl.name} สั่งโจมตีจึงเสีย <strong>-500 LP</strong>!`);
+        checkWinCondition();
+        if (!duelState.active) {
+          onComplete(true);
+          return;
+        }
+      }
+
+      _v30OrigCheckOpponentBattleTrapsAsync(defenderSide, attackerSide, attackerSlotIdx, targetDesc, onComplete);
+    };
+
+    // ============================================================================
+    // FIX 2 & 3: BATTLE ENGINE OVERHAUL
+    // - Equal ATK when both monsters are in Attack position = Mutual Destruction (ตายคู่)
+    // - Opponent attacking our Defense-position monster with higher DEF ALWAYS reduces opponent's LP by (defVal - attVal)
+    //   and is NEVER bypassed by S023 (Mohs Scale) or type-kill effects!
+    // ============================================================================
+    executeMonsterBattle = function(attSide, attIdx, defSide, defIdx) {
+      duelState.pendingAttackFromMonsterIdx = null;
+      updateDynamicStats();
+      const attPl = duelState.players[attSide];
+      const defPl = duelState.players[defSide];
+      const attacker = attPl?.monsters?.[attIdx];
+      const defender = defPl?.monsters?.[defIdx];
+      if (!attacker || !defender) return;
+
+      const targetLabel = (defender.faceDown && defSide !== 0) ? "การ์ดที่หมอบป้องกัน" : defender.name;
+
+      checkOpponentBattleTrapsAsync(defSide, attSide, attIdx, targetLabel, trapStopped => {
+        if (trapStopped || !duelState.active || !attPl.monsters[attIdx] || !defPl.monsters[defIdx]) {
+          checkWinCondition();
+          syncP2P();
+          renderDuelArena();
+          return;
+        }
+
+        playCardMotionGraphic({
+          mode: "attack",
+          sourceCard: attacker,
+          targetCard: defender.faceDown ? null : defender,
+          title: `⚔️ ${attacker.name} (ATK ${attacker.currentAtk}) โจมตี!`,
+          subtitle: defender.faceDown
+            ? `พุ่งโจมตีใส่การ์ดหมอบป้องกันช่องที่ ${defIdx + 1}!`
+            : `ปะทะ ${defender.name} (${defender.position === "atk" ? "ATK " + defender.currentAtk : "DEF " + defender.currentDef})!`,
+          damageText: `⚔️ ATK ${attacker.currentAtk}`,
+          duration: 950,
+          onComplete: () => {
+            animateSwordAttack(attSide, attIdx, defSide, defIdx, false, () => {
+              attacker.attacksLeft = Math.max(0, (attacker.attacksLeft || 1) - 1);
+              if (attSide === 0 && duelState.telemetry) duelState.telemetry.attacksDeclared++;
+
+              function resolveBattleCalculation() {
+                if (!duelState.active || !attPl.monsters[attIdx] || !defPl.monsters[defIdx]) {
+                  renderDuelArena();
+                  return;
+                }
+
+                updateDynamicStats();
+                let attVal = Number(attacker.currentAtk ?? attacker.atk ?? 0);
+                if (attacker.id === "M094") attVal = Math.max(attVal, 3500);
+                if (attacker.id === "M008" && defender.attribute === "ไฟ") attVal += 300;
+                if (attacker.id === "M024" && defender.race === "สัตว์ปีก") attVal += 400;
+                if (attacker.id === "M106" && defender.attribute === "แสง") attVal += 400;
+
+                const isDefPos = (defender.position === "def");
+                const defStat = isDefPos
+                  ? Number(defender.currentDef ?? defender.def ?? 0)
+                  : Number(defender.currentAtk ?? defender.atk ?? 0);
+
+                // Special mutual-sinkhole monster M102 (กับดักธรณีสูบ)
+                if (defender.id === "M102" || attacker.id === "M102") {
+                  destroyMonster(attSide, attIdx, defender);
+                  destroyMonster(defSide, defIdx, attacker);
+                  spawnFloatingBattleText(defSide, "m", defIdx, "🕳️ ธรณีสูบ ตายคู่!", "text-rose-300");
+                  logBattle(`🕳️ เอฟเฟกต์ <strong>กับดักธรณีสูบ</strong>: ยุบตัวดูดกลืนมอนสเตอร์ทั้งสองฝ่ายลงหลุมตายคู่ทันที!`);
+                  checkWinCondition();
+                  syncP2P();
+                  renderDuelArena();
+                  return;
+                }
+
+                // FIX 2: If both monsters are in Attack position (attacker.position === 'atk' && defender.position === 'atk')
+                //        and their power is equal (attVal === defStat), BOTH monsters MUST be destroyed (ตายคู่)!
+                if (!isDefPos && attVal === defStat) {
+                  playVoice("vo_oh_no");
+                  if (attSide === 0 && duelState.telemetry) duelState.telemetry.equalAtkMutualKills++;
+                  spawnFloatingBattleText(attSide, "m", attIdx, `💥 ${attVal} = ${defStat} ตายคู่!`, "text-rose-300");
+                  spawnFloatingBattleText(defSide, "m", defIdx, `💥 ${attVal} = ${defStat} ตายคู่!`, "text-rose-300");
+                  destroyMonster(attSide, attIdx, defender);
+                  destroyMonster(defSide, defIdx, attacker);
+                  logBattle(`💥 <strong>พลังโจมตีเท่ากัน (${attVal} = ${defStat}) ในท่าโจมตี! ตายคู่!</strong> ทั้ง <strong>${attacker.name}</strong> และ <strong>${defender.name}</strong> ทำลายล้างกันและกันลงสุสานพร้อมกัน!`);
+                  showToast(`💥 พลังโจมตีเท่ากัน (${attVal} = ${defStat}) — ตายคู่ลงสุสานทั้งสองฝ่าย!`, "⚔️");
+                  checkWinCondition();
+                  syncP2P();
+                  renderDuelArena();
+                  return;
+                }
+
+                // FIX 3: If defender is in Defense Position and has HIGHER Defense than Attacker's ATK (defStat > attVal),
+                //        Attacker ALWAYS takes Recoil Damage (recoil = defStat - attVal) to Attacker's LP (attPl.lp)!
+                //        No type-kill or Mohs Scale effect can bypass a higher-DEF defense monster!
+                if (isDefPos && defStat > attVal) {
+                  const recoil = defStat - attVal;
+                  attPl.lp = Math.max(0, attPl.lp - recoil);
+                  if (attSide === 0 && duelState.telemetry) {
+                    duelState.telemetry.misplayAttacksIntoHigherDef++;
+                    duelState.telemetry.damageTaken += recoil;
+                  } else if (defSide === 0 && duelState.telemetry) {
+                    duelState.telemetry.damageDealt += recoil;
+                  }
+                  playVoice("vo_hurt");
+                  playTone("lp_tick");
+                  spawnFloatingBattleText(attSide, "m", attIdx, `🛡️ สะท้อน -${recoil} LP!`, "text-rose-400");
+                  spawnFloatingBattleText(defSide, "m", defIdx, `🛡️ ป้องกันชนะ! (DEF ${defStat} > ATK ${attVal})`, "text-cyan-300");
+                  logBattle(`🛡️ ป้องกันแข็งแกร่งกว่า! <strong>${defender.name}</strong> (DEF ${defStat}) สะท้อนความเสียหายใส่ <strong>${attPl.name}</strong> ลดพลังชีวิต <strong>-${recoil} LP</strong> (LP คงเหลือ: ${attPl.lp})!`);
+                  showToast(`🛡️ ป้องกันแข็งแกร่งกว่า! "${defender.name}" (DEF ${defStat}) สะท้อนดาเมจใส่ ${attPl.name} -${recoil} LP!`, "🛡️");
+                  renderDuelArena();
+                  playCardMotionGraphic({
+                    mode: "attack",
+                    sourceCard: defender,
+                    targetCard: attacker,
+                    title: `🛡️ โจมตีไม่เข้า! เกราะป้องกันของ ${defender.name} แข็งแกร่งกว่า!`,
+                    subtitle: `${attacker.name} (ATK ${attVal}) น้อยกว่าพลังป้องกันของ ${defender.name} (DEF ${defStat})!`,
+                    damageText: `🛡️ ${attPl.name} -${recoil} LP!`,
+                    duration: 1050
+                  });
+                } else if (isDefPos && attVal === defStat) {
+                  // Equal ATK vs DEF in Defense Position: neither monster dies, no LP damage
+                  spawnFloatingBattleText(defSide, "m", defIdx, `🛡️ ป้องกันเท่ากัน (${attVal}=${defStat})`, "text-cyan-300");
+                  logBattle(`🛡️ พลังโจมตีเท่ากับพลังป้องกัน (${attVal} = ${defStat})! ไม่มีการ์ดถูกทำลาย`);
+                } else {
+                  // Special defender dodge/absorb abilities when attacker would otherwise win
+                  if (defender.id === "M049") {
+                    spawnFloatingBattleText(defSide, "m", defIdx, "🧼 หินสบู่ลื่นไหล! โจมตีไม่โดน!", "text-cyan-300");
+                    logBattle(`🧼 เอฟเฟกต์ <strong>นักบวชหินสบู่ (M049)</strong>: เนื้อลื่นไหลเหมือนสบู่ การโจมตีของ <strong>${attacker.name}</strong> ลื่นไถลไร้ผล!`);
+                    checkWinCondition();
+                    syncP2P();
+                    renderDuelArena();
+                    return;
+                  }
+                  if (defender.id === "M073" && Math.random() < 0.5) {
+                    spawnFloatingBattleText(defSide, "m", defIdx, "💨 พริ้วหลบได้!", "text-cyan-300");
+                    logBattle(`💨 เอฟเฟกต์ <strong>ก้อนฝุ่นจอมกวน</strong>: ลอยตัวหลบการโจมตีได้สำเร็จ!`);
+                    renderDuelArena();
+                    return;
+                  }
+                  if (defender.id === "M105" && defender.position === "atk" && !defender.moonstoneDodged) {
+                    defender.moonstoneDodged = true;
+                    defender.position = "def";
+                    defender.bonusDef = (defender.bonusDef || 0) + 500;
+                    spawnFloatingBattleText(defSide, "m", defIdx, "🌙 หนีไปตั้งรับ +500 DEF!", "text-cyan-300");
+                    logBattle(`🌙 เอฟเฟกต์ <strong>ภูตมุกดาหาร</strong>: พลิ้วหลบไปอยู่ในท่าป้องกัน (+500 DEF) และไม่ถูกทำลาย!`);
+                    renderDuelArena();
+                    return;
+                  }
+                  if (defender.id === "M116" && attacker.attribute === "ไฟ") {
+                    defender.bonusAtk = (defender.bonusAtk || 0) + 800;
+                    defender.bonusDef = (defender.bonusDef || 0) + 800;
+                    spawnFloatingBattleText(defSide, "m", defIdx, "🏺 เผาไฟแล้วแกร่งขึ้น +800!", "text-amber-300");
+                    logBattle(`🏺 เอฟเฟกต์ <strong>ตุ๊กตาดินขาว (ดินเกาลิน)</strong>: โดนไฟเผาไม่ตาย แต่กลายเป็นเซรามิกแกร่งขึ้น +800 ATK/DEF!`);
+                    renderDuelArena();
+                    return;
+                  }
+
+                  // Type-advantage instant kills (only when defender does not out-stat attacker in DEF)
+                  if ((attacker.id === "M009" || attacker.id === "M091" || attacker.hasGeoHammer) && defender.geoTags?.isRockFamily && attVal >= defStat) {
+                    destroyMonster(defSide, defIdx, attacker);
+                    if (attSide === 0 && duelState.telemetry) duelState.telemetry.typeAdvantageKills++;
+                    spawnFloatingBattleText(defSide, "m", defIdx, "🔨 ชนะทางหิน แตกสลาย!", "text-amber-300");
+                    logBattle(`🧪 <strong>ชนะทางธรณีวิทยา!</strong> <strong>${attacker.name}</strong> ย่อยสลายเผ่าหิน <strong>${defender.name}</strong> ทันที!`);
+                    onMonsterDestroyEnemy(attSide, attacker);
+                    checkWinCondition();
+                    syncP2P();
+                    renderDuelArena();
+                    return;
+                  }
+                  if (attacker.id === "M045" && defender.attribute === "น้ำ" && attVal >= defStat) {
+                    destroyMonster(defSide, defIdx, attacker);
+                    if (attSide === 0 && duelState.telemetry) duelState.telemetry.typeAdvantageKills++;
+                    spawnFloatingBattleText(defSide, "m", defIdx, "⚔️ ชนะทางธาตุน้ำ!", "text-cyan-300");
+                    logBattle(`⚔️ เอฟเฟกต์ <strong>ซามูไรหินชีสต์</strong>: ฟันมอนสเตอร์ธาตุน้ำ <strong>${defender.name}</strong> แตกสลายทันที!`);
+                    onMonsterDestroyEnemy(attSide, attacker);
+                    checkWinCondition();
+                    syncP2P();
+                    renderDuelArena();
+                    return;
+                  }
+
+                  if (!isDefPos) {
+                    // Defender is in Attack Position (attVal > defStat or attVal < defStat)
+                    const defVal = defStat;
+                    if (attVal > defVal) {
+                      const diff = attVal - defVal;
+                      defPl.lp = Math.max(0, defPl.lp - diff);
+                      if (attSide === 0 && duelState.telemetry) duelState.telemetry.damageDealt += diff;
+                      else if (defSide === 0 && duelState.telemetry) duelState.telemetry.damageTaken += diff;
+                      playVoice(diff >= 1000 ? "vo_oh_no" : "vo_hurt");
+                      playTone("lp_tick");
+                      spawnFloatingBattleText(defSide, "m", defIdx, `💥 -${diff} LP!`, "text-rose-400");
+                      destroyMonster(defSide, defIdx, attacker);
+                      logBattle(`⚔️ <strong>${attacker.name}</strong> (ATK ${attVal}) ชนะ <strong>${defender.name}</strong> (ATK ${defVal})! ${defPl.name} เสีย <strong>-${diff} LP</strong>`);
+                      onMonsterDestroyEnemy(attSide, attacker, diff);
+                    } else {
+                      const diff = defVal - attVal;
+                      attPl.lp = Math.max(0, attPl.lp - diff);
+                      if (attSide === 0 && duelState.telemetry) {
+                        duelState.telemetry.misplayAttacksIntoHigherDef++;
+                        duelState.telemetry.damageTaken += diff;
+                      } else if (defSide === 0 && duelState.telemetry) {
+                        duelState.telemetry.damageDealt += diff;
+                      }
+                      playVoice("vo_oh_no");
+                      playTone("lp_tick");
+                      spawnFloatingBattleText(attSide, "m", attIdx, `💥 พลังต่ำกว่า! -${diff} LP!`, "text-rose-400");
+                      destroyMonster(attSide, attIdx, defender);
+                      logBattle(`🛡️ <strong>${attacker.name}</strong> (ATK ${attVal}) พ่ายแพ้ต่อ <strong>${defender.name}</strong> (ATK ${defVal})! ${attPl.name} เสีย <strong>-${diff} LP</strong>`);
+                    }
+                  } else {
+                    // Defender is in Defense Position and attVal > defStat
+                    const defVal = defStat;
+                    const isPiercing = ["M001", "M022", "M042", "M051", "M094", "M123"].includes(attacker.id) || Boolean(attacker.hasPiercing);
+                    if (isPiercing && attVal > defVal) {
+                      const pierceDmg = attVal - defVal;
+                      defPl.lp = Math.max(0, defPl.lp - pierceDmg);
+                      if (attSide === 0 && duelState.telemetry) duelState.telemetry.damageDealt += pierceDmg;
+                      else if (defSide === 0 && duelState.telemetry) duelState.telemetry.damageTaken += pierceDmg;
+                      playVoice("vo_hurt");
+                      playTone("lp_tick");
+                      spawnFloatingBattleText(defSide, "m", defIdx, `🔥 เจาะเกราะ -${pierceDmg} LP!`, "text-orange-400");
+                      logBattle(`🔥 <strong>เจาะเกราะ!</strong> <strong>${attacker.name}</strong> ทะลวงพลังป้องกัน สร้างความเสียหาย <strong>-${pierceDmg} LP</strong>!`);
+                    } else {
+                      spawnFloatingBattleText(defSide, "m", defIdx, `💥 ทำลายการ์ดป้องกัน!`, "text-amber-300");
+                    }
+                    destroyMonster(defSide, defIdx, attacker);
+                    logBattle(`⚔️ <strong>${attacker.name}</strong> (ATK ${attVal}) ทำลาย <strong>${defender.name}</strong> ที่ตั้งรับ (DEF ${defVal}) สำเร็จ!`);
+                    onMonsterDestroyEnemy(attSide, attacker);
+                  }
+                }
+
+                if (defender.id === "M026" && attPl.monsters[attIdx]) {
+                  attacker.bonusAtk = (attacker.bonusAtk || 0) - 400;
+                  attacker.lockedTurns = 2;
+                  logBattle(`🪨 เอฟเฟกต์ <strong>สไลม์หินโคลน</strong>: ดูดซับแรงกระแทก ลด ATK ของ ${attacker.name} ลง 400 และทำให้เคลื่อนไหวช้าลง!`);
+                }
+                if (defender.id === "M098" && attPl.monsters[attIdx]) {
+                  attacker.infectedByAlgae = true;
+                  logBattle(`🌿 เอฟเฟกต์ <strong>ตะไคร่น้ำจอมดูด</strong>: เกาะติดดูดสารอาหารของ <strong>${attacker.name}</strong> (จะถูกทำลายเมื่อจบเทิร์น)!`);
+                }
+                if (defender.id === "M115" && attPl.hand.length > 0) {
+                  const disc = attPl.hand.pop();
+                  attPl.graveyard.push(disc);
+                  logBattle(`💩 เอฟเฟกต์ <strong>สไลม์อึดึกดำบรรพ์ (คอโพรไลต์)</strong>: ผู้โจมตีต้องทิ้งการ์ด <strong>${disc.name}</strong> 1 ใบ!`);
+                }
+
+                checkWinCondition();
+                if (duelState.active && attSide === 0 && attPl.monsters[attIdx] && attPl.monsters[attIdx].attacksLeft > 0) {
+                  duelState.selectedRef = { side: 0, zoneType: "m", index: attIdx };
+                  duelState.pendingAttackFromMonsterIdx = attIdx;
+                }
+                syncP2P();
+                renderDuelArena();
+              } // end resolveBattleCalculation
+
+              if (defender.faceDown) {
+                defender.faceDown = false;
+                defender.position = "def";
+                updateDynamicStats();
+                renderDuelArena();
+                const defSlotEl = document.getElementById(`slot-${defSide}-m-${defIdx}`);
+                if (defSlotEl) defSlotEl.classList.add("anim-def-flip");
+                playTone("summon");
+                spawnFloatingBattleText(defSide, "m", defIdx, `🛡️ พลิกหงายป้องกัน: ${defender.name} (DEF ${defender.currentDef})!`, "text-cyan-300");
+                logBattle(`👁️ พลิกหงายการ์ดหมอบป้องกันของ ${defPl.name}: พบ <strong>${defender.name}</strong> ตั้งรับในท่าแนวนอน (DEF <strong>${defender.currentDef}</strong>)!`);
+                setScienceBanner(defender);
+
+                if (defender.id === "M017") {
+                  attPl.lp = Math.max(0, attPl.lp - 500);
+                  defPl.lp = Math.max(0, defPl.lp - 500);
+                  playTone("lp_tick");
+                  logBattle(`💣 FLIP เอฟเฟกต์ <strong>ด้วงบอมบ์ภูเขาไฟ</strong>: ระเบิดลาวาใส่ทั้งสองฝ่าย 500 LP!`);
+                } else if (defender.id === "M092") {
+                  showDramaticCardReveal(defSide, defender, "☢️ FLIP เอฟเฟกต์ทำงาน!", "ระเบิดกัมมันตรังสีล้างสนามทั้งสองฝ่าย!", 1300, () => {
+                    [0, 1].forEach(s => {
+                      duelState.players[s].monsters.forEach((m, i) => {
+                        if (m) destroyMonster(s, i);
+                      });
+                    });
+                    logBattle(`☢️ FLIP เอฟเฟกต์ <strong>ก้อนยูเรเนียมเรืองแสง</strong>: ระเบิดกัมมันตรังสีล้างมอนสเตอร์ทั้งสนาม!`);
+                    checkWinCondition();
+                    syncP2P();
+                    renderDuelArena();
+                  });
+                  return;
+                } else {
+                  triggerOnSummonEffects(defSide, defender, defIdx);
+                }
+                registerDuelTimeout(resolveBattleCalculation, 750);
+              } else {
+                resolveBattleCalculation();
+              }
+            });
+          }
+        });
+      });
+    };
+
+    // ============================================================================
+    // FIX 4: SMARTER BOT TRIBUTE AI (NEVER SACRIFICES STRONG MONSTERS FOR WEAKER ONES)
+    //        & WAITS FOR ANY HUMAN SELECTION MODAL BEFORE ENDING BOT TURN
+    // ============================================================================
+    function chooseSmartBotSummonAndTributes(botPl, oppPl) {
+      if (!botPl || !Array.isArray(botPl.hand) || botPl.normalSummonedThisTurn) return null;
+      const fieldMonsters = botPl.monsters
+        .map((m, idx) => m ? ({
+          m,
+          idx,
+          atk: Number(m.currentAtk ?? m.atk ?? 0),
+          def: Number(m.currentDef ?? m.def ?? 0),
+          power: Math.max(Number(m.currentAtk ?? m.atk ?? 0), Number(m.currentDef ?? m.def ?? 0) * 0.85)
+        }) : null)
+        .filter(Boolean)
+        .sort((a, b) => a.power - b.power); // Weakest first!
+
+      const hasEmptySlot = botPl.monsters.some(m => m === null);
+      const highestOppPower = Math.max(
+        0,
+        ...oppPl.monsters.filter(Boolean).map(m => m.position === "atk" ? Number(m.currentAtk ?? m.atk ?? 0) : (m.faceDown ? 1400 : Number(m.currentDef ?? m.def ?? 0)))
+      );
+      const ourBestAtk = fieldMonsters.length > 0 ? Math.max(...fieldMonsters.map(x => x.atk)) : 0;
+
+      const handMonsters = botPl.hand
+        .map((c, handIdx) => ({
+          c,
+          handIdx,
+          atk: Number(c.atk || 0),
+          def: Number(c.def || 0),
+          power: Math.max(Number(c.atk || 0), Number(c.def || 0) * 0.85),
+          neededTrib: c.id === "M122" ? 3 : (c.stars >= 7 ? 2 : (c.stars >= 5 ? 1 : 0))
+        }))
+        .filter(x => x.c.category === "monster");
+
+      let bestPlan = null;
+      let bestNetGain = -999999;
+
+      for (const cand of handMonsters) {
+        if (cand.neededTrib === 0) {
+          if (!hasEmptySlot) continue;
+          const netGain = cand.power;
+          if (netGain > bestNetGain) {
+            bestNetGain = netGain;
+            bestPlan = { handIdx: cand.handIdx, card: cand.c, tributeSlots: [] };
+          }
+        } else if (cand.neededTrib === 1) {
+          if (fieldMonsters.length < 1) continue;
+          const sac1 = fieldMonsters[0]; // Weakest monster on field
+          // NEVER tribute a monster whose currentAtk >= candidate's ATK or whose power is close to/greater than candidate!
+          if (cand.atk <= sac1.atk + 200) continue;
+          if (cand.power <= sac1.power + 200) continue;
+          const netGain = (cand.power - sac1.power) + (cand.atk > highestOppPower && sac1.atk < highestOppPower ? 500 : 0);
+          if (netGain > bestNetGain && netGain >= 250) {
+            bestNetGain = netGain;
+            bestPlan = { handIdx: cand.handIdx, card: cand.c, tributeSlots: [sac1.idx] };
+          }
+        } else if (cand.neededTrib === 2) {
+          if (fieldMonsters.length < 2) continue;
+          const sac1 = fieldMonsters[0];
+          const sac2 = fieldMonsters[1];
+          // NEVER tribute any monster that is already as strong as or stronger than the new monster!
+          if (cand.atk <= Math.max(sac1.atk, sac2.atk) + 300) continue;
+          if (cand.power <= Math.max(sac1.power, sac2.power) + 300) continue;
+          // Only sacrifice 2 monsters if either:
+          // (a) Opponent has a strong monster on board that our current monsters CANNOT beat, and this 7+ star monster CAN beat it, OR
+          // (b) Both sacrificed monsters are relatively weak (power <= 1650) and the new boss is much stronger (atk >= 2600)
+          const beatsUnbeatableOpp = (highestOppPower > ourBestAtk && cand.atk >= highestOppPower);
+          const bothWeak = (sac1.power <= 1650 && sac2.power <= 1650 && cand.atk >= 2500);
+          if (!beatsUnbeatableOpp && !bothWeak) continue;
+
+          const netGain = cand.power - (sac1.power * 0.65 + sac2.power * 0.65) + (beatsUnbeatableOpp ? 800 : 0);
+          if (netGain > bestNetGain && netGain >= 200) {
+            bestNetGain = netGain;
+            bestPlan = { handIdx: cand.handIdx, card: cand.c, tributeSlots: [sac1.idx, sac2.idx] };
+          }
+        }
+      }
+
+      return bestPlan;
+    }
+
+    // Override runBotTurn to use chooseSmartBotSummonAndTributes AND wait for any open player selection modal before advancing!
+    runBotTurn = function() {
+      if (!duelState || !duelState.active || duelState.activePlayer !== 1) return;
+
+      // If human player still has a selection modal open (e.g. from end of player turn), wait until it closes!
+      if (isAnyDuelSelectionModalOpen()) {
+        registerDuelTimeout(runBotTurn, 350);
+        return;
+      }
+
+      const bot = duelState.players[1];
+      const human = duelState.players[0];
+
+      duelState.phase = "draw";
+      renderDuelArena();
+
+      if (bot.deck.length === 0) {
+        finishDuel(0, `กองการ์ดของ ${bot.name} หมดลง (Deck Out)!`);
+        return;
+      }
+      const drawnBotCard = bot.deck.shift();
+      animateCardDrawFromDeck(1, drawnBotCard, () => {
+        if (!duelState.active) return;
+        bot.hand.push(drawnBotCard);
+        logBattle(`🃏 <strong>เทิร์นที่ ${duelState.turnCount} (${bot.name})</strong>: จั่วการ์ด 1 ใบจากกองเด็คเข้ามือ`);
+        enforceHandLimit(1, () => {
+          duelState.phase = "main";
+          renderDuelArena();
+          registerDuelTimeout(botStepPlaySpellSmart, 950);
+        });
+      });
+
+      function botStepPlaySpellSmart() {
+        if (!duelState.active || duelState.activePlayer !== 1) return;
+        if (isAnyDuelSelectionModalOpen()) {
+          registerDuelTimeout(botStepPlaySpellSmart, 350);
+          return;
+        }
+        const botMCount = bot.monsters.filter(Boolean).length;
+        const humanMCount = human.monsters.filter(Boolean).length;
+
+        const validSpellIdx = bot.hand.findIndex(c => {
+          if (c.category !== "spell" || !canActivateCard(1, c).ok) return false;
+          if (c.id === "S035" && !(humanMCount >= 3 && botMCount === 0)) return false;
+          // Don't use S001/S002/S031/S032 if Bot already has a stronger magma/rock monster on field than the summoned boss
+          if (c.id === "S002" && bot.monsters.some(m => m && (m.currentAtk || 0) >= 2200)) return false;
+          return true;
+        });
+
+        const spellChance = getBotConfig(duelState.botDifficulty).spellChance;
+        const freeStSlot = bot.spellTraps.findIndex(s => s === null);
+
+        if (validSpellIdx !== -1 && freeStSlot !== -1 && Math.random() < spellChance) {
+          const sp = bot.hand.splice(validSpellIdx, 1)[0];
+          sp.faceDown = true;
+          bot.spellTraps[freeStSlot] = sp;
+          playTone("deal");
+          renderDuelArena();
+
+          registerDuelTimeout(() => {
+            if (!duelState.active) return;
+            sp.faceDown = false;
+            renderDuelArena();
+            showDramaticCardReveal(1, sp, "🔮 คู่ต่อสู้เปิดหงายการ์ดเวทมนตร์จากกระดาน!", "", 1400, () => {
+              if (!duelState.active) return;
+              if (sp.subtype !== "continuous" && sp.subtype !== "equip" && bot.spellTraps[freeStSlot] === sp) {
+                bot.spellTraps[freeStSlot] = null;
+              }
+              executeSpellTrapEffect(1, sp);
+              updateDynamicStats();
+              renderDuelArena();
+              if (!duelState.active) return;
+              registerDuelTimeout(botStepSummonMonsterSmart, 900);
+            });
+          }, 600);
+        } else {
+          registerDuelTimeout(botStepSummonMonsterSmart, 600);
+        }
+      }
+
+      function botStepSummonMonsterSmart() {
+        if (!duelState.active || duelState.activePlayer !== 1) return;
+        if (isAnyDuelSelectionModalOpen()) {
+          registerDuelTimeout(botStepSummonMonsterSmart, 350);
+          return;
+        }
+
+        const plan = chooseSmartBotSummonAndTributes(bot, human);
+        if (plan && !bot.normalSummonedThisTurn) {
+          plan.tributeSlots.forEach(tSlot => {
+            const sac = bot.monsters[tSlot];
+            if (sac) {
+              bot.graveyard.push(sac);
+              bot.monsters[tSlot] = null;
+              logBattle(`🔥 <strong>${bot.name}</strong> สังเวย <strong>${sac.name} (ATK ${sac.currentAtk})</strong> เพื่ออัญเชิญมอนสเตอร์ที่แข็งแกร่งกว่า!`);
+            }
+          });
+          const slot = bot.monsters.findIndex(m => m === null);
+          const actualHandIdx = bot.hand.indexOf(plan.card);
+          if (slot !== -1 && actualHandIdx !== -1) {
+            const highestHumanAtk = Math.max(0, ...human.monsters.filter(Boolean).map(m => m.position === "atk" ? m.currentAtk : 0));
+            const pos = (plan.card.atk >= plan.card.def && plan.card.atk >= highestHumanAtk - 300) ? "atk" : "def";
+            placeMonsterOnField(1, actualHandIdx, slot, pos);
+          }
+        }
+
+        updateDynamicStats();
+        renderDuelArena();
+
+        if (duelState.turnCount > 1 && duelState.iceAgeTurnsLeft <= 0) {
+          registerDuelTimeout(() => {
+            if (!duelState.active) return;
+            duelState.phase = "battle";
+            renderDuelArena();
+
+            let safetySteps = 0;
+            function waitForOverlaysThenNextBotAttack(delayMs = 950) {
+              registerDuelTimeout(() => {
+                if (!duelState.active) return;
+                const mgLayer = document.getElementById("motion-graphic-layer");
+                const revealOverlay = document.getElementById("dramatic-reveal-overlay");
+                const isBusy = isAnyDuelSelectionModalOpen() ||
+                               (mgLayer && !mgLayer.classList.contains("hidden")) ||
+                               (revealOverlay && !revealOverlay.classList.contains("hidden"));
+                if (isBusy) {
+                  waitForOverlaysThenNextBotAttack(400);
+                } else {
+                  nextBotAttackSmart();
+                }
+              }, delayMs);
+            }
+
+            function nextBotAttackSmart() {
+              if (!duelState.active || safetySteps++ > 12) {
+                if (duelState.active) registerDuelTimeout(botStepMainPhase2Smart, 850);
+                return;
+              }
+              if (isAnyDuelSelectionModalOpen()) {
+                waitForOverlaysThenNextBotAttack(400);
+                return;
+              }
+              updateDynamicStats();
+              const humanHasBean = human.monsters.some(hm => hm && !hm.faceDown && hm.id === "SP04");
+              if (humanHasBean) {
+                logBattle(`🌱 <strong>ถั่วเขียวหน้าเสาธง (SP04)</strong> ทำงาน! ${bot.name} ไม่สามารถสั่งโจมตีได้!`);
+                registerDuelTimeout(botStepMainPhase2Smart, 800);
+                return;
+              }
+              const nextAttacker = bot.monsters
+                .map((m, idx) => ({ m, idx }))
+                .find(x => {
+                  if (!x.m || x.m.position !== "atk" || x.m.attacksLeft <= 0 || x.m.lockedTurns > 0 || x.m.id === "M040") return false;
+                  if (x.m.stars >= 5 && isLevel5AttackBlockedByT028(1, x.m, true)) return false;
+                  return true;
+                });
+
+              if (!nextAttacker) {
+                if (duelState.active) registerDuelTimeout(botStepMainPhase2Smart, 850);
+                return;
+              }
+              const { m, idx: bIdx } = nextAttacker;
+              const allHumanM = human.monsters.map((hm, hIdx) => ({ hm, hIdx })).filter(x => x.hm !== null);
+
+              if (allHumanM.length === 0) {
+                duelState.pendingAttackFromMonsterIdx = bIdx;
+                renderDuelArena();
+                registerDuelTimeout(() => {
+                  if (!duelState.active) return;
+                  performDirectAttack();
+                  waitForOverlaysThenNextBotAttack(1450);
+                }, 550);
+              } else {
+                let validTargets = allHumanM.filter(x => {
+                  if (!x.hm.faceDown && x.hm.id === "M049") return false;
+                  if (!x.hm.faceDown && x.hm.id === "M120" && m.currentAtk >= 2000) return false;
+                  return true;
+                });
+                const pyriteTarget = validTargets.find(x => !x.hm.faceDown && x.hm.id === "M097");
+                if (pyriteTarget) validTargets = [pyriteTarget];
+
+                if (validTargets.length === 0) {
+                  m.attacksLeft = 0;
+                  nextBotAttackSmart();
+                  return;
+                }
+                validTargets.sort((a, b) => {
+                  const va = a.hm.position === "atk" ? a.hm.currentAtk : (a.hm.faceDown ? 1300 : a.hm.currentDef);
+                  const vb = b.hm.position === "atk" ? b.hm.currentAtk : (b.hm.faceDown ? 1300 : b.hm.currentDef);
+                  return va - vb;
+                });
+                const target = validTargets[0];
+                const targetVal = target.hm.position === "atk" ? target.hm.currentAtk : (target.hm.faceDown ? 1400 : target.hm.currentDef);
+                const hasTypeKill = ((m.id === "M009" || m.id === "M091" || m.hasGeoHammer) && !target.hm.faceDown && target.hm.geoTags?.isRockFamily && m.currentAtk >= targetVal) ||
+                                    (m.id === "M045" && !target.hm.faceDown && target.hm.attribute === "น้ำ" && m.currentAtk >= targetVal) ||
+                                    (m.id === "M094" && 3500 >= targetVal);
+
+                if (m.currentAtk >= targetVal || hasTypeKill) {
+                  const wasFaceDown = target.hm.faceDown;
+                  duelState.pendingAttackFromMonsterIdx = bIdx;
+                  renderDuelArena();
+                  registerDuelTimeout(() => {
+                    if (!duelState.active) return;
+                    executeMonsterBattle(1, bIdx, 0, target.hIdx);
+                    waitForOverlaysThenNextBotAttack(wasFaceDown ? 2300 : 1550);
+                  }, 550);
+                } else {
+                  m.attacksLeft = 0;
+                  nextBotAttackSmart();
+                }
+              }
+            }
+            registerDuelTimeout(nextBotAttackSmart, 650);
+          }, 800);
+        } else {
+          registerDuelTimeout(botStepMainPhase2Smart, 800);
+        }
+      }
+
+      function botStepMainPhase2Smart() {
+        if (!duelState.active || duelState.activePlayer !== 1) return;
+        if (isAnyDuelSelectionModalOpen()) {
+          registerDuelTimeout(botStepMainPhase2Smart, 350);
+          return;
+        }
+        duelState.phase = "main2";
+        renderDuelArena();
+
+        const trapIdx = bot.hand.findIndex(c => c.category === "trap");
+        const freeSt = bot.spellTraps.findIndex(s => s === null);
+        if (getBotConfig(duelState.botDifficulty).useTraps && trapIdx !== -1 && freeSt !== -1) {
+          const tr = bot.hand.splice(trapIdx, 1)[0];
+          tr.faceDown = true;
+          tr.summonedTurn = duelState.turnCount;
+          bot.spellTraps[freeSt] = tr;
+          playTone("deal");
+          spawnFloatingBattleText(1, "st", freeSt, "🪤 หมอบการ์ด 1 ใบ!", "text-pink-300");
+          logBattle(`🪤 <strong>${bot.name}</strong> หมอบการ์ดไว้ในโซนเวทมนตร์/กับดักช่องที่ ${freeSt + 1}`);
+          renderDuelArena();
+        }
+
+        function waitThenFinishBotTurn() {
+          if (!duelState.active || duelState.activePlayer !== 1) return;
+          if (isAnyDuelSelectionModalOpen()) {
+            registerDuelTimeout(waitThenFinishBotTurn, 350);
+            return;
+          }
+          endPlayerTurn(true);
+        }
+        registerDuelTimeout(waitThenFinishBotTurn, 850);
+      }
+    };
+
+    // ============================================================================
+    // FIX 5: STRICT FORWARD-ONLY TURN PHASE PROGRESSION (1 -> 2 -> 3 -> 4 -> 5)
+    //        AND FIX 7: DRAWN 5+ STAR CARD DOES NOT HIJACK FIELD MONSTER CLICKS
+    // ============================================================================
+    const DUEL_PHASE_STEP_INDEX = {
+      draw: 1,
+      main: 2,
+      battle: 3,
+      main2: 4,
+      end: 5
+    };
+
+    function updatePhaseStepButtonsVisualState() {
+      if (!duelState || !duelState.active) return;
+      const curStep = DUEL_PHASE_STEP_INDEX[duelState.phase] || 1;
+      const btnMap = [
+        { id: "phase-draw", step: 1 },
+        { id: "phase-main", step: 2 },
+        { id: "btn-to-battle", step: 3 },
+        { id: "phase-main2", step: 4 },
+        { id: "btn-end-turn", step: 5 }
+      ];
+      btnMap.forEach(({ id, step }) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.toggle("phase-locked-past", step < curStep);
+        el.classList.toggle("phase-active-current", step === curStep);
+      });
+    }
+
+    // Step 1: Draw Phase (cannot go back to Step 1 once in Step 2, 3, 4, or 5)
+    playerClickDrawPhase = function() {
+      if (typeof blockIfSpectatorClicked === "function" && blockIfSpectatorClicked()) return;
+      if (!duelState || !duelState.active) return;
+      if (isAnyDuelSelectionModalOpen()) {
+        showToast("⏳ กรุณาเลือกการ์ดในหน้าต่างที่เปิดอยู่ให้เสร็จสิ้นก่อนครับ", "⏳");
+        return;
+      }
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      if (duelState.activePlayer !== mySide) {
+        showToast("ตอนนี้เป็นเทิร์นของคู่ต่อสู้ กรุณารอสักครู่ครับ", "⏳");
+        return;
+      }
+      const curStep = DUEL_PHASE_STEP_INDEX[duelState.phase] || 1;
+      if (curStep > 1) {
+        playTone("click");
+        showToast(`🚫 ข้ามขั้นตอนที่ 1️⃣ จั่วการ์ดมาแล้ว ไม่สามารถย้อนกลับไปขั้นตอนที่ 1️⃣ ได้ครับ`, "🚫");
+        return;
+      }
+      const pl = duelState.players[mySide];
+      if (pl.deck.length === 0) {
+        finishDuel(1 - mySide, `กองการ์ดของ ${pl.name} หมดลง (Deck Out)!`);
+        return;
+      }
+      const drawn = pl.deck.shift();
+      duelState.phase = "main";
+      duelState.pendingPlacement = null;
+      document.getElementById("btn-draw-phase-card")?.classList.add("hidden");
+      animateCardDrawFromDeck(mySide, drawn, () => {
+        pl.hand.push(drawn);
+        // FIX 7: Do NOT leave a 5+ star monster auto-armed to hijack field clicks!
+        if (drawn.category === "monster" && (drawn.stars || 0) >= 5 && pl.monsters.some(Boolean)) {
+          duelState.selectedRef = null;
+        } else {
+          duelState.selectedRef = { side: mySide, zoneType: "hand", index: pl.hand.length - 1 };
+        }
+        setScienceBanner(drawn);
+        logBattle(`🃏 <strong>${pl.name}</strong> จั่วการ์ด 1 ใบจากกองเด็ค -> เข้าสู่ขั้นตอนที่ 2️⃣ จัดทัพแรก!`);
+        enforceHandLimit(mySide, () => {
+          syncP2P();
+          renderDuelArena();
+        });
+      });
+    };
+
+    // Step 2: Main Phase 1 (cannot go back to Step 2 once in Step 3 or Step 4!)
+    enterMainPhase1 = function() {
+      if (typeof blockIfSpectatorClicked === "function" && blockIfSpectatorClicked()) return;
+      if (!duelState || !duelState.active) return;
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      if (duelState.activePlayer !== mySide) return;
+      if (duelState.phase === "draw") {
+        playerClickDrawPhase();
+        return;
+      }
+      const curStep = DUEL_PHASE_STEP_INDEX[duelState.phase] || 2;
+      if (curStep > 2) {
+        playTone("click");
+        showToast(`🚫 ตอนนี้อยู่ในขั้นตอนที่ ${curStep} แล้ว ไม่สามารถย้อนกลับไปขั้นตอนที่ 2️⃣ จัดทัพแรกได้ครับ!`, "🚫");
+        return;
+      }
+      playTone("click");
+      duelState.phase = "main";
+      duelState.pendingAttackFromMonsterIdx = null;
+      renderDuelArena();
+    };
+
+    // Step 3: Battle Phase (cannot go back to Step 3 once in Step 4 Main Phase 2!)
+    enterBattlePhase = function() {
+      if (typeof blockIfSpectatorClicked === "function" && blockIfSpectatorClicked()) return;
+      if (!duelState || !duelState.active) return;
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      if (duelState.activePlayer !== mySide) return;
+      if (duelState.phase === "draw") {
+        playerClickDrawPhase();
+        return;
+      }
+      const curStep = DUEL_PHASE_STEP_INDEX[duelState.phase] || 2;
+      if (curStep > 3) {
+        playTone("click");
+        showToast(`🚫 ตอนนี้อยู่ในขั้นตอนที่ 4️⃣ เสริมทัพแล้ว ไม่สามารถย้อนกลับไปขั้นตอนที่ 3️⃣ บุกโจมตีได้ครับ!`, "🚫");
+        return;
+      }
+      if (duelState.turnCount === 1) {
+        const pl = duelState.players[mySide];
+        const hasStalactite = pl && pl.monsters.some(m => m && !m.faceDown && m.position === "atk" && m.id === "M036");
+        if (!hasStalactite) {
+          showToast("🚫 กติกาข้อ 4.3: ผู้เล่นลำดับที่ 1 ห้ามโจมตีในเทิร์นแรก!", "🚫");
+          return;
+        }
+      }
+      if (duelState.iceAgeTurnsLeft > 0) {
+        showToast(`❄️ อยู่ในช่วงยุคน้ำแข็งอีก ${duelState.iceAgeTurnsLeft} เทิร์น ห้ามโจมตี!`, "❄️");
+        return;
+      }
+      playTone("click");
+      hideToastBoxImmediately();
+      closeMobileCardInfoTab();
+      duelState.phase = "battle";
+      renderDuelArena();
+    };
+
+    // Step 4: Main Phase 2 (forward from Step 2 or Step 3)
+    enterMainPhase2 = function() {
+      if (typeof blockIfSpectatorClicked === "function" && blockIfSpectatorClicked()) return;
+      if (!duelState || !duelState.active) return;
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      if (duelState.activePlayer !== mySide) return;
+      if (duelState.phase === "draw") {
+        playerClickDrawPhase();
+        return;
+      }
+      playTone("click");
+      closeMobileCardInfoTab();
+      duelState.phase = "main2";
+      duelState.pendingAttackFromMonsterIdx = null;
+      renderDuelArena();
+    };
+
+    // Step 5: End Turn (waits if a graveyard/card selection modal is currently open!)
+    const _v30BaseEndPlayerTurn = endPlayerTurn;
+    endPlayerTurn = function(fromBotOrSystem = false) {
+      if (!fromBotOrSystem && typeof blockIfSpectatorClicked === "function" && blockIfSpectatorClicked()) return;
+      if (!duelState || !duelState.active) return;
+      if (isAnyDuelSelectionModalOpen()) {
+        if (!fromBotOrSystem) {
+          showToast("⏳ กรุณาเลือกการ์ดจากสุสาน/เอฟเฟกต์ให้เสร็จสิ้นก่อนจบเทิร์นครับ", "⏳");
+        } else {
+          registerDuelTimeout(() => endPlayerTurn(true), 350);
+        }
+        return;
+      }
+      closeMobileCardInfoTab();
+      _v30BaseEndPlayerTurn(fromBotOrSystem);
+      updatePhaseStepButtonsVisualState();
+      syncDrawOverlayTopLayerVisibility();
+    };
+
+    // ============================================================================
+    // FIX 11: GRAVEYARD REVIVAL / RECOVERY CARDS MUST LET PLAYER SELECT FIRST
+    //         BEFORE DRAWING OR ADVANCING TURN (S010, S042, M007, M027, SP01, SP09)
+    // ============================================================================
+    const _v30PreGyTriggerOnSummonEffects = triggerOnSummonEffects;
+    triggerOnSummonEffects = function(side, card, slotIdx) {
+      if (!duelState || !duelState.active || !card) return;
+      const pl = duelState.players[side];
+      if (!pl) return;
+
+      // M007 (จอมเวทย์ไรโอไลต์): Let human player CHOOSE which Spell card in Graveyard to recover to hand!
+      if (card.id === "M007" && isHumanControlledSide(side)) {
+        const spellsInGy = pl.graveyard.filter(c => c.category === "spell");
+        if (spellsInGy.length > 0) {
+          openSelectorModal(
+            "🧙‍♂️ จอมเวทย์ไรโอไลต์: เลือกการ์ดเวทมนตร์ 1 ใบจากสุสานกลับขึ้นมือ!",
+            spellsInGy,
+            picked => {
+              const gIdx = pl.graveyard.indexOf(picked);
+              if (gIdx !== -1) pl.graveyard.splice(gIdx, 1);
+              pl.hand.push(picked);
+              logBattle(`✨ เอฟเฟกต์ <strong>${card.name}</strong>: เลือกนำการ์ดเวทมนตร์ <strong>${picked.name}</strong> จากสุสานกลับขึ้นมือ!`);
+              showToast(`✨ นำ "${picked.name}" จากสุสานกลับขึ้นมือสำเร็จ!`, "🔮");
+              syncDrawOverlayTopLayerVisibility();
+              renderDuelArena();
+            },
+            "เลือกการ์ดเวทมนตร์ในสุสานให้เสร็จสิ้นก่อนดำเนินการต่อ"
+          );
+          return;
+        }
+      }
+
+      // M027 (แม่มดศิลาแลง): When summoned, if there is an Earth monster (or any monster) in Graveyard and an empty slot, let human player choose it to revive!
+      if (card.id === "M027" && isHumanControlledSide(side)) {
+        const earthInGy = pl.graveyard.filter(c => c.category === "monster" && c.attribute === "ดิน");
+        const hasFreeSlot = pl.monsters.some(m => m === null);
+        if (earthInGy.length > 0 && hasFreeSlot) {
+          openSelectorModal(
+            "🧱 แม่มดศิลาแลง: เลือกมอนสเตอร์ธาตุดินในสุสานเพื่อชุบชีวิตลงสนาม!",
+            earthInGy,
+            picked => {
+              const freeSlot = pl.monsters.findIndex(x => x === null);
+              const gIdx = pl.graveyard.indexOf(picked);
+              if (freeSlot !== -1 && gIdx !== -1) {
+                pl.graveyard.splice(gIdx, 1);
+                card.usedActiveEffectThisTurn = true;
+                logBattle(`🧱 เอฟเฟกต์ <strong>แม่มดศิลาแลง</strong>: ชุบชีวิต <strong>${picked.name}</strong> จากสุสานลงสนาม!`);
+                specialSummonToField(side, picked, freeSlot, null, () => {
+                  syncDrawOverlayTopLayerVisibility();
+                  renderDuelArena();
+                });
+              }
+            },
+            "เลือกมอนสเตอร์ที่จะชุบชีวิตลงสนามให้เสร็จสิ้นก่อน"
+          );
+          return;
+        }
+      }
+
+      // SP01 (ครูศิริพล ผู้คุมกฎ): Let human player choose up to 3 cards from Graveyard to return to hand!
+      if (card.id === "SP01" && isHumanControlledSide(side)) {
+        card.spellImmune = true;
+        card.trapImmune = true;
+        const count = Math.min(3, pl.graveyard.length);
+        if (count > 0) {
+          const gyCands = pl.graveyard.map((c, idx) => ({ card: c, source: "gy", index: idx }));
+          openTributeSelectorModal(
+            `🌟 ครูศิริพล ผู้คุมกฎ (SP01): เลือกการ์ดในสุสาน ${count} ใบกลับขึ้นมือ`,
+            `คลิกเลือกการ์ดในสุสานให้ครบ ${count} ใบเพื่อนำกลับขึ้นมือ`,
+            gyCands,
+            count,
+            chosenItems => {
+              const pickedCards = chosenItems.map(x => x.card);
+              pickedCards.forEach(pc => {
+                const gi = pl.graveyard.indexOf(pc);
+                if (gi !== -1) pl.graveyard.splice(gi, 1);
+                pl.hand.push(pc);
+              });
+              logBattle(`🌟 เอฟเฟกต์ <strong>ครูศิริพล ผู้คุมกฎ (SP01)</strong>: นำการ์ดจากสุสาน (${pickedCards.map(c => c.name).join(", ")}) กลับขึ้นมือ!`);
+              enforceHandLimit(side, () => {
+                syncDrawOverlayTopLayerVisibility();
+                renderDuelArena();
+              });
+            }
+          );
+          return;
+        }
+      }
+
+      _v30PreGyTriggerOnSummonEffects(side, card, slotIdx);
+    };
+
+    // Upgrade S010 (วัฏจักรหิน), S042 (การรีไซเคิล), and SP09 (มรดกของ ผอ.ธีรภัทร) in executeSpellTrapEffect
+    // so the player ALWAYS selects the cards from the Graveyard FIRST, and ONLY AFTER selection completes does the game draw cards!
+    const _v30PreGyExecuteSpellTrapEffect = executeSpellTrapEffect;
+    executeSpellTrapEffect = function(side, card) {
+      if (!duelState || !duelState.active || !card) return;
+      const pl = duelState.players[side];
+      if (!pl) return;
+
+      if ((card.id === "S010" || card.id === "S042") && isHumanControlledSide(side) && pl.graveyard.length > 0) {
+        const takeCount = Math.min(3, pl.graveyard.length);
+        const gyCands = pl.graveyard.map((c, idx) => ({ card: c, source: "gy", index: idx }));
+        openTributeSelectorModal(
+          `♻️ ${card.name}: เลือกการ์ดในสุสาน ${takeCount} ใบกลับเข้ากองการ์ด (ก่อนจั่วการ์ดใหม่ 1 ใบ)`,
+          `กรุณาเลือกการ์ดจากสุสานให้ครบ ${takeCount} ใบก่อน แล้วระบบจึงจะสับกองและจั่วการ์ดใหม่ 1 ใบครับ`,
+          gyCands,
+          takeCount,
+          chosenItems => {
+            const pickedCards = chosenItems.map(x => x.card);
+            pickedCards.forEach(pc => {
+              const gi = pl.graveyard.indexOf(pc);
+              if (gi !== -1) pl.graveyard.splice(gi, 1);
+              pl.deck.push(pc);
+            });
+            shuffleArray(pl.deck);
+            if (side === 0 && duelState.telemetry && card.id === "S010") {
+              duelState.telemetry.geologicalCombos.push("หมุนเวียนวัฏจักรหิน (Rock Cycle)");
+            }
+            logBattle(`♻️ <strong>${card.name}!</strong> เลือกนำการ์ดจากสุสาน (${pickedCards.map(c => c.name).join(", ")}) กลับเข้ากองการ์ด แล้วจั่วการ์ดใหม่ 1 ใบ!`);
+            drawCards(side, 1);
+            syncDrawOverlayTopLayerVisibility();
+            syncP2P();
+            renderDuelArena();
+          }
+        );
+        return;
+      }
+
+      if (card.id === "SP09" && isHumanControlledSide(side)) {
+        const candidates = pl.graveyard.filter(c => c.category === "monster" || c.category === "spell");
+        const takeCount = Math.min(3, candidates.length);
+        if (takeCount > 0) {
+          const gyCands = candidates.map((c, idx) => ({ card: c, source: "gy", index: idx }));
+          openTributeSelectorModal(
+            `🏛️ มรดกของ ผอ.ธีรภัทร (SP09): เลือกการ์ดจากสุสาน ${takeCount} ใบกลับขึ้นมือ`,
+            `คลิกเลือกการ์ดในสุสานให้ครบ ${takeCount} ใบ`,
+            gyCands,
+            takeCount,
+            chosenItems => {
+              const pickedCards = chosenItems.map(x => x.card);
+              pickedCards.forEach(pc => {
+                const gi = pl.graveyard.indexOf(pc);
+                if (gi !== -1) pl.graveyard.splice(gi, 1);
+                pl.hand.push(pc);
+              });
+              logBattle(`🏛️ <strong>มรดกของ ผอ.ธีรภัทร (SP09)!</strong> นำการ์ดจากสุสาน (${pickedCards.map(c => c.name).join(", ")}) กลับขึ้นมือ!`);
+              enforceHandLimit(side, () => {
+                syncDrawOverlayTopLayerVisibility();
+                syncP2P();
+                renderDuelArena();
+              });
+            }
+          );
+          return;
+        }
+      }
+
+      _v30PreGyExecuteSpellTrapEffect(side, card);
+    };
+
+    // Also hook closeSelectorModal, closeTributeModal, and resolveSummonPositionModalChoice so closing any selection modal immediately updates Draw overlay visibility
+    const _v30OrigCloseSelectorModal = closeSelectorModal;
+    closeSelectorModal = function() {
+      _v30OrigCloseSelectorModal();
+      setTimeout(syncDrawOverlayTopLayerVisibility, 30);
+    };
+
+    const _v30OrigResolveSummonPos = resolveSummonPositionModalChoice;
+    resolveSummonPositionModalChoice = function(chosenPos, isFaceDown = false) {
+      _v30OrigResolveSummonPos(chosenPos, isFaceDown);
+      setTimeout(syncDrawOverlayTopLayerVisibility, 80);
+    };
+
+    // ============================================================================
+    // FIX 7, 8 & 10: VIEW CARD INFO FOR ANY CARD ON THE FIELD AT ALL TIMES
+    //                & NEVER HIJACK FIELD CLICKS WITH LEVEL 5+ HAND CARDS
+    // ============================================================================
+
+    // Helper: Attack a specific enemy monster slot directly from the Card Info Tab
+    function attackSpecificEnemyFromTab(attSlotIdx, defSlotIdx) {
+      closeMobileCardInfoTab();
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      if (duelState.phase !== "battle") duelState.phase = "battle";
+      duelState.pendingAttackFromMonsterIdx = attSlotIdx;
+      tryAttackEnemySlot(mySide, attSlotIdx, 1 - mySide, defSlotIdx);
+    }
+
+    // Upgrade openMobileCardInfoTab so it works for:
+    // - Player Hand cards (including Trap direct activation button when condition is met!)
+    // - Friendly Field Monsters & Set/Face-up Spells/Traps
+    // - Opponent Face-up Monsters & Spells/Traps on the Field (showing full stats, effect, science fact, and quick attack buttons!)
+    // - Graveyard cards (both Player and Opponent Graveyard!)
+    // - Field Spell cards
+    openMobileCardInfoTab = function(cardOrId, contextObj = null, evt = null) {
+      if (evt) evt.stopPropagation();
+      const card = (typeof cardOrId === "string") ? CARD_MAP[cardOrId] : cardOrId;
+      if (!card) return;
+
+      // If in 16:9 PC mode and not inside duel, use openCardModal; during duel in 9:16 (or when explicitly inspecting), open #mobile-card-info-tab-popup
+      if (currentAspectMode !== "9:16" && (!contextObj || contextObj.source !== "graveyard")) {
+        _v23OpenCardModal(card.id);
+        return;
+      }
+
+      playTone("click");
+      elevateSelectionModalsToBody();
+      const modal = document.getElementById("mobile-card-info-tab-popup");
+      if (!modal) return;
+
+      const isRare = Boolean(card.isRare || String(card.id).startsWith("SP"));
+      const syn = (typeof getCardSynergyHint === "function") ? getCardSynergyHint(card) : "";
+      const curAtk = (card.currentAtk !== undefined) ? card.currentAtk : card.atk;
+      const curDef = (card.currentDef !== undefined) ? card.currentDef : card.def;
+
+      const titleEl = document.getElementById("mob-tab-card-title");
+      const visEl = document.getElementById("mob-tab-card-visual");
+      const badgesEl = document.getElementById("mob-tab-card-badges");
+      const statsEl = document.getElementById("mob-tab-card-stats");
+      const idPillEl = document.getElementById("mob-tab-card-id-pill");
+      const effEl = document.getElementById("mob-tab-card-effect");
+      const synBoxEl = document.getElementById("mob-tab-card-synergy-box");
+      const synEl = document.getElementById("mob-tab-card-synergy");
+      const sciEl = document.getElementById("mob-tab-card-science");
+      const readBtn = document.getElementById("btn-mob-tab-read-aloud");
+      const actEl = document.getElementById("mob-tab-card-actions");
+
+      if (titleEl) titleEl.textContent = `${isRare ? "🌟 " : ""}${card.name}`;
+      if (visEl) visEl.innerHTML = renderYgoCardVisual(card, "w-[96px] h-[138px]");
+
+      const ref = (contextObj && contextObj.ref) ? contextObj.ref : null;
+      const mySide = (duelState && duelState.mode === "hotseat") ? duelState.activePlayer : 0;
+
+      if (idPillEl) {
+        if (ref && ref.zoneType === "m") {
+          const posStr = card.position === "def" ? "🛡️ ท่าตั้งรับ (ป้องกัน)" : "⚔️ ท่าตั้งโจมตี";
+          const ownerStr = ref.side === mySide ? "การ์ดในสนามของคุณ" : "การ์ดในสนามคู่ต่อสู้";
+          idPillEl.textContent = `${ownerStr} • ${posStr}`;
+        } else if (ref && ref.zoneType === "st") {
+          const ownerStr = ref.side === mySide ? "โซนเวท/กับดักของคุณ" : "โซนเวท/กับดักคู่ต่อสู้";
+          idPillEl.textContent = `${ownerStr} • ${card.faceDown ? "🪤 หมอบอยู่" : "👁️ เปิดหงายทำงาน"}`;
+        } else if (contextObj && contextObj.source === "graveyard") {
+          idPillEl.textContent = `🪦 การ์ดในสุสาน (${contextObj.graveyardSide === 1 ? "คู่ต่อสู้" : "ของคุณ"}) • รหัส ${card.id}`;
+        } else {
+          idPillEl.textContent = `รหัสการ์ด: ${card.id}`;
+        }
+      }
+
+      if (badgesEl) {
+        if (card.category === "monster") {
+          badgesEl.innerHTML = `
+            <span class="px-2 py-0.5 rounded bg-amber-500/25 border border-amber-400 text-amber-200 font-black text-[10px]">⭐ ${card.stars} ดาว</span>
+            <span class="px-2 py-0.5 rounded bg-cyan-500/20 border border-cyan-400 text-cyan-200 font-black text-[10px]">ธาตุ${card.attribute}</span>
+            <span class="px-2 py-0.5 rounded bg-purple-500/20 border border-purple-400 text-purple-200 font-bold text-[10px]">เผ่า${card.race || "หิน"}</span>
+          `;
+        } else {
+          const catLbl = card.category === "spell" ? "🔮 การ์ดเวทมนตร์" : "🪤 การ์ดกับดัก";
+          badgesEl.innerHTML = `
+            <span class="px-2.5 py-0.5 rounded bg-emerald-500/25 border border-emerald-400 text-emerald-200 font-black text-[11px]">${catLbl}</span>
+          `;
+        }
+      }
+
+      if (statsEl) {
+        if (card.category === "monster") {
+          const baseNote = (curAtk !== card.atk || curDef !== card.def)
+            ? ` <span class="text-[9.5px] text-slate-300 font-normal">(พื้นฐาน ${card.atk}/${card.def})</span>`
+            : "";
+          statsEl.innerHTML = `⚔️ ATK: <span class="text-yellow-300">${curAtk}</span> &nbsp;|&nbsp; 🛡️ DEF: <span class="text-cyan-300">${curDef}</span>${baseNote}`;
+        } else {
+          const check = (duelState && duelState.active) ? canActivateCard(mySide, card) : { ok: false };
+          statsEl.innerHTML = check.ok
+            ? `<span class="text-emerald-300 font-black">✅ เงื่อนไขครบ! สามารถเปิดใช้งานได้ทันที</span>`
+            : (card.category === "spell" ? "🔮 การ์ดเวทมนตร์ธรณีวิทยา" : "🪤 การ์ดกับดักธรณีวิทยา");
+        }
+      }
+
+      if (effEl) {
+        effEl.textContent = card.effect || "มอนสเตอร์สายโจมตีและป้องกันพื้นฐาน";
+      }
+      if (synBoxEl && synEl) {
+        if (syn) {
+          synEl.textContent = syn;
+          synBoxEl.classList.remove("hidden");
+        } else {
+          synBoxEl.classList.add("hidden");
+        }
+      }
+      if (sciEl) {
+        sciEl.textContent = card.scienceFact || "-";
+      }
+      if (readBtn) {
+        readBtn.onclick = function(ev) {
+          if (ev) ev.stopPropagation();
+          speakCardById(card.id, ev);
+        };
+      }
+
+      if (actEl) {
+        const src = (contextObj && contextObj.source) ? contextObj.source : (duelState && duelState.active ? "duel" : "deck");
+        if (src === "deck") {
+          const inDeck = userDeck[card.id] || 0;
+          const maxCopies = isRare ? 1 : 3;
+          actEl.innerHTML = `
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="removeCardFromDeck('${card.id}', event); openMobileCardInfoTab('${card.id}', { source: 'deck' });" class="py-2 px-3 rounded-xl bg-rose-700 hover:bg-rose-600 text-white font-black text-xs shadow">
+                ➖ นำออกจากเด็ค
+              </button>
+              <button type="button" onclick="addCardToDeck('${card.id}', event); openMobileCardInfoTab('${card.id}', { source: 'deck' });" class="py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-950 font-black text-xs shadow">
+                ➕ ใส่เด็ค (${inDeck}/${maxCopies})
+              </button>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5">
+              <button type="button" onclick="stepMobileCardInfoTabCarousel(-1)" class="py-1.5 px-2 rounded-xl bg-amber-400 text-slate-950 font-black text-[11px] shadow">
+                ◀ ใบก่อนหน้า
+              </button>
+              <button type="button" onclick="closeMobileCardInfoTab()" class="py-1.5 px-2 rounded-xl bg-slate-800 border border-slate-600 text-slate-200 font-black text-[11px]">
+                ✕ ปิดแท็บ
+              </button>
+              <button type="button" onclick="stepMobileCardInfoTabCarousel(1)" class="py-1.5 px-2 rounded-xl bg-amber-400 text-slate-950 font-black text-[11px] shadow">
+                ใบถัดไป ▶
+              </button>
+            </div>
+          `;
+        } else if (src === "graveyard") {
+          actEl.innerHTML = `
+            <button type="button" onclick="closeMobileCardInfoTab()" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black text-xs shadow">
+              ✕ ปิดรายละเอียด (กลับสู่หน้าสุสาน)
+            </button>
+          `;
+        } else if (src === "duel" && duelState && duelState.active && !isSpectatorMode && ref) {
+          const { side, zoneType, index } = ref;
+          const pl = duelState.players[side];
+          const opp = duelState.players[1 - side];
+          let duelBtns = "";
+
+          // CASE 1: Player's own card during Player's turn
+          if (side === mySide && duelState.activePlayer === mySide) {
+            if (zoneType === "hand" && (duelState.phase === "main" || duelState.phase === "main2" || duelState.phase === "battle")) {
+              if (card.category === "monster") {
+                const tribLabel = card.stars >= 5 ? ` (สังเวย ${card.id === "M122" ? 3 : (card.stars >= 7 ? 2 : 1)})` : "";
+                duelBtns += `
+                  <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="closeMobileCardInfoTab(); requestSlotPlacement(${index}, 'm', 'atk');" class="py-2 px-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black text-xs shadow">
+                      ⚔️ อัญเชิญโจมตี${tribLabel}
+                    </button>
+                    <button type="button" onclick="closeMobileCardInfoTab(); requestSlotPlacement(${index}, 'm', 'def');" class="py-2 px-2.5 rounded-xl bg-cyan-400 text-slate-950 font-black text-xs shadow">
+                      🛡️ วางหมอบป้องกัน${tribLabel}
+                    </button>
+                  </div>
+                `;
+                if (card.id === "M020" && opp.monsters.some(Boolean)) {
+                  duelBtns += `<button type="button" onclick="closeMobileCardInfoTab(); useHandMonsterEffect(${index});" class="w-full py-1.5 px-3 rounded-xl bg-purple-600 text-white font-black text-xs">💨 ทิ้งการ์ดนี้เพื่อลด ATK ศัตรู -1000</button>`;
+                }
+                if ((card.id === "M086" || card.id === "M087") && pl.monsters.some(Boolean)) {
+                  duelBtns += `<button type="button" onclick="closeMobileCardInfoTab(); useHandMonsterEffect(${index});" class="w-full py-1.5 px-3 rounded-xl bg-teal-500 text-slate-950 font-black text-xs">🛡️ สวมใส่ให้มอนสเตอร์ในสนาม</button>`;
+                }
+                if (card.id === "M125" && opp.monsters.filter(Boolean).length >= 2 && pl.monsters.some(m => m === null)) {
+                  duelBtns += `<button type="button" onclick="closeMobileCardInfoTab(); useHandMonsterEffect(${index});" class="w-full py-1.5 px-3 rounded-xl bg-cyan-400 text-slate-950 font-black text-xs">🌊 อัญเชิญพิเศษลงสนามทันที</button>`;
+                }
+              } else if (card.category === "spell") {
+                const check = canActivateCard(side, card);
+                duelBtns += `
+                  <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="closeMobileCardInfoTab(); activateSpellFromHand(${index});" class="py-2 px-2.5 rounded-xl ${check.ok ? "bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950" : "bg-slate-800 text-slate-400 opacity-70"} font-black text-xs shadow">
+                      ${check.ok ? "🔮 ใช้เวทมนตร์ทันที" : "🚫 เงื่อนไขยังไม่ครบ"}
+                    </button>
+                    <button type="button" onclick="closeMobileCardInfoTab(); requestSlotPlacement(${index}, 'st', 'set');" class="py-2 px-2.5 rounded-xl bg-slate-800 border border-amber-400 text-amber-200 font-black text-xs">
+                      🪤 หมอบลงกระดาน
+                    </button>
+                  </div>
+                `;
+              } else if (card.category === "trap") {
+                // FIX 8: Trap card in hand can be activated face-up directly if its condition is met, OR set face-down!
+                const check = canActivateCard(side, card);
+                duelBtns += `
+                  <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="closeMobileCardInfoTab(); activateSpellFromHand(${index});" class="py-2 px-2.5 rounded-xl ${check.ok ? "bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white" : "bg-slate-800 text-slate-400 opacity-70"} font-black text-xs shadow">
+                      ${check.ok ? "🪤 เปิดใช้กับดักทันที!" : "🚫 เงื่อนไขยังไม่ครบ"}
+                    </button>
+                    <button type="button" onclick="closeMobileCardInfoTab(); requestSlotPlacement(${index}, 'st', 'set');" class="py-2 px-2.5 rounded-xl bg-slate-800 border border-pink-400 text-pink-200 font-black text-xs">
+                      🪤 หมอบลงกระดาน
+                    </button>
+                  </div>
+                `;
+              }
+            } else if (zoneType === "m") {
+              const mBtns = [];
+              const canAttackNow = (duelState.phase === "battle" || duelState.phase === "main") &&
+                                   !card.faceDown &&
+                                   card.position === "atk" &&
+                                   card.attacksLeft > 0 &&
+                                   canMonsterDeclareAttackV15(side, card, false);
+              if (canAttackNow) {
+                const oppMonstersWithIdx = opp.monsters.map((m, idx) => ({ m, idx })).filter(x => x.m !== null);
+                if (oppMonstersWithIdx.length === 0 || card.id === "M006" || card.id === "M057" || card.id === "SP07") {
+                  mBtns.push(`<button type="button" onclick="closeMobileCardInfoTab(); duelState.phase='battle'; duelState.pendingAttackFromMonsterIdx=${index}; performDirectAttack();" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-red-600 via-amber-500 to-red-600 text-slate-950 font-black text-xs shadow-lg border border-yellow-200">⚡ โจมตีผู้เล่นคู่ต่อสู้โดยตรงทันที!</button>`);
+                }
+                oppMonstersWithIdx.forEach(({ m: om, idx: oIdx }) => {
+                  const oLabel = om.faceDown
+                    ? `การ์ดหมอบป้องกัน (ช่อง ${oIdx + 1})`
+                    : `${om.name} (${om.position === "atk" ? "ATK " + om.currentAtk : "DEF " + om.currentDef})`;
+                  mBtns.push(`<button type="button" onclick="attackSpecificEnemyFromTab(${index}, ${oIdx});" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-red-600 to-orange-500 text-white font-black text-xs shadow-lg border border-amber-200">⚔️ โจมตี "${oLabel}" ทันที!</button>`);
+                });
+              }
+              if ((duelState.phase === "main" || duelState.phase === "main2") && card.faceDown && card.lockedTurns <= 0) {
+                mBtns.push(`<button type="button" onclick="closeMobileCardInfoTab(); flipFaceUpKeepPosition(${index});" class="w-full py-1.5 px-3 rounded-xl bg-amber-400 text-slate-950 font-black text-xs shadow">👁️ หงายการ์ดเปิดเอฟเฟกต์ (คงท่าเดิม)</button>`);
+              }
+              if ((duelState.phase === "main" || duelState.phase === "main2") && !card.changedPosThisTurn && card.summonedTurn !== duelState.turnCount && card.lockedTurns <= 0) {
+                const posLbl = card.faceDown ? "⚔️ พลิกหงายตั้งโจมตี" : `🔄 เปลี่ยนท่า (${card.position === "atk" ? "เป็นตั้งรับ DEF " + curDef : "เป็นโจมตี ATK " + curAtk})`;
+                mBtns.push(`<button type="button" onclick="closeMobileCardInfoTab(); toggleMonsterPosition(${index});" class="w-full py-1.5 px-3 rounded-xl bg-cyan-400 text-slate-950 font-black text-xs shadow">${posLbl}</button>`);
+              }
+              if ((duelState.phase === "main" || duelState.phase === "main2") && !card.faceDown && !card.usedActiveEffectThisTurn && canUseFieldMonsterActiveEffect(side, card)) {
+                mBtns.push(`<button type="button" onclick="closeMobileCardInfoTab(); activateFieldMonsterEffect(${index});" class="w-full py-1.5 px-3 rounded-xl bg-yellow-400 text-slate-950 font-black text-xs shadow">✨ ใช้เอฟเฟกต์พิเศษของ ${card.name}</button>`);
+              }
+              duelBtns = mBtns.join("");
+            } else if (zoneType === "st") {
+              // FIX 8: Both set Spells AND set Traps can be activated in our turn when canActivateCard(side, card).ok is true!
+              if (card.faceDown && (duelState.phase === "main" || duelState.phase === "main2" || duelState.phase === "battle")) {
+                const check = canActivateCard(side, card);
+                const btnLabel = card.category === "trap"
+                  ? (check.ok ? "🪤 เปิดใช้งานกับดักทันที!" : `🚫 เงื่อนไขยังไม่ครบ (${check.reason || ""})`)
+                  : (check.ok ? "🔮 เปิดใช้งานเวทมนตร์ที่หมอบไว้!" : `🚫 เงื่อนไขยังไม่ครบ (${check.reason || ""})`);
+                duelBtns = `<button type="button" onclick="closeMobileCardInfoTab(); activateSetSpellTrap(${index});" class="w-full py-2 px-3 rounded-xl ${check.ok ? (card.category === "trap" ? "bg-gradient-to-r from-pink-500 to-rose-600 text-white" : "bg-teal-400 text-slate-950") : "bg-slate-800 text-rose-300"} font-black text-xs shadow">${btnLabel}</button>`;
+              }
+            }
+          } else if (side !== mySide && zoneType === "m" && duelState.activePlayer === mySide && (duelState.phase === "battle" || duelState.phase === "main")) {
+            // CASE 2: Inspecting an Opponent's monster on the field during our turn!
+            // Show buttons for any of our attack-ready monsters so the player can read the opponent's card AND attack right from here if desired!
+            const myAttackers = duelState.players[mySide].monsters
+              .map((m, mIdx) => ({ m, mIdx }))
+              .filter(x => x.m && !x.m.faceDown && x.m.position === "atk" && x.m.attacksLeft > 0 && canMonsterDeclareAttackV15(mySide, x.m, false));
+            if (myAttackers.length > 0) {
+              duelBtns = myAttackers.map(({ m: myM, mIdx }) => `
+                <button type="button" onclick="attackSpecificEnemyFromTab(${mIdx}, ${index});" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-red-600 to-orange-500 text-white font-black text-xs shadow-lg border border-amber-200">
+                  ⚔️ สั่ง "${myM.name} (ATK ${myM.currentAtk})" โจมตีการ์ดใบนี้!
+                </button>
+              `).join("");
+            }
+          }
+
+          actEl.innerHTML = `
+            ${duelBtns}
+            <button type="button" onclick="closeMobileCardInfoTab()" class="w-full py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-amber-400/50 text-amber-200 font-black text-xs">
+              ✕ ปิดแท็บข้อมูล (กลับสู่กระดานดูเอล)
+            </button>
+          `;
+        } else {
+          actEl.innerHTML = `
+            <button type="button" onclick="closeMobileCardInfoTab()" class="w-full py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-amber-400/50 text-amber-200 font-black text-xs">
+              ✕ ปิดแท็บข้อมูลการ์ด
+            </button>
+          `;
+        }
+      }
+
+      modal.classList.remove("hidden");
+    };
+
+    // Upgrade selectDuelCard so tapping ANY card on the field (friendly or opponent monster/spell/trap) or in hand
+    // ALWAYS lets the player view its full card info (in 9:16 via openMobileCardInfoTab, and in 16:9 via #duel-card-inspector)!
+    selectDuelCard = function(side, zoneType, index) {
+      _v23SelectDuelCard(side, zoneType, index);
+      if (!duelState || !duelState.active) return;
+
+      const pl = duelState.players?.[side];
+      if (!pl) return;
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      const card = zoneType === "hand" ? pl.hand[index] : (zoneType === "m" ? pl.monsters[index] : pl.spellTraps[index]);
+      if (!card) return;
+
+      const hasDinoFootprint = duelState.players[mySide]?.monsters?.some(m => m && !m.faceDown && m.id === "M114");
+      const canSeeCard = (!card.faceDown || side === mySide || hasDinoFootprint);
+
+      if (currentAspectMode === "9:16") {
+        if (canSeeCard) {
+          openMobileCardInfoTab(card, { source: "duel", ref: { side, zoneType, index } });
+        } else {
+          // Face-down opponent card: if it's a monster and we have attack-ready monsters, let player know or attack
+          if (zoneType === "m") {
+            const myAttackers = duelState.players[mySide].monsters
+              .map((m, mIdx) => ({ m, mIdx }))
+              .filter(x => x.m && !x.m.faceDown && x.m.position === "atk" && x.m.attacksLeft > 0 && canMonsterDeclareAttackV15(mySide, x.m, false));
+            if (duelState.activePlayer === mySide && (duelState.phase === "battle" || duelState.phase === "main") && myAttackers.length === 1) {
+              attackSpecificEnemyFromTab(myAttackers[0].mIdx, index);
+              return;
+            }
+          }
+          _v1OrigShowToast("🪤 การ์ดหมอบคว่ำหน้าของฝ่ายตรงข้าม (ยังไม่เปิดหงาย)", "🪤");
+        }
+      }
+    };
+
+    // Clean handleZoneClick:
+    // - Ignores synthetic click right after drag-to-attack
+    // - NEVER auto-triggers Tribute Summon when clicking a friendly monster on the field unless pendingPlacement is explicitly active!
+    // - Tapping any card on the field selects it & opens its Card Info Tab (or attacks if pendingAttackFromMonsterIdx was explicitly armed!)
+    handleZoneClick = function(side, zType, idx) {
+      if (Date.now() < (window._suppressNextZoneClickUntil || 0)) {
+        return;
+      }
+      if (isSpectatorMode) {
+        selectDuelCard(side, zType, idx);
+        return;
+      }
+      if (!duelState || !duelState.active) return;
+
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      const pl = duelState.players[mySide];
+      const clickedCard = duelState.players[side]
+        ? (zType === "m" ? duelState.players[side].monsters[idx] : duelState.players[side].spellTraps[idx])
+        : null;
+
+      // 1. If user explicitly clicked "⚔️ สั่งโจมตี" (so pendingAttackFromMonsterIdx is set) and taps an enemy monster -> attack it!
+      if (
+        duelState.activePlayer === mySide &&
+        side !== mySide &&
+        zType === "m" &&
+        clickedCard &&
+        duelState.pendingAttackFromMonsterIdx !== null
+      ) {
+        hideToastBoxImmediately();
+        tryAttackEnemySlot(mySide, duelState.pendingAttackFromMonsterIdx, side, idx);
+        return;
+      }
+
+      // 2. If user explicitly clicked "อัญเชิญ" or "หมอบ" button (so pendingPlacement is set) and taps an empty friendly slot -> place card there!
+      if (
+        duelState.activePlayer === mySide &&
+        side === mySide &&
+        duelState.pendingPlacement &&
+        duelState.pendingPlacement.zType === zType &&
+        clickedCard === null
+      ) {
+        const { handIdx, pos } = duelState.pendingPlacement;
+        duelState.pendingPlacement = null;
+        if (zType === "m") initiateSummon(handIdx, pos, idx);
+        else setSpellTrapFromHand(handIdx, idx);
+        return;
+      }
+
+      // 3. If user taps an occupied slot on the field (friendly monster, friendly spell/trap, opponent monster, opponent spell/trap):
+      //    ALWAYS select it and show its Card Info Tab so the player can read its properties and use its action buttons!
+      if (clickedCard) {
+        duelState.pendingPlacement = null;
+        selectDuelCard(side, zType, idx);
+        return;
+      }
+
+      // 4. If user taps an empty friendly slot while a hand card is selected (and card is 1-4 stars or spell/trap), open the slot placement popup
+      if (
+        duelState.activePlayer === mySide &&
+        side === mySide &&
+        clickedCard === null &&
+        duelState.selectedRef &&
+        duelState.selectedRef.side === mySide &&
+        duelState.selectedRef.zoneType === "hand" &&
+        (duelState.phase === "main" || duelState.phase === "main2" || duelState.phase === "battle")
+      ) {
+        const handIdx = duelState.selectedRef.index;
+        const handCard = pl.hand[handIdx];
+        if (handCard) {
+          if (zType === "m" && handCard.category === "monster") {
+            openSlotChoicePopup(handIdx, "m", idx);
+            return;
+          }
+          if (zType === "st" && (handCard.category === "spell" || handCard.category === "trap")) {
+            openSlotChoicePopup(handIdx, "st", idx);
+            return;
+          }
+        }
+      }
+
+      selectDuelCard(side, zType, idx);
+    };
+
+    // Also upgrade openSlotChoicePopup so when placing a Trap card from hand into an empty Spell/Trap slot,
+    // if canActivateCard(side, card).ok is true, it offers BOTH "🪤 เปิดใช้กับดักทันที" and "🪤 หมอบกับดักไว้"!
+    const _v30OrigOpenSlotChoicePopup = openSlotChoicePopup;
+    openSlotChoicePopup = function(handIdx, zType, slotIdx) {
+      _v30OrigOpenSlotChoicePopup(handIdx, zType, slotIdx);
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      const pl = duelState.players?.[mySide];
+      const card = pl?.hand?.[handIdx];
+      const btnBox = document.getElementById("slot-choice-buttons");
+      if (!card || !btnBox || zType !== "st" || card.category !== "trap") return;
+
+      const check = canActivateCard(mySide, card);
+      btnBox.innerHTML = `
+        <button onclick="closeSlotChoicePopup(); activateSpellFromHand(${handIdx}, ${slotIdx});" class="py-2.5 px-3 rounded-xl ${check.ok ? "bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white" : "bg-slate-800 text-slate-400 opacity-60"} font-black text-xs sm:text-sm shadow-lg">
+          ${check.ok ? "🪤 เปิดใช้งานกับดักหงายทันที!" : "🚫 ยังไม่เข้าเงื่อนไขเปิดทันที"}
+        </button>
+        <button onclick="closeSlotChoicePopup(); setSpellTrapFromHand(${handIdx}, ${slotIdx});" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-700 text-white font-black text-xs sm:text-sm shadow-lg border border-pink-300">
+          🪤 หมอบการ์ดกับดักไว้ในช่องที่ ${slotIdx + 1}
+        </button>
+      `;
+    };
+
+    // Upgrade PC 16:9 #duel-card-inspector & #duel-card-actions so Trap cards in hand or set on field ALSO show the immediate activation button when conditions are met!
+    const _v30OrigRenderDuelInspector = renderDuelInspector;
+    renderDuelInspector = function() {
+      _v30OrigRenderDuelInspector();
+      updatePhaseStepButtonsVisualState();
+      ensureFloatingTopLeftDuelExitButton();
+
+      if (!duelState || !duelState.active || isSpectatorMode || !duelState.selectedRef) return;
+      const { side, zoneType, index } = duelState.selectedRef;
+      const mySide = duelState.mode === "hotseat" ? duelState.activePlayer : 0;
+      const pl = duelState.players?.[side];
+      const card = pl ? (zoneType === "hand" ? pl.hand[index] : (zoneType === "m" ? pl.monsters[index] : pl.spellTraps[index])) : null;
+      if (!card) return;
+
+      const actBox = document.getElementById("duel-card-actions");
+      if (!actBox) return;
+
+      if (side === mySide && duelState.activePlayer === mySide) {
+        if (zoneType === "hand" && card.category === "trap" && (duelState.phase === "main" || duelState.phase === "main2" || duelState.phase === "battle")) {
+          const check = canActivateCard(side, card);
+          actBox.innerHTML = `
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button onclick="activateSpellFromHand(${index})" class="py-1.5 px-3 rounded-lg font-black text-xs ${check.ok ? "bg-gradient-to-r from-pink-500 to-amber-500 text-white shadow" : "bg-slate-800 text-slate-400 opacity-70"}">
+                ${check.ok ? "🪤 เปิดใช้กับดักทันที!" : "🚫 เงื่อนไขยังไม่ครบ"}
+              </button>
+              <button onclick="requestSlotPlacement(${index}, 'st', 'set')" class="py-1.5 px-3 rounded-lg bg-pink-600 hover:bg-pink-500 text-white font-black text-xs shadow">
+                🪤 หมอบกับดักลงกระดาน
+              </button>
+              <button onclick="openMobileCardInfoTab('${card.id}', { source: 'duel', ref: { side: ${side}, zoneType: 'hand', index: ${index} } })" class="py-1.5 px-2.5 rounded-lg bg-slate-800 border border-amber-400/60 text-amber-200 font-black text-xs">
+                📖 ดูข้อมูล
+              </button>
+            </div>
+          `;
+        } else if (zoneType === "st" && card.category === "trap" && card.faceDown) {
+          const check = canActivateCard(side, card);
+          actBox.innerHTML = `
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button onclick="activateSetSpellTrap(${index})" class="flex-1 py-1.5 px-3 rounded-xl ${check.ok ? "bg-gradient-to-r from-pink-500 to-rose-600 text-white" : "bg-slate-800 text-rose-300"} font-black text-xs shadow">
+                ${check.ok ? "🪤 เปิดใช้งานกับดักทันที!" : `🚫 ยังไม่เข้าเงื่อนไข (${check.reason || ""})`}
+              </button>
+              <button onclick="openMobileCardInfoTab('${card.id}', { source: 'duel', ref: { side: ${side}, zoneType: 'st', index: ${index} } })" class="py-1.5 px-2.5 rounded-lg bg-slate-800 border border-amber-400/60 text-amber-200 font-black text-xs">
+                📖 ดูข้อมูล
+              </button>
+            </div>
+          `;
+        }
+      }
+    };
+
+    // ============================================================================
+    // FIX 12: INSPECT OPPONENT'S (AND PLAYER'S) GRAVEYARD CARDS WITH FULL DETAILS
+    // ============================================================================
+    openGraveyardModal = function(side = 0) {
+      playTone("click");
+      elevateSelectionModalsToBody();
+      if (!duelState || !duelState.players) return;
+      const pl = duelState.players[side];
+      if (!pl) return;
+      const gy = pl.graveyard || [];
+      const otherSide = 1 - side;
+      const otherPl = duelState.players[otherSide];
+
+      const titleEl = document.getElementById("modal-info-title");
+      const bodyEl = document.getElementById("modal-info-body");
+      const modalEl = document.getElementById("modal-info");
+      if (!titleEl || !bodyEl || !modalEl) return;
+
+      titleEl.innerHTML = `🪦 สุสานของ <span class="text-cyan-300">${pl.name}</span> (${gy.length} ใบ — แตะที่การ์ดเพื่อดูคุณสมบัติเต็ม)`;
+
+      const switchBarHtml = `
+        <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-amber-500/30">
+          <button type="button" onclick="openGraveyardModal(0)" class="flex-1 py-1.5 px-2.5 rounded-xl font-black text-xs border ${side === 0 ? "bg-amber-400 text-slate-950 border-white shadow" : "bg-slate-900 text-slate-300 border-slate-700"}">
+            🪦 สุสานของคุณ (${duelState.players[0]?.graveyard?.length || 0} ใบ)
+          </button>
+          <button type="button" onclick="openGraveyardModal(1)" class="flex-1 py-1.5 px-2.5 rounded-xl font-black text-xs border ${side === 1 ? "bg-rose-500 text-white border-white shadow" : "bg-slate-900 text-slate-300 border-slate-700"}">
+            💀 สุสานคู่ต่อสู้: ${otherPl ? otherPl.name : "ศัตรู"} (${duelState.players[1]?.graveyard?.length || 0} ใบ)
+          </button>
+        </div>
+      `;
+
+      if (gy.length === 0) {
+        bodyEl.innerHTML = `
+          ${switchBarHtml}
+          <p class="text-center py-8 text-slate-400 font-bold">ยังไม่มีการ์ดในสุสานของ ${pl.name}</p>
+        `;
+      } else {
+        bodyEl.innerHTML = `
+          ${switchBarHtml}
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            ${gy.map((c, idx) => {
+              const statBadge = c.category === "monster"
+                ? `<span class="text-[10px] font-mono font-black text-yellow-300">⚔️${c.atk} / 🛡️${c.def}</span>`
+                : `<span class="text-[10px] font-bold text-emerald-300">${c.category === "spell" ? "🔮 เวทมนตร์" : "🪤 กับดัก"}</span>`;
+              return `
+                <div onclick="openMobileCardInfoTab('${c.id}', { source: 'graveyard', graveyardSide: ${side} }, event)" class="cursor-pointer p-2 rounded-2xl bg-[#080614] border-2 border-amber-500/50 hover:border-cyan-400 text-xs flex flex-col items-center justify-between gap-1.5 shadow-xl transition active:scale-95">
+                  <div class="w-full flex items-center justify-between gap-1 px-0.5">
+                    <span class="font-black text-amber-300 truncate text-[11px]">#${idx + 1} ${c.name}</span>
+                  </div>
+                  <div class="my-0.5">
+                    ${renderYgoCardVisual(c, currentAspectMode === "9:16" ? "w-[112px] h-[162px]" : "w-[152px] h-[220px]")}
+                  </div>
+                  <div class="w-full text-center">${statBadge}</div>
+                  <div class="w-full text-[10px] text-slate-300 bg-slate-950/90 px-2 py-1 rounded-lg border border-slate-800 line-clamp-2 leading-snug text-left">
+                    ${c.effect || c.scienceFact || "-"}
+                  </div>
+                  <div class="w-full flex items-center justify-between gap-1 pt-0.5">
+                    <button type="button" onclick="speakCardById('${c.id}', event)" class="flex-1 py-1 px-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-[10px] flex items-center justify-center gap-0.5 shadow">
+                      🔊 อ่านเสียง
+                    </button>
+                    <button type="button" onclick="openMobileCardInfoTab('${c.id}', { source: 'graveyard', graveyardSide: ${side} }, event)" class="py-1 px-2 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-[10px] shadow">
+                      📖 ข้อมูลเต็ม
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }
+      modalEl.classList.remove("hidden");
+    };
+
+    // Hook renderDuelArena to always sync phase buttons, top-left exit button, and Isostasy T031 check
+    const _v30OrigRenderDuelArena = renderDuelArena;
+    renderDuelArena = function() {
+      _v30OrigRenderDuelArena();
+      updatePhaseStepButtonsVisualState();
+      ensureFloatingTopLeftDuelExitButton();
+      syncDrawOverlayTopLayerVisibility();
+    };
+
   </script>
 </body>
 </html>
