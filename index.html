@@ -29163,6 +29163,256 @@ ${part3}`;
       if (isAdminAuthenticated) renderAdminDashboard();
     }, 80);
 
+
+    // ============================================================================
+    // PC 16:9 CLASSROOM TEACHING DEMO 9:16 RESIZE BUTTON ("ปรับขนาด")
+    // - Only shown when the actual screen is read as 16:9 / Landscape (isRealPortrait === false)
+    // - Completely hidden on real 9:16 mobile portrait screens
+    // - Clicking "📱 ปรับขนาด (สาธิต 9:16)" switches the UI into a 9:16 vertical phone frame
+    //   centered on the PC screen for classroom teaching & demonstration!
+    // ============================================================================
+    window._pcDemoForce916 = false;
+
+    function injectPcDemo916ResizeStyles() {
+      if (document.getElementById("v1-pc-demo-916-resize-styles")) return;
+      const st = document.createElement("style");
+      st.id = "v1-pc-demo-916-resize-styles";
+      st.textContent = `
+        /* Hide the PC-only "ปรับขนาด" button whenever on a real portrait (9:16) smartphone screen */
+        body.is-real-portrait-screen #btn-pc-resize-916,
+        body.is-real-portrait-screen #btn-menu-pc-resize-916 {
+          display: none !important;
+        }
+        /* Show the PC-only "ปรับขนาด" button when on a 16:9 PC screen */
+        body.is-real-landscape-169 #btn-pc-resize-916 {
+          display: inline-flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          pointer-events: auto !important;
+        }
+        body.is-real-landscape-169 #btn-menu-pc-resize-916 {
+          display: inline-flex !important;
+        }
+        /* When PC is in 9:16 classroom demo mode, frame the 9:16 screen cleanly in the center of the PC monitor */
+        body.ui-mode-mobile-916.is-real-landscape-169 #main-top-header,
+        body.ui-mode-mobile-916.is-real-landscape-169 main {
+          width: var(--dyn-frame-w, 420px) !important;
+          max-width: var(--dyn-frame-w, 420px) !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
+          border-left: 2px solid rgba(250, 204, 21, 0.75) !important;
+          border-right: 2px solid rgba(250, 204, 21, 0.75) !important;
+          box-shadow: 0 0 80px rgba(0, 0, 0, 0.95) !important;
+        }
+      `;
+      document.head.appendChild(st);
+    }
+
+    function ensurePcDemo916ResizeButtonsInDom() {
+      injectPcDemo916ResizeStyles();
+
+      // 1. Place "📱 ปรับขนาด" button right next to the top-right Expand/Shrink button AND in the top header
+      const hostEl = document.getElementById("v27-top-right-expand-Host");
+      if (hostEl && !document.getElementById("btn-pc-resize-916")) {
+        hostEl.style.display = "flex";
+        hostEl.style.alignItems = "center";
+        hostEl.style.gap = "6px";
+
+        const btn = document.createElement("button");
+        btn.id = "btn-pc-resize-916";
+        btn.type = "button";
+        btn.onclick = function(ev) { togglePcDemo916Mode(ev); };
+        btn.style.cssText = "height:28px;padding:0 10px;border-radius:9999px;font-weight:900;font-size:11.5px;color:#020617;border:1.5px solid #ffffff;align-items:center;gap:4px;cursor:pointer;white-space:nowrap;transition:transform 0.15s ease;";
+        hostEl.insertBefore(btn, hostEl.firstChild);
+      }
+
+      // 2. Also add "📱 ปรับขนาด (จำลองจอ 9:16 สำหรับสาธิตสอน)" button on the Main Menu row (visible only on 16:9 PC)
+      const menuExpandBtn = document.getElementById("btn-menu-expand-shrink");
+      if (menuExpandBtn && menuExpandBtn.parentElement && !document.getElementById("btn-menu-pc-resize-916")) {
+        const parentRow = menuExpandBtn.parentElement;
+        parentRow.className = "grid grid-cols-1 sm:grid-cols-2 gap-2 w-full pt-1";
+        const mBtn = document.createElement("button");
+        mBtn.id = "btn-menu-pc-resize-916";
+        mBtn.type = "button";
+        mBtn.onclick = function(ev) { togglePcDemo916Mode(ev); };
+        parentRow.appendChild(mBtn);
+      }
+
+      updatePcDemo916ResizeButtonsUI();
+    }
+
+    function updatePcDemo916ResizeButtonsUI() {
+      const is169Screen = document.body.classList.contains("is-real-landscape-169");
+      const active916 = Boolean(window._pcDemoForce916);
+
+      const topBtn = document.getElementById("btn-pc-resize-916");
+      if (topBtn) {
+        if (!is169Screen) {
+          topBtn.style.display = "none";
+        } else {
+          topBtn.style.display = "inline-flex";
+          topBtn.innerHTML = active916
+            ? `<span style="font-size:13px;line-height:1;">🖥️</span><span>ปรับขนาด (กลับ 16:9)</span>`
+            : `<span style="font-size:13px;line-height:1;">📱</span><span>ปรับขนาด (9:16)</span>`;
+          topBtn.title = active916
+            ? "คลิกเพื่อสลับกลับเป็นหน้าจอ 16:9 ปกติของคอมพิวเตอร์"
+            : "คลิกเพื่อปรับขนาดเป็นหน้าจอ 9:16 สำหรับสาธิตการสอนในห้องเรียน";
+          topBtn.style.background = active916
+            ? "linear-gradient(90deg, #38bdf8, #818cf8)"
+            : "linear-gradient(90deg, #fde047, #f59e0b)";
+          topBtn.style.boxShadow = active916
+            ? "0 0 16px rgba(56,189,248,0.95), 0 2px 8px rgba(0,0,0,0.85)"
+            : "0 0 16px rgba(245,158,11,0.95), 0 2px 8px rgba(0,0,0,0.85)";
+        }
+      }
+
+      const menuBtn = document.getElementById("btn-menu-pc-resize-916");
+      if (menuBtn) {
+        if (!is169Screen) {
+          menuBtn.style.display = "none";
+        } else {
+          menuBtn.style.display = "inline-flex";
+          menuBtn.innerHTML = active916
+            ? `<span class="text-base leading-none">🖥️</span><span>ปรับขนาดกลับเป็น 16:9 (จอคอมปกติ)</span>`
+            : `<span class="text-base leading-none">📱</span><span>ปรับขนาด (สลับเป็นจอ 9:16 สาธิตสอน)</span>`;
+          menuBtn.className = active916
+            ? "w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400 hover:brightness-110 border-2 border-white text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(56,189,248,0.5)]"
+            : "w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-300 via-yellow-400 to-orange-400 hover:brightness-110 border-2 border-white text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(251,191,36,0.5)]";
+        }
+      }
+    }
+
+    function togglePcDemo916Mode(ev) {
+      if (ev) ev.stopPropagation();
+      playTone("click");
+      window._pcDemoForce916 = !window._pcDemoForce916;
+      computeAndApplyScreenUI(true);
+      updatePcDemo916ResizeButtonsUI();
+      setTimeout(adjustMobileHandCardsToFitContainer, 60);
+      setTimeout(adjustMobileHandCardsToFitContainer, 220);
+      showToast(
+        window._pcDemoForce916
+          ? "📱 ปรับขนาดเป็นหน้าจอ 9:16 สำหรับสาธิตสอนในห้องเรียนเรียบร้อยแล้ว! (กดปุ่ม ปรับขนาด อีกครั้งเพื่อกลับเป็น 16:9)"
+          : "🖥️ ปรับขนาดกลับเป็นหน้าจอ 16:9 สำหรับคอมพิวเตอร์เรียบร้อยแล้ว!",
+        window._pcDemoForce916 ? "📱" : "🖥️"
+      );
+    }
+
+    // Override computeAndApplyScreenUI so:
+    // 1. It detects whether the real physical viewport is 16:9 landscape (!isRealPortrait) vs 9:16 portrait (isRealPortrait)
+    // 2. If the real viewport is 16:9 landscape AND window._pcDemoForce916 is true, it renders the 9:16 UI proportionally inside a centered 9:16 frame on the PC monitor!
+    // 3. If the real viewport is 9:16 portrait (smartphone), it hides the "ปรับขนาด" button and uses native 9:16 as normal.
+    computeAndApplyScreenUI = function(reRenderViews = false) {
+      injectDynamicViewportStyles();
+      injectV27UnifiedLayoutAndHandStyles();
+      injectPcDemo916ResizeStyles();
+
+      const vv = window.visualViewport;
+      const rawW = (vv && vv.width) ? vv.width : (window.innerWidth || document.documentElement.clientWidth || 1024);
+      const rawH = (vv && vv.height) ? vv.height : (window.innerHeight || document.documentElement.clientHeight || 768);
+      const vw = Math.max(280, Math.round(rawW));
+      const vh = Math.max(340, Math.round(rawH));
+      window._lastObservedVw = vw;
+      window._lastObservedVh = vh;
+
+      const ratio = vw / vh;
+      const isRealPortrait = ratio < 0.98;
+      const isRealLandscape169 = !isRealPortrait;
+
+      // If screen actually became a real portrait phone screen, reset PC demo override
+      if (isRealPortrait) {
+        window._pcDemoForce916 = false;
+      }
+
+      const useCompactPortraitUI = isRealPortrait || (isRealLandscape169 && Boolean(window._pcDemoForce916));
+
+      const prevMode = currentAspectMode;
+      currentAspectMode = useCompactPortraitUI ? "9:16" : "16:9";
+      screenLayoutLockMode = useCompactPortraitUI ? "compact" : "auto";
+
+      document.body.classList.toggle("ui-mode-mobile-916", useCompactPortraitUI);
+      document.body.classList.toggle("is-real-portrait-screen", isRealPortrait);
+      document.body.classList.toggle("is-real-landscape-169", isRealLandscape169);
+
+      const rootStyle = document.documentElement.style;
+      rootStyle.setProperty("--dyn-vw", vw + "px");
+      rootStyle.setProperty("--dyn-vh", vh + "px");
+
+      if (useCompactPortraitUI) {
+        // On a real portrait phone, fill 100% width; on a 16:9 PC in 9:16 classroom demo mode, calculate a 9:16 frame width from monitor height!
+        const frameW = isRealPortrait
+          ? vw
+          : Math.max(360, Math.min(430, Math.round(vh * (9 / 16))));
+
+        const targetBoardStageH = Math.round(vh * 0.43);
+        const boardMaxPx = Math.max(185, Math.floor(Math.min(frameW * 0.94, (targetBoardStageH - 4) * 0.98)));
+        const boardStagePx = boardMaxPx + 6;
+        const hubStagePx = Math.max(260, vh - boardStagePx);
+
+        const estHandBoxH = Math.max(88, hubStagePx - 142);
+        const estCardH = Math.max(76, Math.min(144, estHandBoxH - 8));
+        const estCardW = Math.max(54, Math.round(estCardH * 0.70));
+
+        const deckAvailH = Math.max(320, vh - 40);
+        const cardH = Math.max(164, Math.min(232, Math.floor((deckAvailH - 210) * 0.72)));
+        const cardW = Math.round(cardH * 0.70);
+        const cardArtH = Math.max(66, Math.round(cardH * 0.43));
+
+        rootStyle.setProperty("--dyn-frame-w", frameW + "px");
+        rootStyle.setProperty("--dyn-board-stage-h", boardStagePx + "px");
+        rootStyle.setProperty("--dyn-hub-stage-h", hubStagePx + "px");
+        rootStyle.setProperty("--dyn-board-max-px", boardMaxPx + "px");
+        rootStyle.setProperty("--dyn-hand-card-w", estCardW + "px");
+        rootStyle.setProperty("--dyn-hand-card-h", estCardH + "px");
+        rootStyle.setProperty("--dyn-card-w", cardW + "px");
+        rootStyle.setProperty("--dyn-card-h", cardH + "px");
+        rootStyle.setProperty("--dyn-card-art-h", cardArtH + "px");
+      } else {
+        const sideHubW = Math.max(290, Math.min(440, Math.round(vw * 0.31)));
+        const availBoardW = Math.max(280, vw - sideHubW - 20);
+        const availBoardH = Math.max(280, vh - 16);
+        const boardMaxPx = Math.floor(Math.min(availBoardW * 0.96, availBoardH * 0.96));
+
+        rootStyle.setProperty("--dyn-side-hub-w", sideHubW + "px");
+        rootStyle.setProperty("--dyn-board-max-px", boardMaxPx + "px");
+      }
+
+      if (useCompactPortraitUI) {
+        document.body.classList.toggle("mobile-lobby-tab-bot", (currentMobileLobbyTab || "bot") === "bot");
+        document.body.classList.toggle("mobile-lobby-tab-rooms", currentMobileLobbyTab === "rooms");
+      } else {
+        document.body.classList.remove("mobile-lobby-tab-bot", "mobile-lobby-tab-rooms", "show-mobile-deck-drawer");
+      }
+
+      updateExpandShrinkButtonsUI();
+      ensurePcDemo916ResizeButtonsInDom();
+      updatePcDemo916ResizeButtonsUI();
+
+      // Reserve enough right padding on #main-top-header when both "ปรับขนาด" and "ขยาย" buttons are shown on 16:9 PC
+      const topHdr = document.getElementById("main-top-header");
+      if (topHdr) {
+        topHdr.style.setProperty("padding-right", (isRealLandscape169 && !useCompactPortraitUI) ? "195px" : "78px", "important");
+      }
+
+      if (reRenderViews || prevMode !== currentAspectMode) {
+        renderCardCatalog();
+        render50RoomsLobby();
+        if (duelState && duelState.active) {
+          renderDuelArena();
+        }
+      }
+
+      requestAnimationFrame(() => {
+        adjustMobileHandCardsToFitContainer();
+      });
+    };
+
+    // Initialize the PC 16:9 -> 9:16 classroom demo button immediately
+    setTimeout(() => {
+      ensurePcDemo916ResizeButtonsInDom();
+      computeAndApplyScreenUI(false);
+    }, 100);
+
   </script>
 </body>
 </html>
