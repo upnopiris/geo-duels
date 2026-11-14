@@ -2308,11 +2308,10 @@
 <input
   id="input-gas-webapp-url"
   type="text"
-  value="https://script.google.com/macros/s/AKfycbyqtcTL1TRXjUFGhytvbuUw6XP5JbsVG07TRqUV_Q0JYyVPD_nJyYhCi-8-uQSRrRdzog/exec"
+  value="https://script.google.com/macros/s/AKfycbxbVf6BMTKUega8iZEf-UL59_CZ7izu1Bh_NmHbpZtNIsZrVJb4zbLKp-UOP6vgFZ1F1g/exec"
   placeholder="วางลิงก์ Google Apps Script Web App URL (https://script.google.com/macros/s/.../exec)"
   class="flex-1 px-3 py-1.5 rounded-xl bg-black border border-slate-700 text-xs text-cyan-200 font-mono"
 />
-
   <button
     onclick="saveGasWebAppUrl()"
     class="px-3.5 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs whitespace-nowrap"
@@ -2381,10 +2380,10 @@
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-500/40 pb-2.5">
               <div>
                 <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-yellow-400/20 border border-yellow-300 text-yellow-200 text-xs font-black mb-1">
-                  🌟 ระบบแอดมินมอบการ์ดแรร์พิเศษ (Exclusive 1-of-1 Rare Cards • SP01–SP10)
+                  🌟 ระบบแอดมินมอบการ์ดแรร์พิเศษ (Multi-Owner Rare Cards • SP01–SP10)
                 </div>
-                <h3 class="text-lg sm:text-xl font-black text-amber-300">🎁 มอบการ์ดแรร์จาก Google Drive ให้สมาชิก (การ์ดแรร์ 1 ใบ มีผู้ครอบครองได้เพียงคนเดียว!)</h3>
-                <p class="text-xs text-slate-300">แอดมินสามารถมอบการ์ดแรร์ให้สมาชิกคนใดก็ได้ กี่ใบก็ได้ (แต่การ์ดแรร์แต่ละใบจะมีเจ้าของได้เพียง 1 คนเท่านั้น) การ์ดจะเข้าไปอยู่ในคลังจัดเด็คของสมาชิกคนนั้นทันที</p>
+                <h3 class="text-lg sm:text-xl font-black text-amber-300">🎁 มอบการ์ดแรร์จาก Google Drive ให้สมาชิก (การ์ดแรร์ 1 ใบ มอบให้สมาชิกหลายคนได้!)</h3>
+                <p class="text-xs text-slate-300">แอดมินสามารถมอบการ์ดแรร์ 1 ใบให้สมาชิกกี่คนก็ได้ เลือกจากรายชื่อหรือพิมพ์ User ID หลายคนพร้อมกัน (คั่นด้วย , หรือเว้นวรรค) การ์ดจะเข้าไปอยู่ในคลังจัดเด็คของสมาชิกทุกคนที่ได้รับ</p>
               </div>
               <a href="https://drive.google.com/drive/folders/1cSmx54cU9b2acAvdv85VYyLElFfV4DS-" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/35 border border-amber-300 text-amber-200 text-xs font-black">
                 📂 เปิดโฟลเดอร์การ์ดแรร์ใน Google Drive
@@ -2393,13 +2392,17 @@
 
             <!-- Quick Grant Controls -->
             <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 bg-[#070512] p-3 rounded-xl border border-amber-500/40 items-end">
-              <div class="md:col-span-5">
+              <div class="md:col-span-4">
                 <label class="block text-xs font-bold text-cyan-300 mb-1">1. เลือกการ์ดแรร์ (SP01 – SP10)</label>
                 <select id="admin-select-rare-card" class="w-full px-3 py-2 rounded-xl bg-black border border-amber-400/60 text-xs sm:text-sm font-bold text-amber-200"></select>
               </div>
-              <div class="md:col-span-5">
-                <label class="block text-xs font-bold text-cyan-300 mb-1">2. เลือกสมาชิกผู้รับการ์ดแรร์ (User ID)</label>
+              <div class="md:col-span-3">
+                <label class="block text-xs font-bold text-cyan-300 mb-1">2. เลือกสมาชิก 1 คน (User ID)</label>
                 <select id="admin-select-rare-recipient" class="w-full px-3 py-2 rounded-xl bg-black border border-cyan-400/60 text-xs sm:text-sm font-bold text-cyan-200"></select>
+              </div>
+              <div class="md:col-span-3">
+                <label class="block text-xs font-bold text-emerald-300 mb-1">หรือพิมพ์หลายคน (คั่นด้วย , หรือเว้นวรรค)</label>
+                <input id="admin-input-rare-recipients-multi" type="text" placeholder="เช่น 6596, 6597, 6598" class="w-full px-3 py-2 rounded-xl bg-black border border-emerald-400/60 text-xs sm:text-sm font-bold text-emerald-200 placeholder-slate-500" />
               </div>
               <div class="md:col-span-2">
                 <button onclick="adminGrantSelectedRareCard()" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-yellow-300 via-amber-400 to-orange-500 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm shadow-lg">
@@ -11232,7 +11235,7 @@
       }
       // Remove any rare card from userDeck if it is not owned by this user
       Object.keys(userDeck).forEach(cid => {
-        if (cid.startsWith('SP') && rareCardsOwnership[cid] !== userProfile.username) {
+        if (cid.startsWith('SP') && !doesUserOwnRareCard(cid, userProfile.username)) {
           delete userDeck[cid];
         }
       });
@@ -11361,8 +11364,9 @@
       userProfile.id = newUid;
       // Update ownership in rare cards & match logs
       Object.keys(rareCardsOwnership).forEach(cid => {
-        if (rareCardsOwnership[cid] && rareCardsOwnership[cid].toLowerCase() === oldUid.toLowerCase()) {
-          rareCardsOwnership[cid] = newUid;
+        const owners = parseRareOwnersList(rareCardsOwnership[cid]);
+        if (owners.length > 0) {
+          rareCardsOwnership[cid] = owners.map(o => o.toLowerCase() === oldUid.toLowerCase() ? newUid : o);
         }
       });
       adminMatchLogs.forEach(log => {
@@ -11426,25 +11430,59 @@
       }
     }
 
-    // -------------------- 4. EXCLUSIVE 1-OF-1 RARE CARDS (SP01 - SP10) SYSTEM --------------------
+    // -------------------- 4. MULTI-OWNER RARE CARDS (SP01 - SP10) SYSTEM --------------------
+    function parseRareOwnersList(val) {
+      if (!val) return [];
+      const rawItems = Array.isArray(val) ? val : String(val).split(/[,;\n\r\t\s]+/);
+      const out = [];
+      const seen = new Set();
+      rawItems.forEach(item => {
+        let s = String(item || '').trim();
+        if (s.startsWith("'")) s = s.slice(1).trim();
+        if (/^\d{4,6}\.0$/.test(s)) s = s.slice(0, -2);
+        if (!s || s.length < 2 || s.length > 36) return;
+        if (typeof INVALID_RARE_OWNER_STRINGS !== 'undefined' && (INVALID_RARE_OWNER_STRINGS.has(s) || INVALID_RARE_OWNER_STRINGS.has(s.toLowerCase()))) return;
+        const lower = s.toLowerCase();
+        if (lower === 'upnopiris' || lower === '-' || lower === 'none' || lower === 'null' || lower === 'undefined') return;
+        if (!seen.has(lower)) {
+          seen.add(lower);
+          out.push(s);
+        }
+      });
+      return out;
+    }
+
+    function getRareCardOwners(cardId) {
+      return parseRareOwnersList(rareCardsOwnership[cardId]);
+    }
+
+    function doesUserOwnRareCard(cardId, username) {
+      if (!username) return false;
+      const uLower = String(username).trim().toLowerCase();
+      return getRareCardOwners(cardId).some(o => o.toLowerCase() === uLower);
+    }
+
+    function formatRareOwnersString(ownersVal) {
+      const list = parseRareOwnersList(ownersVal);
+      return list.join(', ');
+    }
+
     function getAllRareCardsList() {
       return ALL_CARDS.filter(c => c.isRare || String(c.id).startsWith('SP'));
     }
 
     function getRareCardsOwnedByUser(username) {
       if (!username) return [];
-      const uLower = username.toLowerCase();
-      return getAllRareCardsList().filter(c => (rareCardsOwnership[c.id] || '').toLowerCase() === uLower);
+      return getAllRareCardsList().filter(c => doesUserOwnRareCard(c.id, username));
     }
 
     function canCurrentUserSeeCardInDeckBuilder(card) {
       if (card.subtype === 'token') return false;
       if (!card.isRare && !String(card.id).startsWith('SP')) return true;
-      // Rare card: visible ONLY if granted to the currently logged-in user (or if admin is logged in)
+      // Rare card: visible if granted to the currently logged-in user (or if admin is logged in)
       if (isAdminAuthenticated) return true;
       if (!isPlayerLoggedIn || !userProfile.username) return false;
-      const owner = rareCardsOwnership[card.id];
-      return Boolean(owner && owner.toLowerCase() === userProfile.username.toLowerCase());
+      return doesUserOwnRareCard(card.id, userProfile.username);
     }
 
     renderCardCatalog = function() {
@@ -11552,8 +11590,8 @@
       if (selCard) {
         const prev = selCard.value;
         selCard.innerHTML = rares.map(c => {
-          const owner = rareCardsOwnership[c.id];
-          return `<option value="${c.id}">${c.id} - ${c.name} (${owner ? `มอบให้: ${owner} แล้ว` : '🟢 ว่าง — ยังไม่มีผู้ครอบครอง'})</option>`;
+          const owners = getRareCardOwners(c.id);
+          return `<option value="${c.id}">${c.id} - ${c.name} (${owners.length > 0 ? `มอบให้แล้ว ${owners.length} คน` : '🟢 ว่าง — ยังไม่มีผู้ครอบครอง'})</option>`;
         }).join('');
         if (prev && rares.some(c => c.id === prev)) selCard.value = prev;
       }
@@ -11570,15 +11608,23 @@
 
       if (grid) {
         grid.innerHTML = rares.map(c => {
-          const ownerId = rareCardsOwnership[c.id] || '';
-          const ownerMem = ownerId ? membersDb.find(m => m.username.toLowerCase() === ownerId.toLowerCase()) : null;
+          const owners = getRareCardOwners(c.id);
+          const hasOwners = owners.length > 0;
           const hdUrl = getDriveFullCardUrl(c, 'w400');
+          const ownersChipsHtml = owners.map(ownerId => {
+            const ownerMem = membersDb.find(m => m.username.toLowerCase() === ownerId.toLowerCase());
+            const label = ownerMem ? `${ownerId} (${ownerMem.name})` : ownerId;
+            return `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-950/90 border border-emerald-400/60 text-[10px] text-emerald-200 font-bold max-w-full">
+              <span class="truncate">👤 ${label}</span>
+              <button onclick="adminRevokeRareCard('${c.id}', '${ownerId.replace(/'/g, "\\'")}')" title="ถอนสิทธิ์ ${ownerId}" class="text-rose-300 hover:text-rose-100 font-black ml-0.5">✕</button>
+            </span>`;
+          }).join('');
           return `
-            <div class="p-2.5 rounded-2xl bg-[#090618] border-2 ${ownerId ? 'border-emerald-400' : 'border-amber-400/60'} flex flex-col justify-between gap-2 shadow-xl">
+            <div class="p-2.5 rounded-2xl bg-[#090618] border-2 ${hasOwners ? 'border-emerald-400' : 'border-amber-400/60'} flex flex-col justify-between gap-2 shadow-xl">
               <div class="space-y-1">
                 <div class="flex items-center justify-between text-[11px] font-black">
                   <span class="px-2 py-0.5 rounded bg-yellow-400 text-slate-950 font-mono">${c.id}</span>
-                  <span class="${ownerId ? 'text-emerald-300' : 'text-amber-300'}">${ownerId ? `🔒 เจ้าของ: ${ownerId}` : '🟢 ว่าง (1 เดียว)'}</span>
+                  <span class="${hasOwners ? 'text-emerald-300' : 'text-amber-300'}">${hasOwners ? `👥 เจ้าของ ${owners.length} คน` : '🟢 ว่าง (แจกได้ไม่จำกัด)'}</span>
                 </div>
                 <div class="font-black text-xs text-white truncate">${c.name}</div>
                 <div class="w-full h-36 rounded-xl card-sprite border border-amber-300 relative overflow-hidden" style="${getSpriteStyle(c.atlasIndex)}">
@@ -11586,12 +11632,17 @@
                 </div>
                 <div class="text-[10px] text-amber-100 line-clamp-2 leading-snug">${c.effect}</div>
               </div>
-              <div class="space-y-1 pt-1 border-t border-slate-800">
-                ${ownerId ? `
-                  <div class="text-[10px] text-emerald-300 font-bold truncate">👤 ${ownerMem ? ownerMem.name : ownerId}</div>
-                  <button onclick="adminRevokeRareCard('${c.id}')" class="w-full py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-black text-[11px]">
-                    🔄 ดึงการ์ดแรร์คืนคลังแอดมิน
-                  </button>
+              <div class="space-y-1.5 pt-1 border-t border-slate-800">
+                ${hasOwners ? `
+                  <div class="flex flex-wrap gap-1 max-h-20 overflow-y-auto">${ownersChipsHtml}</div>
+                  <div class="grid grid-cols-2 gap-1">
+                    <button onclick="document.getElementById('admin-select-rare-card').value='${c.id}'; adminGrantSelectedRareCard();" class="w-full py-1 rounded-lg bg-gradient-to-r from-amber-400 to-yellow-500 hover:brightness-110 text-slate-950 font-black text-[10px]">
+                      ➕ เพิ่มผู้รับ
+                    </button>
+                    <button onclick="adminRevokeRareCard('${c.id}')" class="w-full py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-black text-[10px]">
+                      🔄 ดึงคืนทั้งหมด
+                    </button>
+                  </div>
                 ` : `
                   <button onclick="document.getElementById('admin-select-rare-card').value='${c.id}'; adminGrantSelectedRareCard();" class="w-full py-1 rounded-lg bg-gradient-to-r from-amber-400 to-yellow-500 hover:brightness-110 text-slate-950 font-black text-[11px]">
                     🎁 มอบให้สมาชิกที่เลือก
@@ -11607,32 +11658,62 @@
     function adminGrantSelectedRareCard() {
       playTone('click');
       const cardId = document.getElementById('admin-select-rare-card')?.value;
-      const targetUser = document.getElementById('admin-select-rare-recipient')?.value;
+      const multiInputEl = document.getElementById('admin-input-rare-recipients-multi');
+      const multiRaw = multiInputEl ? multiInputEl.value.trim() : '';
+      const dropdownUser = document.getElementById('admin-select-rare-recipient')?.value;
       if (!cardId || !CARD_MAP[cardId]) return;
-      if (!targetUser) {
-        showToast('⚠️ กรุณาเลือกสมาชิกผู้รับการ์ดแรร์ก่อน! (ต้องมีสมาชิกสมัครเข้ามาก่อน)', '⚠️');
+
+      const targets = multiRaw ? parseRareOwnersList(multiRaw) : parseRareOwnersList(dropdownUser);
+      if (targets.length === 0) {
+        showToast('⚠️ กรุณาเลือกหรือพิมพ์ User ID สมาชิกผู้รับการ์ดแรร์ก่อน!', '⚠️');
         return;
       }
-      const existingOwner = rareCardsOwnership[cardId];
-      if (existingOwner && existingOwner.toLowerCase() !== targetUser.toLowerCase()) {
-        showToast(`🚫 การ์ดแรร์ "${CARD_MAP[cardId].name}" มอบให้ "${existingOwner}" ไปแล้ว! (การ์ดแรร์ 1 ใบ มีเจ้าของได้เพียงคนเดียว หากต้องการย้ายคน ให้กดดึงคืนก่อน)`, '🔒');
-        return;
-      }
-      rareCardsOwnership[cardId] = targetUser;
+
+      const currentOwners = getRareCardOwners(cardId);
+      const seen = new Set(currentOwners.map(o => o.toLowerCase()));
+      const newlyAdded = [];
+      targets.forEach(t => {
+        const lower = t.toLowerCase();
+        if (!seen.has(lower)) {
+          seen.add(lower);
+          currentOwners.push(t);
+          newlyAdded.push(t);
+        }
+      });
+
+      rareCardsOwnership[cardId] = currentOwners;
+      if (multiInputEl && multiRaw) multiInputEl.value = '';
       saveState();
       renderAdminDashboard();
       updateProfileUI();
       renderCardCatalog();
       playTone('win');
-      showToast(`🎁 มอบการ์ดแรร์ "${CARD_MAP[cardId].name} (${cardId})" ให้สมาชิก ID: "${targetUser}" สำเร็จ! การ์ดเข้าไปอยู่ในหน้าจัดเด็คของสมาชิกแล้ว`, '🌟');
+      if (newlyAdded.length > 0) {
+        showToast(`🎁 มอบการ์ดแรร์ "${CARD_MAP[cardId].name} (${cardId})" เพิ่มให้: ${newlyAdded.join(', ')} สำเร็จ! (รวมเจ้าของ ${currentOwners.length} คน)`, '🌟');
+      } else {
+        showToast(`ℹ️ สมาชิกที่เลือก (${targets.join(', ')}) มีการ์ดแรร์ "${CARD_MAP[cardId].name}" อยู่แล้ว`, 'ℹ️');
+      }
     }
 
-    function adminRevokeRareCard(cardId) {
+    function adminRevokeRareCard(cardId, specificUserId) {
       playTone('click');
-      const prevOwner = rareCardsOwnership[cardId];
-      delete rareCardsOwnership[cardId];
-      // Also remove from that member's savedDeck if they put it in
-      if (prevOwner) {
+      const currentOwners = getRareCardOwners(cardId);
+      let removedOwners = [];
+      if (specificUserId) {
+        const targetLower = String(specificUserId).trim().toLowerCase();
+        const remaining = [];
+        currentOwners.forEach(o => {
+          if (o.toLowerCase() === targetLower) removedOwners.push(o);
+          else remaining.push(o);
+        });
+        if (remaining.length > 0) rareCardsOwnership[cardId] = remaining;
+        else delete rareCardsOwnership[cardId];
+      } else {
+        removedOwners = currentOwners.slice();
+        delete rareCardsOwnership[cardId];
+      }
+
+      removedOwners.forEach(prevOwner => {
         const mem = membersDb.find(m => m.username.toLowerCase() === prevOwner.toLowerCase());
         if (mem && mem.savedDeck && mem.savedDeck[cardId]) {
           delete mem.savedDeck[cardId];
@@ -11641,12 +11722,17 @@
           delete userDeck[cardId];
           updateDeckCountsUI();
         }
-      }
+      });
+
       saveState();
       renderAdminDashboard();
       updateProfileUI();
       renderCardCatalog();
-      showToast(`🔄 ดึงการ์ดแรร์ "${CARD_MAP[cardId]?.name || cardId}" คืนคลังแอดมินเรียบร้อยแล้ว!`, '🔄');
+      if (specificUserId) {
+        showToast(`🔄 ถอนสิทธิ์การ์ดแรร์ "${CARD_MAP[cardId]?.name || cardId}" จาก ${specificUserId} เรียบร้อยแล้ว!`, '🔄');
+      } else {
+        showToast(`🔄 ดึงการ์ดแรร์ "${CARD_MAP[cardId]?.name || cardId}" คืนคลังแอดมินทั้งหมดเรียบร้อยแล้ว!`, '🔄');
+      }
     }
 
     const _origRenderAdminDashboard = renderAdminDashboard;
@@ -12991,12 +13077,15 @@
           });
         }
         // 2. Push Rare Cards ownerships
-        for (const [cid, ownerUid] of Object.entries(rareCardsOwnership || {})) {
+        for (const [cid, ownerVal] of Object.entries(rareCardsOwnership || {})) {
           if (CARD_MAP[cid]) {
+            const ownerStr = formatRareOwnersString(ownerVal);
             await callGasApi('grantRareCard', {
               cardId: cid,
               cardName: CARD_MAP[cid].name,
-              targetUserId: ownerUid || '',
+              ownerUserId: ownerStr,
+              targetUserId: ownerStr,
+              mode: 'set',
               adminId: ADMIN_USER
             });
           }
@@ -13006,7 +13095,8 @@
         if (cloudData && cloudData.ok) {
           if (cloudData.rareRegistry && typeof cloudData.rareRegistry === 'object') {
             Object.entries(cloudData.rareRegistry).forEach(([cid, owner]) => {
-              if (owner) rareCardsOwnership[cid] = owner;
+              const owners = parseRareOwnersList(owner);
+              if (owners.length > 0) rareCardsOwnership[cid] = owners;
             });
           }
           if (Array.isArray(cloudData.leaderboard)) {
@@ -13107,26 +13197,31 @@
     const _v16AdminGrantSelectedRareCard = adminGrantSelectedRareCard;
     adminGrantSelectedRareCard = function() {
       const cardId = document.getElementById('admin-select-rare-card')?.value;
-      const targetUser = document.getElementById('admin-select-rare-recipient')?.value;
       _v16AdminGrantSelectedRareCard();
-      if (cardId && CARD_MAP[cardId] && rareCardsOwnership[cardId] === targetUser) {
+      if (cardId && CARD_MAP[cardId]) {
+        const ownerStr = formatRareOwnersString(rareCardsOwnership[cardId]);
         callGasApi('grantRareCard', {
           cardId,
           cardName: CARD_MAP[cardId].name,
-          targetUserId: targetUser,
+          ownerUserId: ownerStr,
+          targetUserId: ownerStr,
+          mode: 'set',
           adminId: ADMIN_USER
         });
       }
     };
 
     const _v16AdminRevokeRareCard = adminRevokeRareCard;
-    adminRevokeRareCard = function(cardId) {
-      _v16AdminRevokeRareCard(cardId);
+    adminRevokeRareCard = function(cardId, specificUserId) {
+      _v16AdminRevokeRareCard(cardId, specificUserId);
       if (cardId && CARD_MAP[cardId]) {
+        const ownerStr = formatRareOwnersString(rareCardsOwnership[cardId]);
         callGasApi('grantRareCard', {
           cardId,
           cardName: CARD_MAP[cardId].name,
-          targetUserId: '',
+          ownerUserId: ownerStr,
+          targetUserId: ownerStr,
+          mode: 'set',
           adminId: ADMIN_USER
         });
       }
@@ -13443,12 +13538,7 @@
     let isPullingCloudDb = false;
 
     function isValidRareOwnerUserId(val) {
-      if (!val || typeof val !== 'string') return false;
-      const s = val.trim();
-      if (s.length < 2 || s.length > 36) return false;
-      if (INVALID_RARE_OWNER_STRINGS.has(s)) return false;
-      if (/\s/.test(s)) return false; // Registered User IDs never contain spaces
-      return true;
+      return parseRareOwnersList(val).length > 0;
     }
 
     function sanitizeRareCardsOwnership() {
@@ -13457,8 +13547,11 @@
         return;
       }
       Object.keys(rareCardsOwnership).forEach(cid => {
-        if (!isValidRareOwnerUserId(rareCardsOwnership[cid])) {
+        const owners = parseRareOwnersList(rareCardsOwnership[cid]);
+        if (owners.length === 0) {
           delete rareCardsOwnership[cid];
+        } else {
+          rareCardsOwnership[cid] = owners;
         }
       });
     }
@@ -13764,7 +13857,12 @@
             if (Array.isArray(rareArr)) {
               rareArr.forEach(cid => {
                 if (cid && String(cid).startsWith('SP')) {
-                  rareCardsOwnership[String(cid)] = uid;
+                  const key = String(cid).trim().toUpperCase();
+                  const cur = parseRareOwnersList(rareCardsOwnership[key]);
+                  if (!cur.some(o => o.toLowerCase() === uid.toLowerCase())) {
+                    cur.push(uid);
+                  }
+                  rareCardsOwnership[key] = cur;
                 }
               });
             }
@@ -13772,17 +13870,16 @@
           updatedAnything = true;
         }
 
-        // 3. Merge Rare_Cards_Registry (only valid User IDs!)
+        // 3. Merge Rare_Cards_Registry (supports multiple User IDs per rare card!)
         if (Array.isArray(rareRows)) {
           rareRows.forEach(r => {
-            const cid = String(r[0] || '').trim();
+            const cid = String(r[0] || '').trim().toUpperCase();
             if (!cid || !cid.startsWith('SP')) return;
-            const colJOwner = String(r[9] || '').trim();
-            const colCOwner = String(r[2] || '').trim();
-            if (isValidRareOwnerUserId(colJOwner)) {
-              rareCardsOwnership[cid] = colJOwner;
-            } else if (isValidRareOwnerUserId(colCOwner)) {
-              rareCardsOwnership[cid] = colCOwner;
+            const colJOwners = parseRareOwnersList(r[9] || '');
+            const colCOwners = parseRareOwnersList(r[2] || '');
+            const chosen = colJOwners.length > 0 ? colJOwners : colCOwners;
+            if (chosen.length > 0) {
+              rareCardsOwnership[cid] = chosen;
             }
           });
           updatedAnything = true;
@@ -13840,8 +13937,9 @@
           updatedAnything = true;
           if (gasData.rareRegistry && typeof gasData.rareRegistry === 'object') {
             Object.entries(gasData.rareRegistry).forEach(([cid, owner]) => {
-              if (isValidRareOwnerUserId(owner)) {
-                rareCardsOwnership[cid] = String(owner).trim();
+              const owners = parseRareOwnersList(owner);
+              if (owners.length > 0) {
+                rareCardsOwnership[cid] = owners;
               }
             });
           }
@@ -22140,7 +22238,7 @@
           // Strip any rare card not owned by this user
           if (isPlayerLoggedIn && userProfile.username) {
             Object.keys(userDeck).forEach(cid => {
-              if (cid.startsWith("SP") && rareCardsOwnership[cid] && rareCardsOwnership[cid].toLowerCase() !== userProfile.username.toLowerCase()) {
+              if (cid.startsWith("SP") && !doesUserOwnRareCard(cid, userProfile.username)) {
                 delete userDeck[cid];
               }
             });
@@ -28326,8 +28424,9 @@ ${part3}`;
             }
             if (gasData.rareRegistry && typeof gasData.rareRegistry === "object") {
               Object.entries(gasData.rareRegistry).forEach(([cid, owner]) => {
-                if (isValidRareOwnerUserId(owner)) {
-                  rareCardsOwnership[cid] = String(owner).trim();
+                const owners = parseRareOwnersList(owner);
+                if (owners.length > 0) {
+                  rareCardsOwnership[cid] = owners;
                 }
               });
             }
@@ -30518,11 +30617,13 @@ ${part3}`;
             updateMultiTabRegModalStep(3, 55, `กำลังบันทึกทะเบียนการ์ดแรร์ SP01–SP10 (${missingSpCards.length} ใบ) ลงแท็บ Rare_Cards_Registry...`);
           }
           for (const sp of missingSpCards) {
-            const ownerUid = rareCardsOwnership[sp.id] || "";
+            const ownerStr = formatRareOwnersString(rareCardsOwnership[sp.id]);
             await callGasApi("grantRareCard", {
               cardId: sp.id,
               cardName: sp.name,
-              targetUserId: isValidRareOwnerUserId(ownerUid) ? ownerUid : "",
+              ownerUserId: ownerStr,
+              targetUserId: ownerStr,
+              mode: "set",
               adminId: ADMIN_USER
             }, "GET");
           }
@@ -32942,15 +33043,15 @@ ${part3}`;
 
         window._v33HasSyncedFromLiveSheet = true;
 
-        // 1) Parse Rare_Cards_Registry FIRST
+        // 1) Parse Rare_Cards_Registry FIRST (supports multiple owners per rare card)
         if (Array.isArray(rareRows) && rareRows.length > 0) {
           const nextRareMap = {};
           rareRows.forEach(r => {
             const cardId = cleanV33SheetStr(r[0]).toUpperCase();
             if (!cardId || cardId === "RARE_CARD_ID" || !cardId.startsWith("SP")) return;
-            const ownerId = cleanV33SheetStr(r[2]);
-            if (isValidRareOwnerUserId(ownerId) && !isRestrictedAdminAccount(ownerId)) {
-              nextRareMap[cardId] = ownerId;
+            const owners = parseRareOwnersList(cleanV33SheetStr(r[2]));
+            if (owners.length > 0) {
+              nextRareMap[cardId] = owners;
             }
           });
           rareCardsOwnership = nextRareMap;
@@ -35633,15 +35734,16 @@ ${part3}`;
         window._v33HasSyncedFromLiveSheet = true;
         rebuildAllUidFallbackMaps();
 
-        // 1) Parse Rare_Cards_Registry
+        // 1) Parse Rare_Cards_Registry (supports multiple owners per rare card)
         if (Array.isArray(rareRows) && rareRows.length > 0) {
           const nextRareMap = {};
           rareRows.forEach(r => {
             const cardId = cleanV33SheetStr(r[0]).toUpperCase();
             if (!cardId || cardId === "RARE_CARD_ID" || !cardId.startsWith("SP")) return;
-            const ownerId = cleanV33SheetStr(r.length >= 10 ? (r[9] || r[2]) : r[2]);
-            if (isValidRareOwnerUserId(ownerId) && !isRestrictedAdminAccount(ownerId)) {
-              nextRareMap[cardId] = ownerId;
+            const rawOwners = cleanV33SheetStr(r.length >= 10 ? (r[9] || r[2]) : r[2]);
+            const owners = parseRareOwnersList(rawOwners);
+            if (owners.length > 0) {
+              nextRareMap[cardId] = owners;
             }
           });
           rareCardsOwnership = nextRareMap;
@@ -37751,7 +37853,7 @@ ${part3}`;
           userDeck = JSON.parse(JSON.stringify(unpacked.cleanDeck));
           if (isPlayerLoggedIn && userProfile.username) {
             Object.keys(userDeck).forEach(cid => {
-              if (cid.startsWith("SP") && rareCardsOwnership[cid] && rareCardsOwnership[cid].toLowerCase() !== userProfile.username.toLowerCase()) {
+              if (cid.startsWith("SP") && !doesUserOwnRareCard(cid, userProfile.username)) {
                 delete userDeck[cid];
               }
             });
