@@ -11555,7 +11555,7 @@
           const owner = rareCardsOwnership[c.id];
           return `<option value="${c.id}">${c.id} - ${c.name} (${owner ? `มอบให้: ${owner} แล้ว` : '🟢 ว่าง — ยังไม่มีผู้ครอบครอง'})</option>`;
         }).join('');
-        if (prev) selCard.value = prev;
+        if (prev && rares.some(c => c.id === prev)) selCard.value = prev;
       }
 
       if (selUser) {
@@ -11564,7 +11564,7 @@
           selUser.innerHTML = `<option value="">-- ยังไม่มีสมาชิกที่ลงทะเบียน --</option>`;
         } else {
           selUser.innerHTML = membersDb.map(m => `<option value="${m.username}">ID: ${m.username} (${m.name})</option>`).join('');
-          if (prevU) selUser.value = prevU;
+          if (prevU && membersDb.some(m => m.username === prevU)) selUser.value = prevU;
         }
       }
 
@@ -29423,8 +29423,8 @@ ${part3}`;
         }
       }
 
-      if (typeof renderAdminRareCardControls === "function") {
-        renderAdminRareCardControls();
+      if (typeof renderAdminRareCardsSection === "function") {
+        renderAdminRareCardsSection();
       }
     };
 
